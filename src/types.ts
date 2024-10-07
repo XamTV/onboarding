@@ -19,7 +19,7 @@ export type Query = {
   data: {
     viewer: {
       books: {
-        hits: Books;
+        hits: Books[];
       };
     };
   };
@@ -29,4 +29,10 @@ export type BookCardProps = {
   bookId: number;
   picture: string;
   displayTitle: string;
+  onPress?: () => void;
+};
+
+export type StackParamList = {
+  Home: undefined;
+  Bookpage: { bookId: number };
 };

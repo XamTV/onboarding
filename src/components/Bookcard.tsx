@@ -1,26 +1,38 @@
-import { ScrollView, StyleSheet, View, StatusBar } from "react-native";
-import { Button, Card, Text } from "react-native-paper";
+import { ScrollView, StyleSheet, TextStyle } from "react-native";
+import { Card, Text } from "react-native-paper";
 import { BookCardProps } from "../types";
 
 export default function Bookcard({
+  onPress,
   bookId,
   picture,
   displayTitle,
-}: BookCardProps) {
+}: Readonly<BookCardProps>) {
   return (
-    <View>
-      <Text>{displayTitle} </Text>
-    </View>
+    <ScrollView contentContainerStyle={styles.scrollview}>
+      <Card style={styles.bookcard} onPress={onPress}>
+        <Card.Title titleStyle={styles.title} title={displayTitle} />
+
+        <Card.Cover source={{ uri: picture }} />
+        <Card.Content>
+          <Text>ref. {bookId} </Text>
+        </Card.Content>
+      </Card>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: StatusBar.currentHeight,
-  },
   scrollview: {
-    backgroundColor: "pink",
     marginHorizontal: 20,
+    flex: 1,
+    justifyContent: "center",
   },
+  bookcard: {
+    margin: 10,
+    padding: 10,
+  },
+  title: {
+    textAlign: "center",
+  } as TextStyle,
 });
