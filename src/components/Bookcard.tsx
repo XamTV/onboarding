@@ -9,28 +9,21 @@ export default function Bookcard({
   displayTitle,
 }: Readonly<BookCardProps>) {
   return (
-    <ScrollView contentContainerStyle={styles.scrollview}>
-      <Card style={styles.bookcard} onPress={onPress}>
-        <Card.Title titleStyle={styles.title} title={displayTitle} />
+    <Card style={styles.bookcard} onPress={onPress}>
+      <Card.Title titleStyle={styles.title} title={displayTitle} />
 
-        <Card.Cover source={{ uri: picture }} />
-        <Card.Content>
-          <Text>ref. {bookId} </Text>
-        </Card.Content>
-      </Card>
-    </ScrollView>
+      <Card.Cover source={{ uri: picture }} />
+      <Card.Content>
+        <Text>ref. {bookId} </Text>
+      </Card.Content>
+    </Card>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollview: {
-    marginHorizontal: 20,
-    flex: 1,
-    justifyContent: "center",
-  },
   bookcard: {
-    margin: 10,
-    padding: 10,
+    margin: 20,
+    padding: 20,
   },
   title: {
     textAlign: "center",
