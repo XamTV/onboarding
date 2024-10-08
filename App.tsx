@@ -4,6 +4,7 @@ import Homepage from "./src/pages/Homepage";
 import Bookpage from "./src/pages/Bookpage";
 import { StackParamList } from "./src/types";
 import DataContextProvider from "./src/context/FetchContext";
+import Chapterpage from "./src/pages/Chapterpage";
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
@@ -17,6 +18,11 @@ function App() {
             name="Bookpage"
             component={Bookpage}
             options={({ route }) => ({ title: route.params.displayTitle })}
+          />
+          <Stack.Screen
+            name="Chapterpage"
+            component={Chapterpage}
+            options={({ route }) => ({ title: route.params.title })}
           />
         </Stack.Navigator>
       </DataContextProvider>

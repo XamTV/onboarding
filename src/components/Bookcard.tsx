@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, TextStyle } from "react-native";
+import { StyleSheet, TextStyle } from "react-native";
 import { Card, Text } from "react-native-paper";
 import { BookCardProps } from "../types";
 
