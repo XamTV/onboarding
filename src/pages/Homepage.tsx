@@ -1,8 +1,6 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { View, Text, StyleSheet, StatusBar, FlatList } from "react-native";
+import { View, StyleSheet, StatusBar, FlatList } from "react-native";
 import Bookcard from "../components/Bookcard";
-import { Books, Query, StackParamList } from "../types";
+import { StackParamList } from "../types";
 
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useData } from "../context/FetchContext";

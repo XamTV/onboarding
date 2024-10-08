@@ -1,9 +1,10 @@
 import { useRoute, RouteProp } from "@react-navigation/native";
-import { View, Text, FlatList } from "react-native";
+import { View, FlatList } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Chapter, ChapterQuery } from "../types";
+import { Chapter, ChapterQuery, StackParamList } from "../types";
 import Chaptercard from "../components/Chaptercard";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 type RouteParams = {
   params: {
@@ -12,9 +13,18 @@ type RouteParams = {
   };
 };
 
-export default function Bookpage() {
+type BookpageScreenNavigationProp = NativeStackNavigationProp<
+  StackParamList,
+  "Bookpage"
+>;
+
+type Props = {
+  navigation: BookpageScreenNavigationProp;
+};
+
+export default function Bookpage({ navigation }: Readonly<Props>) {
   const route = useRoute<RouteProp<RouteParams, "params">>();
-  const { bookId, displayTitle } = route.params;
+  const { bookId } = route.params;
 
   const [bookDetail, setBookDetail] = useState<Chapter[]>([]);
 
@@ -44,7 +54,6 @@ export default function Bookpage() {
 
   return (
     <View>
-      <Text> Livre n° {displayTitle} </Text>
       <FlatList
         data={bookDetail}
         renderItem={({ item }) =>
@@ -53,6 +62,12 @@ export default function Bookpage() {
               chapterId={item.id}
               chapterTitle={item.title}
               chapterUrl={item.url}
+              onPress={() => {
+                navigation.navigate("Chapterpage", {
+                  chapterId: item.id,
+                  title: item.title,
+                });
+              }}
             />
           ) : null
         }
