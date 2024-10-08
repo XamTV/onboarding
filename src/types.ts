@@ -46,6 +46,7 @@ export type ChapterCardProps = {
   chapterId: number;
   chapterTitle: string;
   chapterUrl: string;
+  onPress?: () => void;
 };
 
 export type ChapterQuery = {
@@ -63,4 +64,5 @@ export type ChapterQuery = {
 export type StackParamList = {
   Home: undefined;
   Bookpage: { bookId: number; displayTitle: string };
+  Chapterpage: { chapterId: number; title: string };
 };

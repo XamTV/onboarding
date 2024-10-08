@@ -4,7 +4,9 @@ import axios from "axios";
 
 const DataContext = createContext<Books[]>([]);
 
-export default function DataContextProvider({ children }) {
+export default function DataContextProvider({
+  children,
+}: Readonly<React.PropsWithChildren>) {
   const [data, setData] = useState<Books[]>([]);
 
   useEffect(() => {
