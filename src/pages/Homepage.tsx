@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import Bookcard from "../components/Bookcard";
-import { Books, StackParamList } from "../types";
+import { Subject, Level, Books, StackParamList } from "../types";
 
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Modal, Portal, Provider } from "react-native-paper";
@@ -39,29 +39,19 @@ export default function Homepage({ navigation }: Readonly<Props>) {
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
-  useEffect(() => {
-    const filteredData = data.filter((book) => {
-      const matchesSubject = subjectFilter
-        ? book.subjects.some((subject) => subject.name === subjectFilter)
-        : true;
-      const matchesLevel = levelFilter
-        ? book.levels.some((level) => level.name === levelFilter)
-        : true;
-      return matchesSubject && matchesLevel;
-    });
-    setFilteredBooks(filteredData);
-  }, [data, subjectFilter, levelFilter]);
-
-  // {le data filtré}
-  const levels = [
+  // useMemo
+  const levels: string[] = [
     ...new Set(data.flatMap((book) => book.levels.map((level) => level.name))),
   ];
 
-  const subjects = [
+  const subjects: string[] = [
     ...new Set(
       data.flatMap((book) => book.subjects.map((subject) => subject.name))
     ),
   ];
+
+  console.log(levels);
+  console.log(subjects);
 
   if (data.length === 0) {
     return (
@@ -70,8 +60,6 @@ export default function Homepage({ navigation }: Readonly<Props>) {
       </View>
     );
   }
-
-  console.log(filteredBooks);
 
   return (
     <Provider>
@@ -82,7 +70,7 @@ export default function Homepage({ navigation }: Readonly<Props>) {
           onDismiss={hideModal}
         >
           {selected === "Levels" ? (
-            <FlatList
+            <FlatList<string>
               style={styles.filterList}
               data={levels}
               renderItem={({ item }) => (
@@ -96,7 +84,7 @@ export default function Homepage({ navigation }: Readonly<Props>) {
               )}
             />
           ) : selected === "Subjects" ? (
-            <FlatList
+            <FlatList<string>
               style={styles.filterList}
               data={subjects}
               renderItem={({ item }) => (
@@ -139,7 +127,7 @@ export default function Homepage({ navigation }: Readonly<Props>) {
           }}
           title={subjectFilter ? `${subjectFilter}` : "Tout sujets"}
         />
-        <FlatList
+        <FlatList<Books>
           data={filteredBooks} // ici le data doit devenir le filteredData
           renderItem={({ item }) =>
             item.valid ? (
