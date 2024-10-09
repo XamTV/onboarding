@@ -3,11 +3,11 @@ import {
   StyleSheet,
   StatusBar,
   FlatList,
-  Text,
   Button,
+  ActivityIndicator,
 } from "react-native";
 import Bookcard from "../components/Bookcard";
-import { StackParamList } from "../types";
+import { Books, StackParamList } from "../types";
 
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Modal, Portal, Provider } from "react-native-paper";
@@ -31,9 +31,47 @@ export default function Homepage({ navigation }: Readonly<Props>) {
   };
 
   const [visible, setVisible] = useState(false);
+  const [levelFilter, setLevelFilter] = useState("");
+  const [subjectFilter, setSubjectFilter] = useState("");
+  const [selected, setSelected] = useState("");
+  const [filteredBooks, setFilteredBooks] = useState<Books[]>();
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
+
+  useEffect(() => {
+    const filteredData = data.filter((book) => {
+      const matchesSubject = subjectFilter
+        ? book.subjects.some((subject) => subject.name === subjectFilter)
+        : true;
+      const matchesLevel = levelFilter
+        ? book.levels.some((level) => level.name === levelFilter)
+        : true;
+      return matchesSubject && matchesLevel;
+    });
+    setFilteredBooks(filteredData);
+  }, [data, subjectFilter, levelFilter]);
+
+  // {le data filtré}
+  const levels = [
+    ...new Set(data.flatMap((book) => book.levels.map((level) => level.name))),
+  ];
+
+  const subjects = [
+    ...new Set(
+      data.flatMap((book) => book.subjects.map((subject) => subject.name))
+    ),
+  ];
+
+  if (data.length === 0) {
+    return (
+      <View style={[styles.loaderContainer, styles.horizontal]}>
+        <ActivityIndicator size="large" color="#00ff00" />
+      </View>
+    );
+  }
+
+  console.log(filteredBooks);
 
   return (
     <Provider>
@@ -43,19 +81,66 @@ export default function Homepage({ navigation }: Readonly<Props>) {
           visible={visible}
           onDismiss={hideModal}
         >
-          <Text>Coucou</Text>
-          <Text>Coucou</Text>
-          <Text>Coucou</Text>
-          <Text>Coucou</Text>
-          <Text>Coucou</Text>
+          {selected === "Levels" ? (
+            <FlatList
+              style={styles.filterList}
+              data={levels}
+              renderItem={({ item }) => (
+                <Button
+                  title={item}
+                  onPress={() => {
+                    setLevelFilter(item);
+                    hideModal();
+                  }}
+                />
+              )}
+            />
+          ) : selected === "Subjects" ? (
+            <FlatList
+              style={styles.filterList}
+              data={subjects}
+              renderItem={({ item }) => (
+                <Button
+                  title={item}
+                  onPress={() => {
+                    setSubjectFilter(item);
+                    hideModal();
+                  }}
+                />
+              )}
+            />
+          ) : null}
 
-          <Button onPress={hideModal} title="Fermer" />
+          <Button
+            title="Réinitialiser le filtre"
+            onPress={() => {
+              selected === "Levels"
+                ? setLevelFilter("")
+                : selected === "Subjects"
+                ? setSubjectFilter("")
+                : null;
+              hideModal();
+            }}
+          />
         </Modal>
       </Portal>
       <View style={styles.container}>
-        <Button onPress={showModal} title="Filters" />
+        <Button
+          onPress={() => {
+            showModal();
+            setSelected("Levels");
+          }}
+          title={levelFilter ? `${levelFilter}` : "Tout niveaux"}
+        />
+        <Button
+          onPress={() => {
+            showModal();
+            setSelected("Subjects");
+          }}
+          title={subjectFilter ? `${subjectFilter}` : "Tout sujets"}
+        />
         <FlatList
-          data={data} // ici le data doit devenir le filteredData
+          data={filteredBooks} // ici le data doit devenir le filteredData
           renderItem={({ item }) =>
             item.valid ? (
               <Bookcard
@@ -82,10 +167,25 @@ const styles = StyleSheet.create({
     paddingTop: StatusBar.currentHeight,
   },
   modalContainer: {
+    display: "flex",
+    flexDirection: "row",
     backgroundColor: "white",
     padding: 20,
     marginHorizontal: 30,
+    marginVertical: 10,
     height: 400,
     borderRadius: 20,
+  },
+  filterList: {
+    margin: 10,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  horizontal: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 10,
   },
 });
