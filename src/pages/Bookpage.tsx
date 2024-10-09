@@ -50,8 +50,6 @@ export default function Bookpage({ navigation }: Readonly<Props>) {
       });
   }, []);
 
-  console.log(bookDetail);
-
   return (
     <View>
       <FlatList
