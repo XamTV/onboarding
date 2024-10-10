@@ -8,11 +8,10 @@ import {
 } from "react-native";
 import Bookcard from "../components/Bookcard";
 import { Books } from "../context/FetchContext";
-
+import useData from "../context/FetchContext";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Modal, Portal, Provider } from "react-native-paper";
 import { useState } from "react";
-import useData from "../context/FetchContext";
 import { StackParamList } from "../../App";
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<
@@ -26,10 +25,6 @@ type Props = {
 
 export default function Homepage({ navigation }: Readonly<Props>) {
   const { data } = useData();
-
-  const filteredData = {
-    ...data, // {le data filtré}
-  };
 
   const [visible, setVisible] = useState(false);
   const [levelFilter, setLevelFilter] = useState("");
@@ -50,6 +45,15 @@ export default function Homepage({ navigation }: Readonly<Props>) {
     ),
   ];
 
+  const filteredData = data.filter((book) => {
+    const validLevel = levelFilter
+      ? book.levels.some((level) => level.name === levelFilter)
+      : true;
+    const validSubject = subjectFilter
+      ? book.subjects.some((subject) => subject.name === subjectFilter)
+      : true;
+    return validSubject && validLevel;
+  });
   if (data.length === 0) {
     return (
       <View style={[styles.loaderContainer, styles.horizontal]}>
@@ -125,7 +129,7 @@ export default function Homepage({ navigation }: Readonly<Props>) {
           title={subjectFilter ? `${subjectFilter}` : "Tout sujets"}
         />
         <FlatList<Books>
-          data={data} // ici le data doit devenir le filteredData
+          data={filteredData} // ici le data doit devenir le filteredData
           renderItem={({ item }) =>
             item.valid ? (
               <Bookcard
