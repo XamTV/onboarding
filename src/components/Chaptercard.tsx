@@ -1,13 +1,19 @@
 import { StyleSheet, Text } from "react-native";
 import { Card } from "react-native-paper";
-import { ChapterCardProps } from "../types";
+
+type Props = {
+  chapterId: number;
+  chapterTitle: string;
+  chapterUrl: string;
+  onPress?: () => void;
+};
 
 export default function Chaptercard({
   chapterId,
   chapterTitle,
   chapterUrl,
   onPress,
-}: Readonly<ChapterCardProps>) {
+}: Readonly<Props>) {
   return (
     <Card style={styles.bookcard} onPress={onPress}>
       <Card.Content style={styles.container}>

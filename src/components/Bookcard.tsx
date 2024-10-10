@@ -1,13 +1,19 @@
 import { StyleSheet, TextStyle } from "react-native";
 import { Card, Text } from "react-native-paper";
-import { BookCardProps } from "../types";
+
+type Props = {
+  bookId: number;
+  picture: string;
+  displayTitle: string;
+  onPress?: () => void;
+};
 
 export default function Bookcard({
   onPress,
   bookId,
   picture,
   displayTitle,
-}: Readonly<BookCardProps>) {
+}: Readonly<Props>) {
   return (
     <Card style={styles.bookcard} onPress={onPress}>
       <Card.Title titleStyle={styles.title} title={displayTitle} />

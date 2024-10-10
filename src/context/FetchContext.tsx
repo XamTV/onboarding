@@ -1,7 +1,32 @@
 import React, { ReactNode, useContext, useEffect, useState } from "react";
-import { BookQuery, Books } from "../types";
 import axios from "axios";
 
+export type Books = {
+  id: number;
+  displayTitle: string;
+  url: string;
+  subjects: Subject[];
+  levels: Level[];
+  valid: boolean;
+};
+
+type Subject = {
+  name: string;
+};
+
+type Level = {
+  name: string;
+};
+
+type BookQuery = {
+  data: {
+    viewer: {
+      books: {
+        hits: Books[];
+      };
+    };
+  };
+};
 interface IDataContext {
   data: Books[];
   loading: boolean;
