@@ -57,7 +57,8 @@ export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
         const result: Books[] = res.data.data.viewer.books.hits;
         setData(result);
         setLoading(false);
-      });
+      })
+      .catch((err: Error) => console.error(err));
   }, []);
 
   const contextValue: IDataContext = {
