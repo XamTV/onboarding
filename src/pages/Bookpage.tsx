@@ -52,7 +52,7 @@ export default function Bookpage({ navigation }: Readonly<Props>) {
 
   return (
     <View>
-      <FlatList
+      <FlatList<Chapter>
         data={bookDetail}
         renderItem={({ item }) =>
           item.valid ? (

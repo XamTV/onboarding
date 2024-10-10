@@ -34,7 +34,6 @@ export default function Homepage({ navigation }: Readonly<Props>) {
   const [levelFilter, setLevelFilter] = useState("");
   const [subjectFilter, setSubjectFilter] = useState("");
   const [selected, setSelected] = useState("");
-  const [filteredBooks, setFilteredBooks] = useState<Books[]>();
 
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
@@ -49,9 +48,6 @@ export default function Homepage({ navigation }: Readonly<Props>) {
       data.flatMap((book) => book.subjects.map((subject) => subject.name))
     ),
   ];
-
-  console.log(levels);
-  console.log(subjects);
 
   if (data.length === 0) {
     return (
@@ -128,7 +124,7 @@ export default function Homepage({ navigation }: Readonly<Props>) {
           title={subjectFilter ? `${subjectFilter}` : "Tout sujets"}
         />
         <FlatList<Books>
-          data={filteredBooks} // ici le data doit devenir le filteredData
+          data={data} // ici le data doit devenir le filteredData
           renderItem={({ item }) =>
             item.valid ? (
               <Bookcard
