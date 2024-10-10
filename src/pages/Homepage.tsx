@@ -7,11 +7,10 @@ import {
   ActivityIndicator,
 } from "react-native";
 import Bookcard from "../components/Bookcard";
-import { Books } from "../context/FetchContext";
-import useData from "../context/FetchContext";
+import useData, { Books } from "../context/FetchContext";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Modal, Portal, Provider } from "react-native-paper";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { StackParamList } from "../../App";
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<
@@ -34,16 +33,23 @@ export default function Homepage({ navigation }: Readonly<Props>) {
   const showModal = () => setVisible(true);
   const hideModal = () => setVisible(false);
 
-  // useMemo
-  const levels: string[] = [
-    ...new Set(data.flatMap((book) => book.levels.map((level) => level.name))),
-  ];
+  const levels: string[] = useMemo(
+    () => [
+      ...new Set(
+        data.flatMap((book) => book.levels.map((level) => level.name))
+      ),
+    ],
+    [data]
+  );
 
-  const subjects: string[] = [
-    ...new Set(
-      data.flatMap((book) => book.subjects.map((subject) => subject.name))
-    ),
-  ];
+  const subjects: string[] = useMemo(
+    () => [
+      ...new Set(
+        data.flatMap((book) => book.subjects.map((subject) => subject.name))
+      ),
+    ],
+    [data]
+  );
 
   const filteredData = data.filter((book) => {
     const validLevel = levelFilter
@@ -70,7 +76,7 @@ export default function Homepage({ navigation }: Readonly<Props>) {
           visible={visible}
           onDismiss={hideModal}
         >
-          {selected === "Levels" ? (
+          {selected === "Levels" && (
             <FlatList<string>
               style={styles.filterList}
               data={levels}
@@ -84,7 +90,8 @@ export default function Homepage({ navigation }: Readonly<Props>) {
                 />
               )}
             />
-          ) : selected === "Subjects" ? (
+          )}
+          {selected === "Subjects" && (
             <FlatList<string>
               style={styles.filterList}
               data={subjects}
@@ -98,16 +105,16 @@ export default function Homepage({ navigation }: Readonly<Props>) {
                 />
               )}
             />
-          ) : null}
+          )}
 
           <Button
             title="Réinitialiser le filtre"
             onPress={() => {
-              selected === "Levels"
-                ? setLevelFilter("")
-                : selected === "Subjects"
-                ? setSubjectFilter("")
-                : null;
+              if (selected === "Levels") {
+                setLevelFilter("");
+              } else if (selected === "Subjects") {
+                setSubjectFilter("");
+              }
               hideModal();
             }}
           />
