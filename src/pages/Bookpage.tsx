@@ -2,14 +2,32 @@ import { useRoute, RouteProp } from "@react-navigation/native";
 import { View, FlatList } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Chapter, ChapterQuery, StackParamList } from "../types";
+
 import Chaptercard from "../components/Chaptercard";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { StackParamList } from "../../App";
 
 type RouteParams = {
   params: {
     bookId: number;
     displayTitle: string;
+  };
+};
+
+type Chapter = {
+  id: number;
+  title: string;
+  url: string;
+  valid: boolean;
+};
+
+type ChapterQuery = {
+  data: {
+    viewer: {
+      chapters: {
+        hits: Chapter[];
+      };
+    };
   };
 };
 
