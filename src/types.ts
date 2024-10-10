@@ -1,10 +1,4 @@
-export type Subject = {
-  name: string;
-};
-
-export type Level = {
-  name: string;
-};
+// Books typing
 
 export type Books = {
   id: number;
@@ -15,7 +9,21 @@ export type Books = {
   valid: boolean;
 };
 
-export type Query = {
+export type Subject = {
+  name: string;
+};
+
+export type Level = {
+  name: string;
+};
+export type BookCardProps = {
+  bookId: number;
+  picture: string;
+  displayTitle: string;
+  onPress?: () => void;
+};
+
+export type BookQuery = {
   data: {
     viewer: {
       books: {
@@ -25,14 +33,36 @@ export type Query = {
   };
 };
 
-export type BookCardProps = {
-  bookId: number;
-  picture: string;
-  displayTitle: string;
+// Chapter typing
+
+export type Chapter = {
+  id: number;
+  title: string;
+  url: string;
+  valid: boolean;
+};
+
+export type ChapterCardProps = {
+  chapterId: number;
+  chapterTitle: string;
+  chapterUrl: string;
   onPress?: () => void;
 };
 
+export type ChapterQuery = {
+  data: {
+    viewer: {
+      chapters: {
+        hits: Chapter[];
+      };
+    };
+  };
+};
+
+// Routes typing
+
 export type StackParamList = {
   Home: undefined;
-  Bookpage: { bookId: number };
+  Bookpage: { bookId: number; displayTitle: string };
+  Chapterpage: { chapterId: number; title: string };
 };
