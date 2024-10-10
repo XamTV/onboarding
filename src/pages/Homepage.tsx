@@ -7,12 +7,13 @@ import {
   ActivityIndicator,
 } from "react-native";
 import Bookcard from "../components/Bookcard";
-import { Subject, Level, Books, StackParamList } from "../types";
+import { Books } from "../context/FetchContext";
 
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Modal, Portal, Provider } from "react-native-paper";
 import { useState } from "react";
 import useData from "../context/FetchContext";
+import { StackParamList } from "../../App";
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<
   StackParamList,
