@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 
 export type Books = {
@@ -32,7 +32,7 @@ interface IDataContext {
   loading: boolean;
 }
 
-const DataContext = React.createContext({} as IDataContext); // empty default value, don't export the context
+const DataContext = React.createContext({} as IDataContext);
 
 export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
   const [data, setData] = useState<Books[]>([]);

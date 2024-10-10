@@ -9,7 +9,6 @@ type Props = {
 };
 
 export default function Chaptercard({
-  chapterId,
   chapterTitle,
   chapterUrl,
   onPress,
