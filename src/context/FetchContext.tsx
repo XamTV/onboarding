@@ -1,15 +1,20 @@
-import { createContext, useEffect, useState, useContext } from "react";
-import { Books, BookQuery } from "../types";
+import React, { ReactNode, useContext, useEffect, useState } from "react";
+import { BookQuery, Books } from "../types";
 import axios from "axios";
 
-const DataContext = createContext<Books[]>([]);
+interface IDataContext {
+  data: Books[];
+  loading: boolean;
+}
 
-export default function DataContextProvider({
-  children,
-}: Readonly<React.PropsWithChildren>) {
+const DataContext = React.createContext({} as IDataContext); // empty default value, don't export the context
+
+export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
   const [data, setData] = useState<Books[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    setLoading(true);
     axios
       .post<BookQuery>(
         "https://api-preprod.lelivrescolaire.fr/graph",
@@ -26,16 +31,26 @@ export default function DataContextProvider({
       .then((res) => {
         const result: Books[] = res.data.data.viewer.books.hits;
         setData(result);
+        setLoading(false);
       });
   }, []);
 
-  return <DataContext.Provider value={data}>{children}</DataContext.Provider>;
-}
+  const contextValue: IDataContext = {
+    data,
+    loading,
+  };
 
-export function useData() {
+  return (
+    <DataContext.Provider value={contextValue}>{children}</DataContext.Provider>
+  );
+};
+
+const useData = () => {
   const context = useContext(DataContext);
-  if (!context) {
-    throw new Error("useContext must be used within a MyContextProvider");
+  if (Object.keys(context).length === 0) {
+    throw new Error("useMyContext must be used within a MyContextProvider");
   }
   return context;
-}
+};
+
+export default useData;

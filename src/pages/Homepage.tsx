@@ -3,7 +3,7 @@ import Bookcard from "../components/Bookcard";
 import { StackParamList } from "../types";
 
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import { useData } from "../context/FetchContext";
+import useData from "../context/FetchContext";
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<
   StackParamList,
@@ -15,7 +15,7 @@ type Props = {
 };
 
 export default function Homepage({ navigation }: Readonly<Props>) {
-  const data = useData();
+  const { data } = useData();
 
   return (
     <View style={styles.container}>
