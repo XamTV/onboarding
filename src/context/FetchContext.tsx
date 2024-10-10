@@ -48,7 +48,7 @@ export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
 const useData = () => {
   const context = useContext(DataContext);
   if (Object.keys(context).length === 0) {
-    throw new Error("useMyContext must be used within a MyContextProvider");
+    throw new Error("useData must be used within a DataContextProvider");
   }
   return context;
 };
