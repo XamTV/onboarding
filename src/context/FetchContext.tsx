@@ -39,26 +39,29 @@ export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setLoading(true);
-    axios
-      .post<BookQuery>(
-        "https://api-preprod.lelivrescolaire.fr/graph",
-        {
-          query:
-            "query{viewer{books{hits{id displayTitle url subjects{name}levels{name}valid}}}}",
-        },
-        {
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
+    (async () => {
+      try {
+        setLoading(true);
+        const response = await axios.post<BookQuery>(
+          "https://api-preprod.lelivrescolaire.fr/graph",
+          {
+            query:
+              "query{viewer{books{hits{id displayTitle url subjects{name}levels{name}valid}}}}",
           },
-        }
-      )
-      .then((res) => {
-        const result: Books[] = res.data.data.viewer.books.hits;
+          {
+            headers: {
+              "Content-Type": "application/json; charset=utf-8",
+            },
+          }
+        );
+        const result: Books[] = response.data.data.viewer.books.hits;
         setData(result);
+      } catch (err) {
+        console.error(err);
+      } finally {
         setLoading(false);
-      })
-      .catch((err: Error) => console.error(err));
+      }
+    })();
   }, []);
 
   const contextValue: IDataContext = {
