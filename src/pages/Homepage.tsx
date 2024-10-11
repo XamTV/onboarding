@@ -124,13 +124,13 @@ export default function Homepage({ navigation }: Readonly<Props>) {
           onPress={() => {
             setModalHandle({ visible: true, selected: "Levels" });
           }}
-          title={levelFilter ? `${levelFilter}` : "Tout niveaux"}
+          title={levelFilter ? `${levelFilter}` : "Tous niveaux"}
         />
         <Button
           onPress={() => {
             setModalHandle({ visible: true, selected: "Subject" });
           }}
-          title={subjectFilter ? `${subjectFilter}` : "Tout sujets"}
+          title={subjectFilter ? `${subjectFilter}` : "Tous sujets"}
         />
         <FlatList<Book>
           data={filteredData} // ici le data doit devenir le filteredData
