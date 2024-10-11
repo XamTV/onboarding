@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 
-export type Books = {
+export type Book = {
   id: number;
   displayTitle: string;
   url: string;
@@ -22,20 +22,20 @@ type BookQuery = {
   data: {
     viewer: {
       books: {
-        hits: Books[];
+        hits: Book[];
       };
     };
   };
 };
 interface IDataContext {
-  data: Books[];
+  data: Book[];
   loading: boolean;
 }
 
 const DataContext = React.createContext({} as IDataContext);
 
 export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
-  const [data, setData] = useState<Books[]>([]);
+  const [data, setData] = useState<Book[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
             },
           }
         );
-        const result: Books[] = response.data.data.viewer.books.hits;
+        const result: Book[] = response.data.data.viewer.books.hits;
         setData(result);
       } catch (err) {
         console.error(err);
