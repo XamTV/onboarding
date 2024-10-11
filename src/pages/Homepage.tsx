@@ -65,8 +65,6 @@ export default function Homepage({ navigation }: Readonly<Props>) {
       </View>
     );
   }
-  console.log(levelFilter);
-  console.log(subjectFilter);
 
   return (
     <Provider>
