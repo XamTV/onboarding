@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import Bookcard from "../components/Bookcard";
-import useData, { Books } from "../context/FetchContext";
+import useData, { Book } from "../context/FetchContext";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Modal, Portal, Provider } from "react-native-paper";
 import { useMemo, useState } from "react";
@@ -135,7 +135,7 @@ export default function Homepage({ navigation }: Readonly<Props>) {
           }}
           title={subjectFilter ? `${subjectFilter}` : "Tout sujets"}
         />
-        <FlatList<Books>
+        <FlatList<Book>
           data={filteredData} // ici le data doit devenir le filteredData
           renderItem={({ item }) =>
             item.valid ? (
