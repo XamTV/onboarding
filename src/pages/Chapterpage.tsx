@@ -1,8 +1,8 @@
 import { useRoute, RouteProp } from "@react-navigation/native";
-import { View, FlatList } from "react-native";
+import { View, FlatList, Text, StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+import * as R from "remeda";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../../App";
 import Pagecard from "../components/Pagecard";
@@ -69,10 +69,16 @@ export default function Chapterpage({ navigation }: Readonly<Props>) {
       });
   }, []);
 
+  const sortedPages = pageDetail ? R.sortBy(pageDetail, R.prop("page")) : [];
+
   return (
     <View>
+      <Text style={styles.title}>
+        P.{sortedPages[0]?.page} - P.
+        {sortedPages[sortedPages.length - 1]?.page}{" "}
+      </Text>{" "}
       <FlatList<Page>
-        data={pageDetail}
+        data={sortedPages}
         renderItem={({ item }) =>
           item.valid ? (
             <Pagecard
@@ -87,3 +93,13 @@ export default function Chapterpage({ navigation }: Readonly<Props>) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  title: {
+    textAlign: "center",
+    marginHorizontal: "auto",
+    marginVertical: 8,
+    maxWidth: 200,
+    fontWeight: "500",
+  },
+});

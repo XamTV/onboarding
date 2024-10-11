@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   },
   container: {
     backgroundColor: "wheat",
-    borderRadius: 16,
+    borderRadius: 8,
     flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
