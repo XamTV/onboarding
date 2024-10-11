@@ -28,14 +28,14 @@ type BookQuery = {
   };
 };
 interface IDataContext {
-  data: Book[];
+  books: Book[];
   loading: boolean;
 }
 
 const DataContext = React.createContext({} as IDataContext);
 
 export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
-  const [data, setData] = useState<Book[]>([]);
+  const [books, setBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -55,7 +55,7 @@ export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
           }
         );
         const result: Book[] = response.data.data.viewer.books.hits;
-        setData(result);
+        setBooks(result);
       } catch (err) {
         console.error(err);
       } finally {
@@ -65,7 +65,7 @@ export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
   }, []);
 
   const contextValue: IDataContext = {
-    data,
+    books,
     loading,
   };
 

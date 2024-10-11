@@ -23,7 +23,7 @@ type Props = {
 };
 
 export default function Homepage({ navigation }: Readonly<Props>) {
-  const { data } = useData();
+  const { books } = useData();
 
   const [visible, setVisible] = useState(false);
   const [levelFilter, setLevelFilter] = useState("");
@@ -36,22 +36,22 @@ export default function Homepage({ navigation }: Readonly<Props>) {
   const levels: string[] = useMemo(
     () => [
       ...new Set(
-        data.flatMap((book) => book.levels.map((level) => level.name))
+        books.flatMap((book) => book.levels.map((level) => level.name))
       ),
     ],
-    [data]
+    [books]
   );
 
   const subjects: string[] = useMemo(
     () => [
       ...new Set(
-        data.flatMap((book) => book.subjects.map((subject) => subject.name))
+        books.flatMap((book) => book.subjects.map((subject) => subject.name))
       ),
     ],
-    [data]
+    [books]
   );
 
-  const filteredData = data.filter((book) => {
+  const filteredData = books.filter((book) => {
     const validLevel = levelFilter
       ? book.levels.some((level) => level.name === levelFilter)
       : true;
@@ -60,7 +60,7 @@ export default function Homepage({ navigation }: Readonly<Props>) {
       : true;
     return validSubject && validLevel;
   });
-  if (data.length === 0) {
+  if (books.length === 0) {
     return (
       <View style={[styles.loaderContainer, styles.horizontal]}>
         <ActivityIndicator size="large" color="#00ff00" />
