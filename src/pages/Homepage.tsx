@@ -25,13 +25,12 @@ type Props = {
 export default function Homepage({ navigation }: Readonly<Props>) {
   const { books } = useData();
 
-  const [visible, setVisible] = useState(false);
+  const [modalHandle, setModalHandle] = useState<{
+    visible: boolean;
+    selected?: "Levels" | "Subject";
+  }>({ visible: false, selected: undefined });
   const [levelFilter, setLevelFilter] = useState("");
   const [subjectFilter, setSubjectFilter] = useState("");
-  const [selected, setSelected] = useState("");
-
-  const showModal = () => setVisible(true);
-  const hideModal = () => setVisible(false);
 
   const levels: string[] = useMemo(
     () => [
@@ -53,9 +52,9 @@ export default function Homepage({ navigation }: Readonly<Props>) {
 
   const filteredData = books.filter((book) => {
     const validLevel =
-      levelFilter || book.levels.some((level) => level.name === levelFilter);
+      !levelFilter || book.levels.some((level) => level.name === levelFilter);
     const validSubject =
-      subjectFilter ||
+      !subjectFilter ||
       book.subjects.some((subject) => subject.name === subjectFilter);
     return validSubject && validLevel;
   });
@@ -66,16 +65,18 @@ export default function Homepage({ navigation }: Readonly<Props>) {
       </View>
     );
   }
+  console.log(levelFilter);
+  console.log(subjectFilter);
 
   return (
     <Provider>
       <Portal>
         <Modal
           style={styles.modalContainer}
-          visible={visible}
-          onDismiss={hideModal}
+          visible={modalHandle.visible}
+          onDismiss={() => setModalHandle({ visible: false })}
         >
-          {selected === "Levels" && (
+          {modalHandle.selected === "Levels" ? (
             <FlatList<string>
               style={styles.filterList}
               data={levels}
@@ -84,13 +85,12 @@ export default function Homepage({ navigation }: Readonly<Props>) {
                   title={item}
                   onPress={() => {
                     setLevelFilter(item);
-                    hideModal();
+                    setModalHandle({ visible: false });
                   }}
                 />
               )}
             />
-          )}
-          {selected === "Subjects" && (
+          ) : (
             <FlatList<string>
               style={styles.filterList}
               data={subjects}
@@ -99,7 +99,7 @@ export default function Homepage({ navigation }: Readonly<Props>) {
                   title={item}
                   onPress={() => {
                     setSubjectFilter(item);
-                    hideModal();
+                    setModalHandle({ visible: false });
                   }}
                 />
               )}
@@ -109,12 +109,12 @@ export default function Homepage({ navigation }: Readonly<Props>) {
           <Button
             title="Réinitialiser le filtre"
             onPress={() => {
-              if (selected === "Levels") {
+              if (modalHandle.selected === "Levels") {
                 setLevelFilter("");
-              } else if (selected === "Subjects") {
+              } else if (modalHandle.selected === "Subject") {
                 setSubjectFilter("");
               }
-              hideModal();
+              setModalHandle({ visible: false });
             }}
           />
         </Modal>
@@ -122,15 +122,13 @@ export default function Homepage({ navigation }: Readonly<Props>) {
       <View style={styles.container}>
         <Button
           onPress={() => {
-            showModal();
-            setSelected("Levels");
+            setModalHandle({ visible: true, selected: "Levels" });
           }}
           title={levelFilter ? `${levelFilter}` : "Tout niveaux"}
         />
         <Button
           onPress={() => {
-            showModal();
-            setSelected("Subjects");
+            setModalHandle({ visible: true, selected: "Subject" });
           }}
           title={subjectFilter ? `${subjectFilter}` : "Tout sujets"}
         />
