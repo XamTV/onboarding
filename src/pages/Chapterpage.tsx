@@ -76,7 +76,7 @@ export default function Chapterpage({ navigation }: Readonly<Props>) {
       <Text style={styles.title}>
         P.{sortedPages[0]?.page} - P.
         {sortedPages[sortedPages.length - 1]?.page}{" "}
-      </Text>{" "}
+      </Text>
       <FlatList<Page>
         data={sortedPages}
         renderItem={({ item }) =>
