@@ -52,12 +52,11 @@ export default function Homepage({ navigation }: Readonly<Props>) {
   );
 
   const filteredData = books.filter((book) => {
-    const validLevel = levelFilter
-      ? book.levels.some((level) => level.name === levelFilter)
-      : true;
-    const validSubject = subjectFilter
-      ? book.subjects.some((subject) => subject.name === subjectFilter)
-      : true;
+    const validLevel =
+      levelFilter || book.levels.some((level) => level.name === levelFilter);
+    const validSubject =
+      subjectFilter ||
+      book.subjects.some((subject) => subject.name === subjectFilter);
     return validSubject && validLevel;
   });
   if (books.length === 0) {
