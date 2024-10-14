@@ -7,13 +7,6 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../../App";
 import PageCard from "../components/Pagecard";
 
-type RouteParams = {
-  params: {
-    chapterId: number;
-    title: string;
-  };
-};
-
 type Page = {
   id: number;
   title: string;
@@ -37,12 +30,14 @@ type ChapterPageScreenNavigationProp = NativeStackNavigationProp<
   "Chapterpage"
 >;
 
+type ChapterPageScreenRouteProp = RouteProp<StackParamList, "Chapterpage">;
+
 type Props = {
   navigation: ChapterPageScreenNavigationProp;
+  route: ChapterPageScreenRouteProp;
 };
 
-export default function ChapterPage({ navigation }: Readonly<Props>) {
-  const route = useRoute<RouteProp<RouteParams, "params">>();
+export default function ChapterPage({ navigation, route }: Readonly<Props>) {
   const { chapterId } = route.params;
 
   const [pageDetail, setPageDetail] = useState<Page[]>();
