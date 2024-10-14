@@ -1,6 +1,6 @@
 import { useRoute, RouteProp } from "@react-navigation/native";
 import { View, FlatList, Text, StyleSheet } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import * as R from "remeda";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
@@ -64,7 +64,10 @@ export default function ChapterPage({ navigation, route }: Readonly<Props>) {
       });
   }, []);
 
-  const sortedPages = pageDetail ? R.sortBy(pageDetail, R.prop("page")) : [];
+  const sortedPages = useMemo(
+    () => (pageDetail ? R.sortBy(pageDetail, R.prop("page")) : []),
+    [pageDetail]
+  );
 
   return (
     <View>
