@@ -8,7 +8,7 @@ type Props = {
   onPress?: () => void;
 };
 
-export default function Bookcard({
+export default function BookCard({
   onPress,
   bookId,
   picture,

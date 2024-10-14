@@ -6,7 +6,7 @@ import {
   Button,
   ActivityIndicator,
 } from "react-native";
-import Bookcard from "../components/Bookcard";
+import BookCard from "../components/Bookcard";
 import useData, { Book } from "../context/FetchContext";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { Modal, Portal, Provider } from "react-native-paper";
@@ -22,7 +22,7 @@ type Props = {
   navigation: HomeScreenNavigationProp;
 };
 
-export default function Homepage({ navigation }: Readonly<Props>) {
+export default function HomePage({ navigation }: Readonly<Props>) {
   const { books } = useData();
 
   const [modalHandle, setModalHandle] = useState<{
@@ -134,7 +134,7 @@ export default function Homepage({ navigation }: Readonly<Props>) {
           data={filteredData} // ici le data doit devenir le filteredData
           renderItem={({ item }) =>
             item.valid ? (
-              <Bookcard
+              <BookCard
                 bookId={item.id}
                 picture={item.url}
                 displayTitle={item.displayTitle}

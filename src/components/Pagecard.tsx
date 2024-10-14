@@ -8,7 +8,7 @@ type Props = {
   pageNumber: number;
 };
 
-export default function Pagecard({
+export default function PageCard({
   pageId,
   pageTitle,
   pagePicture,

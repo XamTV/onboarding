@@ -5,7 +5,7 @@ import axios from "axios";
 import * as R from "remeda";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../../App";
-import Pagecard from "../components/Pagecard";
+import PageCard from "../components/Pagecard";
 
 type RouteParams = {
   params: {
@@ -41,7 +41,7 @@ type Props = {
   navigation: ChapterPageScreenNavigationProp;
 };
 
-export default function Chapterpage({ navigation }: Readonly<Props>) {
+export default function ChapterPage({ navigation }: Readonly<Props>) {
   const route = useRoute<RouteProp<RouteParams, "params">>();
   const { chapterId } = route.params;
 
@@ -81,7 +81,7 @@ export default function Chapterpage({ navigation }: Readonly<Props>) {
         data={sortedPages}
         renderItem={({ item }) =>
           item.valid ? (
-            <Pagecard
+            <PageCard
               pageId={item.id}
               pageTitle={item.title}
               pagePicture={item.picture}

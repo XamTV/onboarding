@@ -3,7 +3,7 @@ import { View, FlatList } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-import Chaptercard from "../components/Chaptercard";
+import ChapterCard from "../components/Chaptercard";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackParamList } from "../../App";
 
@@ -40,7 +40,7 @@ type Props = {
   navigation: BookpageScreenNavigationProp;
 };
 
-export default function Bookpage({ navigation }: Readonly<Props>) {
+export default function BookPage({ navigation }: Readonly<Props>) {
   const route = useRoute<RouteProp<RouteParams, "params">>();
   const { bookId } = route.params;
 
@@ -74,7 +74,7 @@ export default function Bookpage({ navigation }: Readonly<Props>) {
         data={bookDetail}
         renderItem={({ item }) =>
           item.valid ? (
-            <Chaptercard
+            <ChapterCard
               chapterId={item.id}
               chapterTitle={item.title}
               chapterUrl={item.url}
