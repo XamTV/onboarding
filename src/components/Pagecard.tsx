@@ -17,16 +17,9 @@ export default function Pagecard({
   return (
     <Card style={styles.bookcard}>
       <Card.Content style={styles.container}>
-        <Card.Cover
-          style={styles.picture}
-          source={
-            pagePicture === null
-              ? {
-                  uri: "https://cdn.pixabay.com/photo/2019/04/14/20/04/duck-meet-4127701_1280.jpg",
-                }
-              : { uri: pagePicture }
-          }
-        />
+        {pagePicture !== null && (
+          <Card.Cover style={styles.picture} source={{ uri: pagePicture }} />
+        )}
         <Text style={styles.title}>{pageTitle}</Text>
         <Text style={styles.pageNumber}>p.{pageNumber}</Text>
       </Card.Content>
