@@ -1,5 +1,5 @@
 import { useRoute, RouteProp } from "@react-navigation/native";
-import { View, FlatList } from "react-native";
+import { View, FlatList, Pressable, Text, StyleSheet } from "react-native";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -36,15 +36,18 @@ type BookpageScreenNavigationProp = NativeStackNavigationProp<
   "Bookpage"
 >;
 
+type BookPageScreenRouteProp = RouteProp<StackParamList, "Bookpage">;
+
 type Props = {
   navigation: BookpageScreenNavigationProp;
+  route: BookPageScreenRouteProp;
 };
 
-export default function BookPage({ navigation }: Readonly<Props>) {
-  const route = useRoute<RouteProp<RouteParams, "params">>();
+export default function BookPage({ navigation, route }: Readonly<Props>) {
   const { bookId } = route.params;
 
   const [bookDetail, setBookDetail] = useState<Chapter[]>([]);
+  const [isLiked, setIsliked] = useState(false);
 
   useEffect(() => {
     axios
@@ -69,7 +72,15 @@ export default function BookPage({ navigation }: Readonly<Props>) {
   }, []);
 
   return (
-    <View>
+    <View style={style.bookPageContainer}>
+      <Pressable
+        style={!isLiked ? style.favoriteAddbutton : style.favoriteRemovebutton}
+        onPress={() => setIsliked(!isLiked)}
+      >
+        <Text style={style.buttonText}>
+          {!isLiked ? "Ajouter aux favoris" : "Retirer des favoris"}
+        </Text>
+      </Pressable>
       <FlatList<Chapter>
         data={bookDetail}
         renderItem={({ item }) =>
@@ -91,3 +102,26 @@ export default function BookPage({ navigation }: Readonly<Props>) {
     </View>
   );
 }
+
+const style = StyleSheet.create({
+  bookPageContainer: {
+    marginBottom: 60,
+  },
+  favoriteAddbutton: {
+    backgroundColor: "lightgreen",
+    marginHorizontal: "auto",
+    marginVertical: 16,
+    padding: 8,
+    borderRadius: 32,
+  },
+  favoriteRemovebutton: {
+    backgroundColor: "#f1807e",
+    marginHorizontal: "auto",
+    marginVertical: 16,
+    padding: 8,
+    borderRadius: 32,
+  },
+  buttonText: {
+    fontSize: 16,
+  },
+});
