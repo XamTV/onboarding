@@ -2,8 +2,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomePage from "./src/pages/Homepage";
 import BookPage from "./src/pages/Bookpage";
-import { DataContextProvider } from "./src/context/FetchContext";
 import ChapterPage from "./src/pages/Chapterpage";
+import { DataContextProvider } from "./src/context/FetchContext";
+import { FavoriteContextProvider } from "./src/context/FavoriteContext";
 
 export type StackParamList = {
   Home: undefined;
@@ -17,19 +18,21 @@ function App() {
   return (
     <NavigationContainer>
       <DataContextProvider>
-        <Stack.Navigator initialRouteName="Home">
-          <Stack.Screen name="Home" component={HomePage} />
-          <Stack.Screen
-            name="BookPage"
-            component={BookPage}
-            options={({ route }) => ({ title: route.params.displayTitle })}
-          />
-          <Stack.Screen
-            name="ChapterPage"
-            component={ChapterPage}
-            options={({ route }) => ({ title: route.params.title })}
-          />
-        </Stack.Navigator>
+        <FavoriteContextProvider>
+          <Stack.Navigator initialRouteName="Home">
+            <Stack.Screen name="Home" component={HomePage} />
+            <Stack.Screen
+              name="BookPage"
+              component={BookPage}
+              options={({ route }) => ({ title: route.params.displayTitle })}
+            />
+            <Stack.Screen
+              name="ChapterPage"
+              component={ChapterPage}
+              options={({ route }) => ({ title: route.params.title })}
+            />
+          </Stack.Navigator>
+        </FavoriteContextProvider>
       </DataContextProvider>
     </NavigationContainer>
   );

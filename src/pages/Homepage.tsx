@@ -15,11 +15,13 @@ import type {
 import { Modal, Portal, Provider } from "react-native-paper";
 import { useCallback, useMemo, useState } from "react";
 import { StackParamList } from "../../App";
+import useFavorite from "../context/FavoriteContext";
 
 type Props = NativeStackScreenProps<StackParamList, "Home">;
 
 export default function HomePage({ navigation }: Props) {
   const { books } = useData();
+  const { likedBooks } = useFavorite();
 
   const [modalHandle, setModalHandle] = useState<{
     visible: boolean;
@@ -80,6 +82,8 @@ export default function HomePage({ navigation }: Props) {
     },
     [books]
   );
+
+  console.info(likedBooks);
 
   return (
     <Provider>

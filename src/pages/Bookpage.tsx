@@ -8,6 +8,7 @@ import {
   NativeStackScreenProps,
 } from "@react-navigation/native-stack";
 import { StackParamList } from "../../App";
+import useFavorite from "../context/FavoriteContext";
 
 type RouteParams = {
   params: {
@@ -35,11 +36,15 @@ type ChapterQuery = {
 
 type Props = NativeStackScreenProps<StackParamList, "BookPage">;
 
-export default function BookPage({ navigation, route }: Props) {
-  const { bookId } = route.params;
+export default function BookPage({ navigation, route }: Readonly<Props>) {
+  const { toggleLiked, likedBooks } = useFavorite();
 
+  const { bookId } = route.params;
   const [bookDetail, setBookDetail] = useState<Chapter[]>([]);
-  const [isLiked, setIsliked] = useState(false);
+
+  const onFavoritePress = useCallback(() => {
+    toggleLiked(bookId);
+  }, [bookId]);
 
   useEffect(() => {
     axios
@@ -85,14 +90,17 @@ export default function BookPage({ navigation, route }: Props) {
   return (
     <View style={style.bookPageContainer}>
       <Pressable
-        style={[
-          style.buttons,
-          !isLiked ? style.favoriteAddbutton : style.favoriteRemovebutton,
-        ]}
-        onPress={() => setIsliked(!isLiked)}
+        style={
+          likedBooks[bookId] !== true
+            ? style.favoriteAddbutton
+            : style.favoriteRemovebutton
+        }
+        onPress={onFavoritePress}
       >
         <Text style={style.buttonText}>
-          {!isLiked ? "Ajouter aux favoris" : "Retirer des favoris"}
+          {likedBooks[bookId] !== true
+            ? "Ajouter aux favoris"
+            : "Retirer des favoris"}
         </Text>
       </Pressable>
       <FlatList<Chapter> data={bookDetail} renderItem={renderItem} />
