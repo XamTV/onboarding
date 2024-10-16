@@ -1,5 +1,6 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
-import { Book } from "./FetchContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useCallback, useContext, useState } from "react";
+import { useEffect } from "react";
 
 interface IFavoriteContext {
   toggleLiked: (id: number) => void;
@@ -12,6 +13,22 @@ export const FavoriteContextProvider = ({
   children,
 }: React.PropsWithChildren) => {
   const [likedBooks, setLikedBooks] = useState<Record<number, boolean>>({});
+
+  useEffect(() => {
+    const storeFavoriteBooks = async () => {
+      try {
+        console.log(likedBooks);
+
+        const jsonValue = JSON.stringify(likedBooks);
+        await AsyncStorage.setItem("favoriteBooks", jsonValue);
+        console.log(jsonValue);
+      } catch (e) {
+        console.error("Can't store likedBooks");
+      }
+    };
+
+    storeFavoriteBooks();
+  }, [likedBooks]);
 
   const toggleLiked = useCallback((id: number) => {
     setLikedBooks((prev) => ({ ...prev, [id]: !prev[id] }));
