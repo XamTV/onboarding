@@ -1,9 +1,12 @@
 import { useRoute, RouteProp } from "@react-navigation/native";
 import { View, FlatList, Text, StyleSheet } from "react-native";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import * as R from "remeda";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from "@react-navigation/native-stack";
 import { StackParamList } from "../../App";
 import PageCard from "../components/Pagecard";
 
@@ -25,19 +28,9 @@ type PageQuery = {
   };
 };
 
-type ChapterPageScreenNavigationProp = NativeStackNavigationProp<
-  StackParamList,
-  "ChapterPage"
->;
+type Props = NativeStackScreenProps<StackParamList, "ChapterPage">;
 
-type ChapterPageScreenRouteProp = RouteProp<StackParamList, "ChapterPage">;
-
-type Props = {
-  navigation: ChapterPageScreenNavigationProp;
-  route: ChapterPageScreenRouteProp;
-};
-
-export default function ChapterPage({ navigation, route }: Readonly<Props>) {
+export default function ChapterPage({ navigation, route }: Props) {
   const { chapterId } = route.params;
 
   const [pageDetail, setPageDetail] = useState<Page[]>();
@@ -69,25 +62,27 @@ export default function ChapterPage({ navigation, route }: Readonly<Props>) {
     [pageDetail]
   );
 
+  const renderItem = useCallback(
+    ({ item }: { item: Page }) => {
+      return item.valid ? (
+        <PageCard
+          pageId={item.id}
+          pageTitle={item.title}
+          pagePicture={item.picture}
+          pageNumber={item.page}
+        />
+      ) : null;
+    },
+    [sortedPages]
+  );
+
   return (
     <View>
       <Text style={styles.title}>
         P.{sortedPages[0]?.page} - P.
         {sortedPages[sortedPages.length - 1]?.page}{" "}
       </Text>
-      <FlatList<Page>
-        data={sortedPages}
-        renderItem={({ item }) =>
-          item.valid ? (
-            <PageCard
-              pageId={item.id}
-              pageTitle={item.title}
-              pagePicture={item.picture}
-              pageNumber={item.page}
-            />
-          ) : null
-        }
-      />
+      <FlatList<Page> data={sortedPages} renderItem={renderItem} />
     </View>
   );
 }

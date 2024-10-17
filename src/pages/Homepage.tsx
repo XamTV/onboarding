@@ -8,21 +8,17 @@ import {
 } from "react-native";
 import BookCard from "../components/Bookcard";
 import useData, { Book } from "../context/FetchContext";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import type {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from "@react-navigation/native-stack";
 import { Modal, Portal, Provider } from "react-native-paper";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { StackParamList } from "../../App";
 
-type HomeScreenNavigationProp = NativeStackNavigationProp<
-  StackParamList,
-  "Home"
->;
+type Props = NativeStackScreenProps<StackParamList, "Home">;
 
-type Props = {
-  navigation: HomeScreenNavigationProp;
-};
-
-export default function HomePage({ navigation }: Readonly<Props>) {
+export default function HomePage({ navigation }: Props) {
   const { books } = useData();
 
   const [modalHandle, setModalHandle] = useState<{
@@ -65,6 +61,25 @@ export default function HomePage({ navigation }: Readonly<Props>) {
       </View>
     );
   }
+
+  const renderItem = useCallback(
+    ({ item }: { item: Book }) => {
+      return item.valid ? (
+        <BookCard
+          bookId={item.id}
+          picture={item.url}
+          displayTitle={item.displayTitle}
+          onPress={() => {
+            navigation.navigate("BookPage", {
+              bookId: item.id,
+              displayTitle: item.displayTitle,
+            });
+          }}
+        />
+      ) : null;
+    },
+    [books]
+  );
 
   return (
     <Provider>
@@ -130,24 +145,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
           }}
           title={subjectFilter ? `${subjectFilter}` : "Tous sujets"}
         />
-        <FlatList<Book>
-          data={filteredData} // ici le data doit devenir le filteredData
-          renderItem={({ item }) =>
-            item.valid ? (
-              <BookCard
-                bookId={item.id}
-                picture={item.url}
-                displayTitle={item.displayTitle}
-                onPress={() => {
-                  navigation.navigate("BookPage", {
-                    bookId: item.id,
-                    displayTitle: item.displayTitle,
-                  });
-                }}
-              />
-            ) : null
-          }
-        />
+        <FlatList<Book> data={filteredData} renderItem={renderItem} />
       </View>
     </Provider>
   );
