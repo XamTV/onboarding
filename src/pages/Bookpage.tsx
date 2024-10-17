@@ -74,7 +74,10 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
   return (
     <View style={style.bookPageContainer}>
       <Pressable
-        style={!isLiked ? style.favoriteAddbutton : style.favoriteRemovebutton}
+        style={[
+          style.buttons,
+          !isLiked ? style.favoriteAddbutton : style.favoriteRemovebutton,
+        ]}
         onPress={() => setIsliked(!isLiked)}
       >
         <Text style={style.buttonText}>
@@ -107,19 +110,18 @@ const style = StyleSheet.create({
   bookPageContainer: {
     marginBottom: 60,
   },
-  favoriteAddbutton: {
+  buttons: {
     backgroundColor: "lightgreen",
     marginHorizontal: "auto",
     marginVertical: 16,
     padding: 8,
     borderRadius: 32,
   },
+  favoriteAddbutton: {
+    backgroundColor: "lightgreen",
+  },
   favoriteRemovebutton: {
     backgroundColor: "#f1807e",
-    marginHorizontal: "auto",
-    marginVertical: 16,
-    padding: 8,
-    borderRadius: 32,
   },
   buttonText: {
     fontSize: 16,
