@@ -1,6 +1,5 @@
-import { useRoute, RouteProp } from "@react-navigation/native";
 import { View, FlatList, Pressable, Text, StyleSheet } from "react-native";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 
 import ChapterCard from "../components/Chaptercard";
@@ -64,6 +63,25 @@ export default function BookPage({ navigation, route }: Props) {
       });
   }, []);
 
+  const renderItem = useCallback(
+    ({ item }: { item: Chapter }) => {
+      return item.valid ? (
+        <ChapterCard
+          chapterId={item.id}
+          chapterTitle={item.title}
+          chapterUrl={item.url}
+          onPress={() => {
+            navigation.navigate("ChapterPage", {
+              chapterId: item.id,
+              title: item.title,
+            });
+          }}
+        />
+      ) : null;
+    },
+    [bookDetail]
+  );
+
   return (
     <View style={style.bookPageContainer}>
       <Pressable
@@ -77,24 +95,7 @@ export default function BookPage({ navigation, route }: Props) {
           {!isLiked ? "Ajouter aux favoris" : "Retirer des favoris"}
         </Text>
       </Pressable>
-      <FlatList<Chapter>
-        data={bookDetail}
-        renderItem={({ item }) =>
-          item.valid ? (
-            <ChapterCard
-              chapterId={item.id}
-              chapterTitle={item.title}
-              chapterUrl={item.url}
-              onPress={() => {
-                navigation.navigate("ChapterPage", {
-                  chapterId: item.id,
-                  title: item.title,
-                });
-              }}
-            />
-          ) : null
-        }
-      />
+      <FlatList<Chapter> data={bookDetail} renderItem={renderItem} />
     </View>
   );
 }
