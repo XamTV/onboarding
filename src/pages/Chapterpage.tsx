@@ -27,10 +27,10 @@ type PageQuery = {
 
 type ChapterPageScreenNavigationProp = NativeStackNavigationProp<
   StackParamList,
-  "Chapterpage"
+  "ChapterPage"
 >;
 
-type ChapterPageScreenRouteProp = RouteProp<StackParamList, "Chapterpage">;
+type ChapterPageScreenRouteProp = RouteProp<StackParamList, "ChapterPage">;
 
 type Props = {
   navigation: ChapterPageScreenNavigationProp;

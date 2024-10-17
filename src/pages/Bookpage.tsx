@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 import ChapterCard from "../components/Chaptercard";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from "@react-navigation/native-stack";
 import { StackParamList } from "../../App";
 
 type RouteParams = {
@@ -31,19 +34,9 @@ type ChapterQuery = {
   };
 };
 
-type BookpageScreenNavigationProp = NativeStackNavigationProp<
-  StackParamList,
-  "Bookpage"
->;
+type Props = NativeStackScreenProps<StackParamList, "BookPage">;
 
-type BookPageScreenRouteProp = RouteProp<StackParamList, "Bookpage">;
-
-type Props = {
-  navigation: BookpageScreenNavigationProp;
-  route: BookPageScreenRouteProp;
-};
-
-export default function BookPage({ navigation, route }: Readonly<Props>) {
+export default function BookPage({ navigation, route }: Props) {
   const { bookId } = route.params;
 
   const [bookDetail, setBookDetail] = useState<Chapter[]>([]);
@@ -93,7 +86,7 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
               chapterTitle={item.title}
               chapterUrl={item.url}
               onPress={() => {
-                navigation.navigate("Chapterpage", {
+                navigation.navigate("ChapterPage", {
                   chapterId: item.id,
                   title: item.title,
                 });

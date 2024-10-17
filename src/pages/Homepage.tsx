@@ -139,7 +139,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
                 picture={item.url}
                 displayTitle={item.displayTitle}
                 onPress={() => {
-                  navigation.navigate("Bookpage", {
+                  navigation.navigate("BookPage", {
                     bookId: item.id,
                     displayTitle: item.displayTitle,
                   });

@@ -7,8 +7,8 @@ import ChapterPage from "./src/pages/Chapterpage";
 
 export type StackParamList = {
   Home: undefined;
-  Bookpage: { bookId: number; displayTitle: string };
-  Chapterpage: { chapterId: number; title: string };
+  BookPage: { bookId: number; displayTitle: string };
+  ChapterPage: { chapterId: number; title: string };
 };
 
 const Stack = createNativeStackNavigator<StackParamList>();
@@ -20,12 +20,12 @@ function App() {
         <Stack.Navigator initialRouteName="Home">
           <Stack.Screen name="Home" component={HomePage} />
           <Stack.Screen
-            name="Bookpage"
+            name="BookPage"
             component={BookPage}
             options={({ route }) => ({ title: route.params.displayTitle })}
           />
           <Stack.Screen
-            name="Chapterpage"
+            name="ChapterPage"
             component={ChapterPage}
             options={({ route }) => ({ title: route.params.title })}
           />
