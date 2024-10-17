@@ -92,8 +92,8 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
       <Pressable
         style={
           likedBooks[bookId] !== true
-            ? style.favoriteAddbutton
-            : style.favoriteRemovebutton
+            ? [style.buttons, style.favoriteAddbutton]
+            : [style.buttons, style.favoriteRemovebutton]
         }
         onPress={onFavoritePress}
       >

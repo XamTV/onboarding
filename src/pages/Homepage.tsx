@@ -64,25 +64,6 @@ export default function HomePage({ navigation }: Props) {
     );
   }
 
-  const renderItem = useCallback(
-    ({ item }: { item: Book }) => {
-      return item.valid ? (
-        <BookCard
-          bookId={item.id}
-          picture={item.url}
-          displayTitle={item.displayTitle}
-          onPress={() => {
-            navigation.navigate("BookPage", {
-              bookId: item.id,
-              displayTitle: item.displayTitle,
-            });
-          }}
-        />
-      ) : null;
-    },
-    [books]
-  );
-
   console.info(likedBooks);
 
   return (
@@ -149,7 +130,24 @@ export default function HomePage({ navigation }: Props) {
           }}
           title={subjectFilter ? `${subjectFilter}` : "Tous sujets"}
         />
-        <FlatList<Book> data={filteredData} renderItem={renderItem} />
+        <FlatList<Book>
+          data={filteredData}
+          renderItem={({ item }) =>
+            item.valid ? (
+              <BookCard
+                bookId={item.id}
+                picture={item.url}
+                displayTitle={item.displayTitle}
+                onPress={() => {
+                  navigation.navigate("BookPage", {
+                    bookId: item.id,
+                    displayTitle: item.displayTitle,
+                  });
+                }}
+              />
+            ) : null
+          }
+        />
       </View>
     </Provider>
   );
