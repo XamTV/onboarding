@@ -17,11 +17,8 @@ export const FavoriteContextProvider = ({
   useEffect(() => {
     const storeFavoriteBooks = async () => {
       try {
-        console.log(likedBooks);
-
         const jsonValue = JSON.stringify(likedBooks);
         await AsyncStorage.setItem("favoriteBooks", jsonValue);
-        console.log(jsonValue);
       } catch (e) {
         console.error("Can't store likedBooks");
       }
@@ -33,6 +30,18 @@ export const FavoriteContextProvider = ({
   const toggleLiked = useCallback((id: number) => {
     setLikedBooks((prev) => ({ ...prev, [id]: !prev[id] }));
   }, []);
+
+  const readFavoriteBooks = useCallback(() => {
+    AsyncStorage.getItem("favoriteBooks")
+      .then((jsonValue) => {
+        if (jsonValue != null) {
+          setLikedBooks(JSON.parse(jsonValue));
+        }
+      })
+      .catch(console.log);
+  }, []);
+
+  useEffect(readFavoriteBooks, []);
 
   const contextValue: IFavoriteContext = {
     likedBooks,
