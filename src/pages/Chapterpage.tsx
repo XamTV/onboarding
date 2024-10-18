@@ -1,5 +1,5 @@
 import { useRoute, RouteProp } from "@react-navigation/native";
-import { View, FlatList, Text, StyleSheet } from "react-native";
+import { View, FlatList, Text, StyleSheet, Pressable } from "react-native";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import * as R from "remeda";
@@ -9,6 +9,8 @@ import {
 } from "@react-navigation/native-stack";
 import { StackParamList } from "../../App";
 import PageCard from "../components/Pagecard";
+import useFavorite from "../context/FavoriteContext";
+import useData from "../context/FetchContext";
 
 type Page = {
   id: number;
@@ -32,6 +34,7 @@ type Props = NativeStackScreenProps<StackParamList, "ChapterPage">;
 
 export default function ChapterPage({ navigation, route }: Props) {
   const { chapterId } = route.params;
+  const { likedBooks, toggleLiked } = useFavorite();
 
   const [pageDetail, setPageDetail] = useState<Page[]>();
 
@@ -62,6 +65,10 @@ export default function ChapterPage({ navigation, route }: Props) {
     [pageDetail]
   );
 
+  const onFavoritePress = useCallback(() => {
+    toggleLiked(chapterId);
+  }, [chapterId]);
+
   const renderItem = useCallback(
     ({ item }: { item: Page }) => {
       return item.valid ? (
@@ -78,7 +85,21 @@ export default function ChapterPage({ navigation, route }: Props) {
 
   return (
     <View>
-      <Text style={styles.title}>
+      <Pressable
+        style={
+          likedBooks[chapterId] !== true
+            ? [style.buttons, style.favoriteAddbutton]
+            : [style.buttons, style.favoriteRemovebutton]
+        }
+        onPress={onFavoritePress}
+      >
+        <Text style={style.buttonText}>
+          {likedBooks[chapterId] !== true
+            ? "Ajouter aux favoris"
+            : "Retirer des favoris"}
+        </Text>
+      </Pressable>
+      <Text style={style.title}>
         P.{sortedPages[0]?.page} - P.
         {sortedPages[sortedPages.length - 1]?.page}{" "}
       </Text>
@@ -87,12 +108,28 @@ export default function ChapterPage({ navigation, route }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
+const style = StyleSheet.create({
   title: {
     textAlign: "center",
     marginHorizontal: "auto",
     marginVertical: 8,
     maxWidth: 200,
     fontWeight: "500",
+  },
+  buttons: {
+    backgroundColor: "lightgreen",
+    marginHorizontal: "auto",
+    marginVertical: 16,
+    padding: 8,
+    borderRadius: 32,
+  },
+  favoriteAddbutton: {
+    backgroundColor: "lightgreen",
+  },
+  favoriteRemovebutton: {
+    backgroundColor: "#f1807e",
+  },
+  buttonText: {
+    fontSize: 16,
   },
 });
