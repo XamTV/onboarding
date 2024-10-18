@@ -5,6 +5,8 @@ import {
   FlatList,
   Button,
   ActivityIndicator,
+  Pressable,
+  Text,
 } from "react-native";
 import BookCard from "../components/Bookcard";
 import useData, { Book } from "../context/FetchContext";
@@ -58,7 +60,7 @@ export default function HomePage({ navigation }: Props) {
   });
   if (books.length === 0) {
     return (
-      <View style={[styles.loaderContainer, styles.horizontal]}>
+      <View style={[style.loaderContainer, style.horizontal]}>
         <ActivityIndicator size="large" color="#00ff00" />
       </View>
     );
@@ -70,13 +72,13 @@ export default function HomePage({ navigation }: Props) {
     <Provider>
       <Portal>
         <Modal
-          style={styles.modalContainer}
+          style={style.modalContainer}
           visible={modalHandle.visible}
           onDismiss={() => setModalHandle({ visible: false })}
         >
           {modalHandle.selected === "Levels" ? (
             <FlatList<string>
-              style={styles.filterList}
+              style={style.filterList}
               data={levels}
               renderItem={({ item }) => (
                 <Button
@@ -90,7 +92,7 @@ export default function HomePage({ navigation }: Props) {
             />
           ) : (
             <FlatList<string>
-              style={styles.filterList}
+              style={style.filterList}
               data={subjects}
               renderItem={({ item }) => (
                 <Button
@@ -117,7 +119,7 @@ export default function HomePage({ navigation }: Props) {
           />
         </Modal>
       </Portal>
-      <View style={styles.container}>
+      <View style={style.container}>
         <Button
           onPress={() => {
             setModalHandle({ visible: true, selected: "Levels" });
@@ -130,6 +132,14 @@ export default function HomePage({ navigation }: Props) {
           }}
           title={subjectFilter ? `${subjectFilter}` : "Tous sujets"}
         />
+        <Pressable
+          style={style.buttons}
+          onPress={() => {
+            navigation.navigate("FavoritePage");
+          }}
+        >
+          <Text>Mes Favoris</Text>
+        </Pressable>
         <FlatList<Book>
           data={filteredData}
           renderItem={({ item }) =>
@@ -152,7 +162,7 @@ export default function HomePage({ navigation }: Props) {
     </Provider>
   );
 }
-const styles = StyleSheet.create({
+const style = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: StatusBar.currentHeight,
@@ -178,5 +188,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 10,
+  },
+  buttons: {
+    backgroundColor: "lightblue",
+    marginHorizontal: "auto",
+    marginVertical: 16,
+    padding: 8,
+    borderRadius: 32,
   },
 });

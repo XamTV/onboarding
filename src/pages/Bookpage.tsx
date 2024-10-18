@@ -9,6 +9,7 @@ import {
 } from "@react-navigation/native-stack";
 import { StackParamList } from "../../App";
 import useFavorite from "../context/FavoriteContext";
+import useData, { Chapter } from "../context/FetchContext";
 
 type RouteParams = {
   params: {
@@ -17,56 +18,19 @@ type RouteParams = {
   };
 };
 
-type Chapter = {
-  id: number;
-  title: string;
-  url: string;
-  valid: boolean;
-};
-
-type ChapterQuery = {
-  data: {
-    viewer: {
-      chapters: {
-        hits: Chapter[];
-      };
-    };
-  };
-};
-
 type Props = NativeStackScreenProps<StackParamList, "BookPage">;
 
 export default function BookPage({ navigation, route }: Readonly<Props>) {
   const { toggleLiked, likedBooks } = useFavorite();
+  const { sendBookId, chapters } = useData();
 
   const { bookId } = route.params;
-  const [bookDetail, setBookDetail] = useState<Chapter[]>([]);
 
   const onFavoritePress = useCallback(() => {
     toggleLiked(bookId);
   }, [bookId]);
 
-  useEffect(() => {
-    axios
-      .post<ChapterQuery>(
-        "https://api-preprod.lelivrescolaire.fr/graph",
-        {
-          query:
-            "query chapters($bookId:Int){viewer{chapters(bookIds:[$bookId]){hits{id title url valid}}}}",
-          variables: { bookId },
-        },
-
-        {
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-          },
-        }
-      )
-      .then((res) => {
-        const result: Chapter[] = res.data.data.viewer.chapters.hits;
-        setBookDetail(result);
-      });
-  }, []);
+  useEffect(() => sendBookId(bookId), [bookId]);
 
   const renderItem = useCallback(
     ({ item }: { item: Chapter }) => {
@@ -84,7 +48,7 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
         />
       ) : null;
     },
-    [bookDetail]
+    [chapters]
   );
 
   return (
@@ -103,7 +67,7 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
             : "Retirer des favoris"}
         </Text>
       </Pressable>
-      <FlatList<Chapter> data={bookDetail} renderItem={renderItem} />
+      <FlatList<Chapter> data={chapters} renderItem={renderItem} />
     </View>
   );
 }
