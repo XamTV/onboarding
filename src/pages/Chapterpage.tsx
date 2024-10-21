@@ -81,11 +81,12 @@ export default function ChapterPage({ navigation, route }: Props) {
   return (
     <View>
       <Pressable
-        style={
-          likedBooks[chapterId] !== true
-            ? [style.buttons, style.favoriteAddbutton]
-            : [style.buttons, style.favoriteRemovebutton]
-        }
+        style={[
+          style.buttons,
+          likedBooks[chapterId]
+            ? style.favoriteRemovebutton
+            : style.favoriteAddbutton,
+        ]}
         onPress={onFavoritePress}
       >
         <Text style={style.buttonText}>
