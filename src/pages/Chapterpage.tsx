@@ -60,9 +60,10 @@ export default function ChapterPage({ navigation, route }: Props) {
     [pageDetail]
   );
 
-  const onFavoritePress = useCallback(() => {
-    toggleLiked(chapterId);
-  }, [chapterId]);
+  const onFavoritePress = useCallback(
+    () => toggleLiked(chapterId),
+    [chapterId]
+  );
 
   const renderItem = useCallback(
     ({ item }: { item: Page }) => {
