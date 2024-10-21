@@ -1,11 +1,11 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import HomePage from "./src/pages/Homepage";
-import BookPage from "./src/pages/Bookpage";
-import ChapterPage from "./src/pages/Chapterpage";
+import HomePage from "./src/pages/HomePage";
+import BookPage from "./src/pages/BookPage";
+import ChapterPage from "./src/pages/ChapterPage";
 import { DataContextProvider } from "./src/context/FetchContext";
 import { FavoriteContextProvider } from "./src/context/FavoriteContext";
-import FavoritePage from "./src/pages/Favoritepage";
+import FavoritePage from "./src/pages/FavoritePage";
 
 export type StackParamList = {
   Home: undefined;

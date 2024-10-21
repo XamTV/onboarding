@@ -1,10 +1,9 @@
-import { FlatList, Text } from "react-native";
+import { FlatList } from "react-native";
 import useData, { Book } from "../context/FetchContext";
 import useFavorite from "../context/FavoriteContext";
-import BookCard from "../components/Bookcard";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../App";
-import FavoriteCard from "../components/Favoritecard";
+import FavoriteCard from "../components/FavoriteCard";
 
 type Props = NativeStackScreenProps<StackParamList, "FavoritePage">;
 

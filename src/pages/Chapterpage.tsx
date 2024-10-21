@@ -1,16 +1,11 @@
-import { useRoute, RouteProp } from "@react-navigation/native";
 import { View, FlatList, Text, StyleSheet, Pressable } from "react-native";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import * as R from "remeda";
-import {
-  NativeStackNavigationProp,
-  NativeStackScreenProps,
-} from "@react-navigation/native-stack";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../App";
-import PageCard from "../components/Pagecard";
+import PageCard from "../components/PageCard";
 import useFavorite from "../context/FavoriteContext";
-import useData from "../context/FetchContext";
 
 type Page = {
   id: number;

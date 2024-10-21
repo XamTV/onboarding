@@ -2,7 +2,6 @@ import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { Card } from "react-native-paper";
 import useData from "../context/FetchContext";
 import useFavorite from "../context/FavoriteContext";
-import { useCallback } from "react";
 
 type Props = {
   onPress: () => void;
@@ -14,7 +13,7 @@ export default function FavoriteCard({
   onPress,
   displayTitle,
   picture,
-}: Props) {
+}: Readonly<Props>) {
   const { chapters } = useData();
   const { likedBooks, toggleLiked } = useFavorite();
 
