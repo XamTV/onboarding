@@ -6,12 +6,14 @@ import ChapterPage from "./src/pages/ChapterPage";
 import { DataContextProvider } from "./src/context/FetchContext";
 import { FavoriteContextProvider } from "./src/context/FavoriteContext";
 import FavoritePage from "./src/pages/FavoritePage";
+import SignupPage from "./src/pages/SignupPage";
 
 export type StackParamList = {
   HomePage: undefined;
   BookPage: { bookId: number; displayTitle: string };
   ChapterPage: { chapterId: number; title: string; bookId: number };
   FavoritePage: undefined;
+  SignupPage: undefined;
 };
 
 const Stack = createNativeStackNavigator<StackParamList>();
@@ -34,6 +36,7 @@ function App() {
               options={({ route }) => ({ title: route.params.title })}
             />
             <Stack.Screen name="FavoritePage" component={FavoritePage} />
+            <Stack.Screen name="SignupPage" component={SignupPage} />
           </Stack.Navigator>
         </FavoriteContextProvider>
       </DataContextProvider>

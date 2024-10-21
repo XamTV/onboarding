@@ -118,6 +118,11 @@ export default function HomePage({ navigation }: Props) {
       </Portal>
       <View style={style.container}>
         <Button
+          title={"S'enregistrer"}
+          onPress={() => navigation.navigate("SignupPage")}
+        />
+
+        <Button
           onPress={() => {
             setModalHandle({ visible: true, selected: "Levels" });
           }}
