@@ -16,14 +16,13 @@
       "googleServicesFile": "./GoogleService-Info.plist",
       "bundleIdentifier": "com.siruplab.onboarding"
     },
-
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff",
-        "googleServicesFile": "./google-services.json",
-        "package": "com.siruplab.onboarding"
-      }
+        "backgroundColor": "#ffffff"
+      },
+      "googleServicesFile": "./google-services.json",
+      "package": "com.siruplab.onboarding"
     },
     "plugins": [
       "@react-native-firebase/app",
