@@ -50,7 +50,9 @@ export default function FavoriteCard({
       <Card.Title titleStyle={styles.title} title={displayTitle} />
       {liked.books[bookId] ? <Card.Cover source={{ uri: picture }} /> : null}
 
-      <Text style={styles.subtitleText}>Chapitres</Text>
+      {chapterCache[bookId].some((chapter) => liked.chapters[chapter.id]) ? (
+        <Text style={styles.subtitleText}>Chapitres</Text>
+      ) : null}
 
       <Card.Content>
         <FlatList
@@ -107,6 +109,7 @@ const styles = StyleSheet.create({
   },
   chapterPressable: {
     padding: 8,
+    margin: 8,
     backgroundColor: "lightcoral",
     justifyContent: "center",
     alignItems: "center",
