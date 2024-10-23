@@ -3,8 +3,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomePage from "./src/pages/HomePage";
 import BookPage from "./src/pages/BookPage";
 import ChapterPage from "./src/pages/ChapterPage";
-import { DataContextProvider } from "./src/context/FetchContextTemp";
-import { FavoriteContextProvider } from "./src/context/FavoriteContextTemp";
+import { DataContextProvider } from "./src/context/FetchContext";
+import { FavoriteContextProvider } from "./src/context/FavoriteContext";
 import FavoritePage from "./src/pages/FavoritePage";
 
 export type StackParamList = {
