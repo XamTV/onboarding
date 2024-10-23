@@ -1,10 +1,10 @@
 import { View, FlatList, Pressable, Text, StyleSheet } from "react-native";
 import { useCallback, useEffect, useState } from "react";
-import ChapterCard from "../components/ChapterCard";
+import ChapterCard from "../components/ChapterCardTemp";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../App";
-import useFavorite from "../context/FavoriteContext";
-import useData, { Chapter } from "../context/FetchContext";
+import useFavorite from "../context/FavoriteContextTemp";
+import useData, { Chapter } from "../context/FetchContextTemp";
 import axios from "axios";
 
 type Props = NativeStackScreenProps<StackParamList, "BookPage">;

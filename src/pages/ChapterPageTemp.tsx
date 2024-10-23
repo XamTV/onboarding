@@ -4,8 +4,8 @@ import axios from "axios";
 import * as R from "remeda";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../App";
-import PageCard from "../components/PageCard";
-import useFavorite from "../context/FavoriteContext";
+import PageCard from "../components/PageCardTemp";
+import useFavorite from "../context/FavoriteContextTemp";
 
 type Page = {
   id: number;

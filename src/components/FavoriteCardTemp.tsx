@@ -1,7 +1,7 @@
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { Card } from "react-native-paper";
-import useData, { Chapter } from "../context/FetchContext";
-import useFavorite from "../context/FavoriteContext";
+import useData, { Chapter } from "../context/FetchContextTemp";
+import useFavorite from "../context/FavoriteContextTemp";
 import { useCallback } from "react";
 
 type Props = {
@@ -65,7 +65,7 @@ export default function FavoriteCard({
           onPress={() => toggleLikedBooks(bookId)}
           style={styles.chapterPressable}
         >
-          <Text>Suprrimer le livre des favoris</Text>
+          <Text>Supprimer le livre des favoris</Text>
         </Pressable>
       ) : null}
     </Card>

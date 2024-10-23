@@ -8,13 +8,13 @@ import {
   Pressable,
   Text,
 } from "react-native";
-import BookCard from "../components/BookCard";
-import useData, { Book } from "../context/FetchContext";
+import BookCard from "../components/BookCardTemp";
+import useData, { Book } from "../context/FetchContextTemp";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Modal, Portal, Provider } from "react-native-paper";
 import { useMemo, useState } from "react";
 import { StackParamList } from "../../App";
-import useFavorite from "../context/FavoriteContext";
+import useFavorite from "../context/FavoriteContextTemp";
 
 type Props = NativeStackScreenProps<StackParamList, "HomePage">;
 
