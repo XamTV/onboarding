@@ -3,8 +3,8 @@ import React, { useCallback, useContext, useState } from "react";
 import { useEffect } from "react";
 
 interface IFavoriteContext {
-  toggleLikedBooks: (id: number) => void;
-  toggleLikedChapters: (bookIds: number, chapterId: number) => void;
+  toggleLikedBook: (id: number) => void;
+  toggleLikedChapter: (bookIds: number, chapterId: number) => void;
   liked: Favorite;
 }
 
@@ -33,13 +33,13 @@ export const FavoriteContextProvider = ({
     storeFavoriteBooks();
   }, [liked]);
 
-  const toggleLikedBooks = useCallback((id: number) => {
+  const toggleLikedBook = useCallback((id: number) => {
     setLiked((prev) => ({
       ...prev,
       books: { ...prev.books, [id]: !prev.books[id] },
     }));
   }, []);
-  const toggleLikedChapters = useCallback(
+  const toggleLikedChapter = useCallback(
     (bookId: number, chapterId: number) => {
       setLiked((prev) => ({
         ...prev,
@@ -66,8 +66,8 @@ export const FavoriteContextProvider = ({
 
   const contextValue: IFavoriteContext = {
     liked,
-    toggleLikedBooks,
-    toggleLikedChapters,
+    toggleLikedBook,
+    toggleLikedChapter,
   };
 
   return (

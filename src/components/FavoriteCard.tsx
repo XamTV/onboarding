@@ -18,7 +18,7 @@ export default function FavoriteCard({
   bookId,
 }: Readonly<Props>) {
   const { chapterCache } = useData();
-  const { liked, toggleLikedBooks, toggleLikedChapters } = useFavorite();
+  const { liked, toggleLikedBook, toggleLikedChapter } = useFavorite();
 
   const renderItem = useCallback(({ item }: { item: Chapter }) => {
     return (
@@ -36,7 +36,7 @@ export default function FavoriteCard({
         <Text style={styles.chapterTitle}>{item.title}</Text>
 
         <Pressable
-          onPress={() => toggleLikedChapters(bookId, item.id)}
+          onPress={() => toggleLikedChapter(bookId, item.id)}
           style={styles.chapterPressable}
         >
           <Text>X</Text>
@@ -64,7 +64,7 @@ export default function FavoriteCard({
       </Card.Content>
       {liked.books[bookId] ? (
         <Pressable
-          onPress={() => toggleLikedBooks(bookId)}
+          onPress={() => toggleLikedBook(bookId)}
           style={styles.chapterPressable}
         >
           <Text>Supprimer le livre des favoris</Text>

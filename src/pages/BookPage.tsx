@@ -10,13 +10,13 @@ import axios from "axios";
 type Props = NativeStackScreenProps<StackParamList, "BookPage">;
 
 export default function BookPage({ navigation, route }: Readonly<Props>) {
-  const { toggleLikedBooks, liked } = useFavorite();
+  const { toggleLikedBook, liked } = useFavorite();
   const { chapterCache, fetchChapters } = useData();
 
   const { bookId } = route.params;
 
   const onFavoritePress = useCallback(() => {
-    toggleLikedBooks(bookId);
+    toggleLikedBook(bookId);
   }, [bookId]);
 
   useEffect(() => fetchChapters(bookId), [bookId]);
