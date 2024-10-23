@@ -1,4 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import axios from "axios";
 
 export type Book = {
@@ -59,7 +65,7 @@ export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
   const [chapterCache, setChapterCache] = useState<
     Record<number, Array<Chapter>>
   >({});
-
+  const cachedChapterRef = useRef<Set<number>>(new Set());
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -88,37 +94,35 @@ export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
     })();
   }, []);
 
-  const fetchChapter = useCallback(
-    (bookId: number) => {
-      if (chapterCache[bookId]) {
-        return console.info("Already in cache");
-      }
-      console.info("Not in cache");
+  const fetchChapter = useCallback((bookId: number) => {
+    if (cachedChapterRef.current.has(bookId)) {
+      return console.info("Already in cache", bookId);
+    }
+    console.info("Not in cache");
 
-      axios
-        .post<ChapterQuery>(
-          "https://api-preprod.lelivrescolaire.fr/graph",
-          {
-            query:
-              "query chapters($bookId:Int){viewer{chapters(bookIds:[$bookId]){hits{id title url valid  }}}}",
-            variables: { bookId },
+    axios
+      .post<ChapterQuery>(
+        "https://api-preprod.lelivrescolaire.fr/graph",
+        {
+          query:
+            "query chapters($bookId:Int){viewer{chapters(bookIds:[$bookId]){hits{id title url valid  }}}}",
+          variables: { bookId },
+        },
+        {
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
           },
-          {
-            headers: {
-              "Content-Type": "application/json; charset=utf-8",
-            },
-          }
-        )
-        .then((res) => {
-          const result: Chapter[] = res.data.data.viewer.chapters.hits;
-          setChapterCache((prev) => ({ ...prev, [bookId]: result }));
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-    [chapterCache]
-  );
+        }
+      )
+      .then((res) => {
+        const result: Chapter[] = res.data.data.viewer.chapters.hits;
+        setChapterCache((prev) => ({ ...prev, [bookId]: result }));
+        cachedChapterRef.current.add(bookId);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
 
   const contextValue: IDataContext = {
     books,
