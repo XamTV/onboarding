@@ -11,7 +11,7 @@ type Props = NativeStackScreenProps<StackParamList, "BookPage">;
 
 export default function BookPage({ navigation, route }: Readonly<Props>) {
   const { toggleLikedBook, liked } = useFavorite();
-  const { chapterCache, fetchChapters } = useData();
+  const { chapterCache, fetchChapter } = useData();
 
   const { bookId } = route.params;
 
@@ -19,7 +19,7 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
     toggleLikedBook(bookId);
   }, [bookId]);
 
-  useEffect(() => fetchChapters(bookId), [bookId]);
+  useEffect(() => fetchChapter(bookId), [bookId]);
 
   const renderItem = useCallback(({ item }: { item: Chapter }) => {
     return item.valid ? (

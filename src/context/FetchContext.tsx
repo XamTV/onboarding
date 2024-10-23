@@ -48,7 +48,7 @@ type Level = {
 interface IDataContext {
   books: Book[];
   loading: boolean;
-  fetchChapters: (bookId: number) => void;
+  fetchChapter: (bookId: number) => void;
   chapterCache: Record<number, Array<Chapter>>;
 }
 
@@ -88,7 +88,7 @@ export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
     })();
   }, []);
 
-  const fetchChapters = useCallback(
+  const fetchChapter = useCallback(
     (bookId: number) => {
       if (chapterCache[bookId]) {
         return console.info("Already in cache");
@@ -123,7 +123,7 @@ export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
   const contextValue: IDataContext = {
     books,
     loading,
-    fetchChapters,
+    fetchChapter,
     chapterCache,
   };
 

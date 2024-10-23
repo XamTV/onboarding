@@ -9,7 +9,7 @@ import { useEffect, useMemo } from "react";
 type Props = NativeStackScreenProps<StackParamList, "FavoritePage">;
 
 export default function FavoritePage({ navigation }: Props) {
-  const { books, fetchChapters } = useData();
+  const { books, fetchChapter } = useData();
   const { liked } = useFavorite();
 
   const likedBookIds = useMemo(
@@ -27,10 +27,10 @@ export default function FavoritePage({ navigation }: Props) {
     [liked.chapters]
   );
   useEffect(() => {
-    likedBookIds.map((likedBookId) => fetchChapters(likedBookId));
+    likedBookIds.map((likedBookId) => fetchChapter(likedBookId));
   }, [likedBookIds]);
   useEffect(() => {
-    bookIdsOfLikedChapters.map((likedBookId) => fetchChapters(likedBookId));
+    bookIdsOfLikedChapters.map((likedBookId) => fetchChapter(likedBookId));
   }, [bookIdsOfLikedChapters]);
 
   return (
