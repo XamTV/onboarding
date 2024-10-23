@@ -20,13 +20,15 @@ export const FavoriteContextProvider = ({
 }: React.PropsWithChildren) => {
   const [liked, setLiked] = useState<Favorite>({ books: {}, chapters: {} });
 
+  const storageName = "favorite";
+
   useEffect(() => {
     const storeFavoriteBooks = async () => {
       try {
         const jsonValue = JSON.stringify(liked);
-        await AsyncStorage.setItem("favorites", jsonValue);
+        await AsyncStorage.setItem(storageName, jsonValue);
       } catch (e) {
-        console.error("Can't store liked");
+        console.error(`Can't Store ${storageName}`);
       }
     };
 
@@ -53,7 +55,7 @@ export const FavoriteContextProvider = ({
   );
 
   const readFavoriteBooks = useCallback(() => {
-    AsyncStorage.getItem("favorites")
+    AsyncStorage.getItem(storageName)
       .then((jsonValue) => {
         if (jsonValue != null) {
           setLiked(JSON.parse(jsonValue));
