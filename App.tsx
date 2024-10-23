@@ -8,9 +8,9 @@ import { FavoriteContextProvider } from "./src/context/FavoriteContext";
 import FavoritePage from "./src/pages/FavoritePage";
 
 export type StackParamList = {
-  Home: undefined;
+  HomePage: undefined;
   BookPage: { bookId: number; displayTitle: string };
-  ChapterPage: { chapterId: number; title: string };
+  ChapterPage: { chapterId: number; title: string; bookId: number };
   FavoritePage: undefined;
 };
 
@@ -21,8 +21,8 @@ function App() {
     <NavigationContainer>
       <DataContextProvider>
         <FavoriteContextProvider>
-          <Stack.Navigator initialRouteName="Home">
-            <Stack.Screen name="Home" component={HomePage} />
+          <Stack.Navigator initialRouteName="HomePage">
+            <Stack.Screen name="HomePage" component={HomePage} />
             <Stack.Screen
               name="BookPage"
               component={BookPage}

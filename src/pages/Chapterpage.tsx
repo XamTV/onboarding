@@ -28,8 +28,8 @@ type PageQuery = {
 type Props = NativeStackScreenProps<StackParamList, "ChapterPage">;
 
 export default function ChapterPage({ navigation, route }: Props) {
-  const { chapterId } = route.params;
-  const { likedBooks, toggleLiked } = useFavorite();
+  const { chapterId, bookId } = route.params;
+  const { liked, toggleLikedChapters } = useFavorite();
 
   const [pageDetail, setPageDetail] = useState<Page[]>();
 
@@ -61,7 +61,7 @@ export default function ChapterPage({ navigation, route }: Props) {
   );
 
   const onFavoritePress = useCallback(
-    () => toggleLiked(chapterId),
+    () => toggleLikedChapters(bookId, chapterId),
     [chapterId]
   );
 
@@ -84,14 +84,14 @@ export default function ChapterPage({ navigation, route }: Props) {
       <Pressable
         style={[
           style.buttons,
-          likedBooks[chapterId]
+          liked.chapters[chapterId]
             ? style.favoriteRemovebutton
             : style.favoriteAddbutton,
         ]}
         onPress={onFavoritePress}
       >
         <Text style={style.buttonText}>
-          {likedBooks[chapterId] !== true
+          {liked.chapters[chapterId] !== true
             ? "Ajouter aux favoris"
             : "Retirer des favoris"}
         </Text>

@@ -1,61 +1,60 @@
 import { View, FlatList, Pressable, Text, StyleSheet } from "react-native";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ChapterCard from "../components/ChapterCard";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../App";
 import useFavorite from "../context/FavoriteContext";
 import useData, { Chapter } from "../context/FetchContext";
+import axios from "axios";
 
 type Props = NativeStackScreenProps<StackParamList, "BookPage">;
 
 export default function BookPage({ navigation, route }: Readonly<Props>) {
-  const { toggleLiked, likedBooks } = useFavorite();
-  const { sendBookId, chapters } = useData();
+  const { toggleLikedBooks, liked } = useFavorite();
+  const { chapterCache, fetchChapters } = useData();
 
   const { bookId } = route.params;
 
   const onFavoritePress = useCallback(() => {
-    toggleLiked(bookId);
+    toggleLikedBooks(bookId);
   }, [bookId]);
 
-  useEffect(() => sendBookId(bookId), [bookId]);
+  useEffect(() => fetchChapters(bookId), [bookId]);
 
-  const renderItem = useCallback(
-    ({ item }: { item: Chapter }) => {
-      return item.valid ? (
-        <ChapterCard
-          chapterId={item.id}
-          chapterTitle={item.title}
-          chapterUrl={item.url}
-          onPress={() => {
-            navigation.navigate("ChapterPage", {
-              chapterId: item.id,
-              title: item.title,
-            });
-          }}
-        />
-      ) : null;
-    },
-    [chapters]
-  );
+  const renderItem = useCallback(({ item }: { item: Chapter }) => {
+    return item.valid ? (
+      <ChapterCard
+        chapterId={item.id}
+        chapterTitle={item.title}
+        chapterUrl={item.url}
+        onPress={() => {
+          navigation.navigate("ChapterPage", {
+            chapterId: item.id,
+            title: item.title,
+            bookId,
+          });
+        }}
+      />
+    ) : null;
+  }, []);
 
   return (
     <View style={style.bookPageContainer}>
       <Pressable
         style={
-          likedBooks[bookId] !== true
+          liked.books[bookId] !== true
             ? [style.buttons, style.favoriteAddbutton]
             : [style.buttons, style.favoriteRemovebutton]
         }
         onPress={onFavoritePress}
       >
         <Text style={style.buttonText}>
-          {likedBooks[bookId] !== true
+          {liked.books[bookId] !== true
             ? "Ajouter aux favoris"
             : "Retirer des favoris"}
         </Text>
       </Pressable>
-      <FlatList<Chapter> data={chapters} renderItem={renderItem} />
+      <FlatList<Chapter> data={chapterCache[bookId]} renderItem={renderItem} />
     </View>
   );
 }
