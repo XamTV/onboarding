@@ -6,15 +6,14 @@ import ToastManager, { Toast } from "toastify-react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../App";
 
-type Props = NativeStackScreenProps<StackParamList, "SignupPage">;
+type Props = NativeStackScreenProps<StackParamList, "SigninPage">;
 
-export default function SignupPage({ navigation }: Props) {
+export default function SigninPage({ navigation }: Props) {
   const [initializing, setInitializing] = useState(false);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
 
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
-  const [confirmPassword, setconfirmPassword] = useState<string>();
 
   const onAuthUserChange = (user: FirebaseAuthTypes.User | null) => {
     setUser(user);
@@ -26,24 +25,17 @@ export default function SignupPage({ navigation }: Props) {
     return subscriber;
   }, []);
 
-  const createUser = () => {
-    if (!password || password.length < 6) {
-      return Toast.error("Votre mot de passe doit faire plus de 6 caractères");
+  const handleConnexion = () => {
+    if (!password) {
+      return Toast.error("Le champ mot de passe ne peut pas être vide");
     }
-    if (password !== confirmPassword) {
-      return Toast.error("Les mots de passe ne sont pas identique");
-    }
-    if (!email || email.length < 1) {
-      return Toast.error("Email invalide");
+    if (!email) {
+      return Toast.error("Le champ email ne peut pas être vide ");
     }
     auth()
-      .createUserWithEmailAndPassword(email, password)
+      .signInWithEmailAndPassword(email, password)
       .then(() => {
-        Toast.success("compte créer");
-        auth().signOut();
-        setTimeout(() => {
-          navigation.navigate("SigninPage");
-        }, 3000);
+        navigation.navigate("HomePage");
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
@@ -54,62 +46,69 @@ export default function SignupPage({ navigation }: Props) {
           Toast.error("adresse email invalide");
         }
 
-        console.error(error);
+        Toast.error(`Email et/ou mot de passe invalide`);
       });
   };
 
   if (initializing) return null;
+  console.log(user);
 
   if (!user) {
     return (
       <View style={styles.formContainer}>
         <ToastManager
-          position="top"
-          positionValue={300}
+          positionValue={320}
           animationIn={`slideInRight`}
           animationOut={`slideOutLeft`}
           textStyle={styles.toastText}
         />
         <TextInput
           style={styles.formInput}
-          label="email *"
+          label="email "
           value={email}
           onChangeText={(email) => setEmail(email)}
           mode="outlined"
-          error={!email ? true : false}
         />
         <TextInput
           style={styles.formInput}
-          label="mot de passe *"
+          label="mot de passe "
           value={password}
           onChangeText={(password) => setPassword(password)}
           secureTextEntry={true}
           mode="outlined"
-          error={!password ? true : false}
         />
-        <TextInput
-          style={styles.formInput}
-          label="confirmation du mot de passe *"
-          value={confirmPassword}
-          onChangeText={(password) => setconfirmPassword(password)}
-          secureTextEntry={true}
-          mode="outlined"
-          error={!confirmPassword ? true : false}
-        />
-
-        <Pressable style={styles.formButton} onPress={createUser}>
-          <Text style={styles.FormButtonText}>Créer mon compte</Text>
-        </Pressable>
+        <View style={styles.buttonContainer}>
+          <Pressable style={styles.formButton} onPress={handleConnexion}>
+            <Text style={styles.FormButtonText}>Se connecter</Text>
+          </Pressable>
+          <Text>Pas de compte ?</Text>
+          <Pressable
+            style={styles.formButton}
+            onPress={() => {
+              navigation.navigate("SignupPage");
+            }}
+          >
+            <Text style={styles.FormButtonText}>S'enregistrer</Text>
+          </Pressable>
+        </View>
       </View>
     );
   }
+  return (
+    <View>
+      <Button title="deco" onPress={() => auth().signOut()} />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
+  buttonContainer: {
+    alignItems: "center",
+  },
   formButton: {
     padding: 8,
     marginHorizontal: "auto",
-    marginVertical: 8,
+    marginVertical: 24,
     backgroundColor: "#48BBEC",
     borderColor: "#48BBEC",
     borderWidth: 1,

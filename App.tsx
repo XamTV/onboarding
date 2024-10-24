@@ -7,8 +7,12 @@ import { DataContextProvider } from "./src/context/FetchContext";
 import { FavoriteContextProvider } from "./src/context/FavoriteContext";
 import FavoritePage from "./src/pages/FavoritePage";
 import SignupPage from "./src/pages/SignupPage";
+import SigninPage from "./src/pages/SigninPage";
+import { Button } from "react-native";
+import auth from "@react-native-firebase/auth";
 
 export type StackParamList = {
+  SigninPage: undefined;
   HomePage: undefined;
   BookPage: { bookId: number; displayTitle: string };
   ChapterPage: { chapterId: number; title: string; bookId: number };
@@ -23,8 +27,20 @@ function App() {
     <NavigationContainer>
       <DataContextProvider>
         <FavoriteContextProvider>
-          <Stack.Navigator initialRouteName="HomePage">
-            <Stack.Screen name="HomePage" component={HomePage} />
+          <Stack.Navigator initialRouteName="SigninPage">
+            <Stack.Screen name="SigninPage" component={SigninPage} />
+            <Stack.Screen
+              name="HomePage"
+              component={HomePage}
+              options={{
+                headerLeft: () => (
+                  <Button
+                    title="Deconnexion"
+                    onPress={() => auth().signOut()}
+                  />
+                ),
+              }}
+            />
             <Stack.Screen
               name="BookPage"
               component={BookPage}
