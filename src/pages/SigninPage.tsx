@@ -6,6 +6,7 @@ import ToastManager, { Toast } from "toastify-react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../RootNavigator";
 import useAuthContext from "../context/AuthContext";
+import { Link } from "@react-navigation/native";
 
 type Props = NativeStackScreenProps<StackParamList, "SigninPage">;
 
@@ -70,15 +71,10 @@ export default function SigninPage({ navigation }: Props) {
           <Pressable style={styles.formButton} onPress={handleConnexion}>
             <Text style={styles.FormButtonText}>Se connecter</Text>
           </Pressable>
-          <Text>Pas de compte ?</Text>
-          <Pressable
-            style={styles.formButton}
-            onPress={() => {
-              navigation.navigate("SignupPage");
-            }}
-          >
-            <Text style={styles.FormButtonText}>S'enregistrer</Text>
-          </Pressable>
+          <Link style={styles.link} to={{ screen: "SignupPage" }}>
+            {" "}
+            Pas de compte ?{" "}
+          </Link>
         </View>
       </View>
     );
@@ -114,6 +110,10 @@ const styles = StyleSheet.create({
   formInput: {
     marginTop: 8,
   },
+  link: {
+    color: "purple",
+  },
+
   toastText: {
     fontSize: 16,
     maxWidth: 200,
