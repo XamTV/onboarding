@@ -35,11 +35,11 @@ export default function SignupPage({ navigation }: Props) {
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
-          Toast.error("Cet adresse email est deja utilisé");
+          Toast.error("Cette adresse email est deja utilisé");
         }
 
         if (error.code === "auth/invalid-email") {
-          Toast.error("adresse email invalide");
+          Toast.error("Cette adresse email est invalide");
         }
 
         console.error(error);
