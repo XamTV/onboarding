@@ -1,30 +1,20 @@
-import { useEffect, useState } from "react";
-import { Button, Pressable, StyleSheet, Text, View } from "react-native";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import auth from "@react-native-firebase/auth";
 import { TextInput } from "react-native-paper";
 import ToastManager, { Toast } from "toastify-react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { StackParamList } from "../../App";
+import { StackParamList } from "../../RootNavigator";
+import useAuthContext from "../context/AuthContext";
 
 type Props = NativeStackScreenProps<StackParamList, "SignupPage">;
 
 export default function SignupPage({ navigation }: Props) {
-  const [initializing, setInitializing] = useState(false);
-  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
+  const { user, initializing } = useAuthContext();
 
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
   const [confirmPassword, setconfirmPassword] = useState<string>();
-
-  const onAuthUserChange = (user: FirebaseAuthTypes.User | null) => {
-    setUser(user);
-    if (initializing) setInitializing(false);
-  };
-
-  useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthUserChange);
-    return subscriber;
-  }, []);
 
   const createUser = () => {
     if (!password || password.length < 6) {

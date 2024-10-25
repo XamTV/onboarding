@@ -4,7 +4,7 @@ import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 import { TextInput } from "react-native-paper";
 import ToastManager, { Toast } from "toastify-react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { StackParamList } from "../../App";
+import { StackParamList } from "../../RootNavigator";
 
 type Props = NativeStackScreenProps<StackParamList, "SigninPage">;
 
@@ -94,11 +94,6 @@ export default function SigninPage({ navigation }: Props) {
       </View>
     );
   }
-  return (
-    <View>
-      <Button title="deco" onPress={() => auth().signOut()} />
-    </View>
-  );
 }
 
 const styles = StyleSheet.create({

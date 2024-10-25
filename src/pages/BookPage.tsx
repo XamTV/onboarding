@@ -2,7 +2,7 @@ import { View, FlatList, Pressable, Text, StyleSheet } from "react-native";
 import { useCallback, useEffect, useState } from "react";
 import ChapterCard from "../components/ChapterCard";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { StackParamList } from "../../App";
+import { StackParamList } from "../../RootNavigator";
 import useFavorite from "../context/FavoriteContext";
 import useData, { Chapter } from "../context/FetchContext";
 import axios from "axios";

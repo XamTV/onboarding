@@ -13,14 +13,16 @@ import useData, { Book } from "../context/FetchContext";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Modal, Portal, Provider } from "react-native-paper";
 import { useMemo, useState } from "react";
-import { StackParamList } from "../../App";
+import { StackParamList } from "../../RootNavigator";
 import useFavorite from "../context/FavoriteContext";
+import useAuthContext from "../context/AuthContext";
 
 type Props = NativeStackScreenProps<StackParamList, "HomePage">;
 
 export default function HomePage({ navigation }: Props) {
   const { books } = useData();
   const { liked } = useFavorite();
+  const { user, initializing } = useAuthContext();
 
   const [modalHandle, setModalHandle] = useState<{
     visible: boolean;
@@ -117,31 +119,38 @@ export default function HomePage({ navigation }: Props) {
         </Modal>
       </Portal>
       <View style={style.container}>
-        <Button
-          title={"S'enregistrer"}
-          onPress={() => navigation.navigate("SignupPage")}
-        />
+        <Text style={style.buttonText}> Bonjour, {user?.email} </Text>
+        <View style={style.buttonContainer}>
+          <Pressable
+            style={style.buttons}
+            onPress={() => {
+              setModalHandle({ visible: true, selected: "Levels" });
+            }}
+          >
+            <Text style={style.buttonText}>
+              {levelFilter ? `${levelFilter}` : "Tous niveaux"}
+            </Text>
+          </Pressable>
+          <Pressable
+            style={style.buttons}
+            onPress={() => {
+              setModalHandle({ visible: true, selected: "Subject" });
+            }}
+          >
+            <Text style={style.buttonText}>
+              {subjectFilter ? `${subjectFilter}` : "Tous sujets"}
+            </Text>
+          </Pressable>
 
-        <Button
-          onPress={() => {
-            setModalHandle({ visible: true, selected: "Levels" });
-          }}
-          title={levelFilter ? `${levelFilter}` : "Tous niveaux"}
-        />
-        <Button
-          onPress={() => {
-            setModalHandle({ visible: true, selected: "Subject" });
-          }}
-          title={subjectFilter ? `${subjectFilter}` : "Tous sujets"}
-        />
-        <Pressable
-          style={style.buttons}
-          onPress={() => {
-            navigation.navigate("FavoritePage");
-          }}
-        >
-          <Text>Mes Favoris</Text>
-        </Pressable>
+          <Pressable
+            style={style.buttons}
+            onPress={() => {
+              navigation.navigate("FavoritePage");
+            }}
+          >
+            <Text style={style.buttonText}>Mes Favoris</Text>
+          </Pressable>
+        </View>
         <FlatList<Book>
           data={filteredData}
           renderItem={({ item }) =>
@@ -197,5 +206,14 @@ const style = StyleSheet.create({
     marginVertical: 16,
     padding: 8,
     borderRadius: 32,
+    minWidth: 100,
+  },
+  buttonContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+  },
+  buttonText: {
+    textAlign: "center",
+    fontSize: 16,
   },
 });

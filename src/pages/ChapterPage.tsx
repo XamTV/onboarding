@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import * as R from "remeda";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { StackParamList } from "../../App";
+import { StackParamList } from "../../RootNavigator";
 import PageCard from "../components/PageCard";
 import useFavorite from "../context/FavoriteContext";
 
