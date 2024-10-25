@@ -24,9 +24,7 @@ export default function SigninPage({ navigation }: Props) {
     }
     auth()
       .signInWithEmailAndPassword(email, password)
-      .then(() => {
-        navigation.navigate("HomePage");
-      })
+
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
           Toast.error("Cet adresse email est deja utilisé");
