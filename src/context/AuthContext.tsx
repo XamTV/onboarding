@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
 
 interface IAuthContext {
@@ -12,10 +12,13 @@ export const AuthContextProvider = ({ children }: React.PropsWithChildren) => {
   const [initializing, setInitializing] = useState(false);
   const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
 
-  const onAuthUserChange = (user: FirebaseAuthTypes.User | null) => {
-    setUser(user);
-    if (initializing) setInitializing(false);
-  };
+  const onAuthUserChange = useCallback(
+    (user: FirebaseAuthTypes.User | null) => {
+      setUser(user);
+      if (initializing) setInitializing(false);
+    },
+    []
+  );
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(onAuthUserChange);
