@@ -35,8 +35,10 @@ export default function SigninPage({ navigation }: Props) {
         if (error.code === "auth/invalid-email") {
           Toast.error("adresse email invalide");
         }
-
-        Toast.error(`Email et/ou mot de passe invalide`);
+        if (error.code === "auth/invalid-credential") {
+          Toast.error("Email et/ou mot de passe invalide");
+        }
+        console.error(`${error}`);
       });
   };
 
