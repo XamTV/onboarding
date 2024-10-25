@@ -32,9 +32,6 @@ export default function SignupPage({ navigation }: Props) {
       .then(() => {
         Toast.success("compte crée");
         auth().signOut();
-        setTimeout(() => {
-          navigation.navigate("SigninPage");
-        }, 3000);
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
