@@ -41,7 +41,6 @@ export default function SigninPage({ navigation }: Props) {
   };
 
   if (initializing) return null;
-  console.log(user);
 
   if (!user) {
     return (

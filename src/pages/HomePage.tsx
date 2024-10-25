@@ -64,9 +64,6 @@ export default function HomePage({ navigation }: Props) {
       </View>
     );
   }
-
-  console.info(liked);
-
   return (
     <Provider>
       <Portal>
