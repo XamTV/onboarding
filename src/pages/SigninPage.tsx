@@ -5,25 +5,15 @@ import { TextInput } from "react-native-paper";
 import ToastManager, { Toast } from "toastify-react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../RootNavigator";
+import useAuthContext from "../context/AuthContext";
 
 type Props = NativeStackScreenProps<StackParamList, "SigninPage">;
 
 export default function SigninPage({ navigation }: Props) {
-  const [initializing, setInitializing] = useState(false);
-  const [user, setUser] = useState<FirebaseAuthTypes.User | null>(null);
-
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
 
-  const onAuthUserChange = (user: FirebaseAuthTypes.User | null) => {
-    setUser(user);
-    if (initializing) setInitializing(false);
-  };
-
-  useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthUserChange);
-    return subscriber;
-  }, []);
+  const { user, initializing } = useAuthContext();
 
   const handleConnexion = () => {
     if (!password) {
