@@ -25,37 +25,35 @@ function RootNavigator() {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="SigninPage">
-        <Stack.Screen name="SigninPage" component={SigninPage} />
-        <Stack.Screen name="SignupPage" component={SignupPage} />
-        {user ? (
-          <>
-            <Stack.Screen
-              name="HomePage"
-              component={HomePage}
-              options={{
-                headerLeft: () => (
-                  <Button
-                    title="Deconnexion"
-                    onPress={() => auth().signOut()}
-                  />
-                ),
-              }}
-            />
-            <Stack.Screen
-              name="BookPage"
-              component={BookPage}
-              options={({ route }) => ({ title: route.params.displayTitle })}
-            />
-            <Stack.Screen
-              name="ChapterPage"
-              component={ChapterPage}
-              options={({ route }) => ({ title: route.params.title })}
-            />
-            <Stack.Screen name="FavoritePage" component={FavoritePage} />
-          </>
-        ) : null}
-      </Stack.Navigator>
+      {user ? (
+        <Stack.Navigator initialRouteName={"HomePage"}>
+          <Stack.Screen
+            name="HomePage"
+            component={HomePage}
+            options={{
+              headerLeft: () => (
+                <Button title="Deconnexion" onPress={() => auth().signOut()} />
+              ),
+            }}
+          />
+          <Stack.Screen
+            name="BookPage"
+            component={BookPage}
+            options={({ route }) => ({ title: route.params.displayTitle })}
+          />
+          <Stack.Screen
+            name="ChapterPage"
+            component={ChapterPage}
+            options={({ route }) => ({ title: route.params.title })}
+          />
+          <Stack.Screen name="FavoritePage" component={FavoritePage} />
+        </Stack.Navigator>
+      ) : (
+        <Stack.Navigator initialRouteName={"SigninPage"}>
+          <Stack.Screen name="SigninPage" component={SigninPage} />
+          <Stack.Screen name="SignupPage" component={SignupPage} />
+        </Stack.Navigator>
+      )}
     </NavigationContainer>
   );
 }
