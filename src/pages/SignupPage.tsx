@@ -13,23 +13,24 @@ export default function SignupPage({ navigation }: Props) {
   const { user, initializing } = useAuthContext();
 
   const [email, setEmail] = useState<string>();
-  const [password, setPassword] = useState<string>();
+  const [password, setPassword] = useState<string>("");
   const [confirmPassword, setconfirmPassword] = useState<string>();
 
   const createUser = () => {
-    if (!password || password.length < 6) {
+    if (!email) {
+      return Toast.error("L'adresse email est requise");
+    }
+    if (password.length < 6) {
       return Toast.error("Votre mot de passe doit faire plus de 6 caractères");
     }
     if (password !== confirmPassword) {
       return Toast.error("Les mots de passe ne sont pas identique");
     }
-    if (!email || email.length < 1) {
-      return Toast.error("Email invalide");
-    }
+
     auth()
       .createUserWithEmailAndPassword(email, password)
       .then(() => {
-        Toast.success("compte créer");
+        Toast.success("compte crée");
         auth().signOut();
         setTimeout(() => {
           navigation.navigate("SigninPage");
