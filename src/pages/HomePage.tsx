@@ -119,7 +119,12 @@ export default function HomePage({ navigation }: Props) {
         </Modal>
       </Portal>
       <View style={style.container}>
-        <Text style={style.buttonText}> Bonjour, {user?.email} </Text>
+        <Text style={style.buttonText}>
+          {" "}
+          {user && user.email !== null
+            ? `Bonjour, ${user.email}`
+            : "Bonjour"}{" "}
+        </Text>
         <View style={style.buttonContainer}>
           <Pressable
             style={style.buttons}
