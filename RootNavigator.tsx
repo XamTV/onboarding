@@ -21,7 +21,7 @@ export type StackParamList = {
 function RootNavigator() {
   const Stack = createNativeStackNavigator<StackParamList>();
 
-  const { user, initializing } = useAuthContext();
+  const { user } = useAuthContext();
 
   return (
     <NavigationContainer>

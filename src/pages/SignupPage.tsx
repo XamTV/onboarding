@@ -6,6 +6,7 @@ import ToastManager, { Toast } from "toastify-react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../RootNavigator";
 import useAuthContext from "../context/AuthContext";
+import firestore from "@react-native-firebase/firestore";
 
 type Props = NativeStackScreenProps<StackParamList, "SignupPage">;
 
@@ -29,9 +30,18 @@ export default function SignupPage({ navigation }: Props) {
 
     auth()
       .createUserWithEmailAndPassword(email, password)
-      .then(() => {
+      .then((res) => {
+        firestore()
+          .collection("login")
+          .doc(`${res.user.uid}`)
+          .set({
+            email: res.user.email,
+            uid: res.user.uid,
+            likedBooks: [null],
+            likedChapters: [null],
+          });
+
         Toast.success("compte crée");
-        auth().signOut();
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {

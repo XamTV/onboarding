@@ -6,6 +6,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../RootNavigator";
 import PageCard from "../components/PageCard";
 import useFavorite from "../context/FavoriteContext";
+import useAuthContext from "../context/AuthContext";
 
 type Page = {
   id: number;
@@ -29,7 +30,8 @@ type Props = NativeStackScreenProps<StackParamList, "ChapterPage">;
 
 export default function ChapterPage({ navigation, route }: Props) {
   const { chapterId, bookId } = route.params;
-  const { liked, toggleLikedChapter } = useFavorite();
+  const { liked, toggleLikedChapter, storeFavoriteChapters } = useFavorite();
+  const { user } = useAuthContext();
 
   const [pageDetail, setPageDetail] = useState<Page[]>();
 
@@ -60,10 +62,17 @@ export default function ChapterPage({ navigation, route }: Props) {
     [pageDetail]
   );
 
-  const onFavoritePress = useCallback(
-    () => toggleLikedChapter(bookId, chapterId),
-    [chapterId]
-  );
+  const onFavoritePress = useCallback(() => {
+    if (user !== null) {
+      toggleLikedChapter(bookId, chapterId);
+    }
+  }, [chapterId]);
+
+  useEffect(() => {
+    if (user !== null) {
+      storeFavoriteChapters(user.uid);
+    }
+  }, [liked.chapters]);
 
   const renderItem = useCallback(
     ({ item }: { item: Page }) => {

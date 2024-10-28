@@ -1,10 +1,13 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useCallback, useContext, useState } from "react";
 import { useEffect } from "react";
+import firestore from "@react-native-firebase/firestore";
 
 interface IFavoriteContext {
   toggleLikedBook: (id: number) => void;
   toggleLikedChapter: (bookIds: number, chapterId: number) => void;
+  storeFavoriteBooks: (uid: string) => void;
+  storeFavoriteChapters: (uid: string) => void;
   liked: Favorite;
 }
 
@@ -22,18 +25,27 @@ export const FavoriteContextProvider = ({
 
   const storageName = "favorite";
 
-  useEffect(() => {
-    const storeFavoriteBooks = async () => {
-      try {
-        const jsonValue = JSON.stringify(liked);
-        await AsyncStorage.setItem(storageName, jsonValue);
-      } catch (e) {
-        console.error(`Can't Store ${storageName}`);
-      }
-    };
+  const storeFavoriteBooks = useCallback(
+    (uid: string) => {
+      firestore()
+        .doc(`login/${uid}`)
+        .update({
+          likedBooks: [liked.books],
+        });
+    },
+    [liked.books]
+  );
 
-    storeFavoriteBooks();
-  }, [liked]);
+  const storeFavoriteChapters = useCallback(
+    (uid: string) => {
+      firestore()
+        .doc(`login/${uid}`)
+        .update({
+          likedChapters: [liked.chapters],
+        });
+    },
+    [liked.chapters]
+  );
 
   const toggleLikedBook = useCallback((id: number) => {
     setLiked((prev) => ({
@@ -41,6 +53,7 @@ export const FavoriteContextProvider = ({
       books: { ...prev.books, [id]: !prev.books[id] },
     }));
   }, []);
+
   const toggleLikedChapter = useCallback(
     (bookId: number, chapterId: number) => {
       setLiked((prev) => ({
@@ -54,22 +67,14 @@ export const FavoriteContextProvider = ({
     []
   );
 
-  const readFavoriteBooks = useCallback(() => {
-    AsyncStorage.getItem(storageName)
-      .then((jsonValue) => {
-        if (jsonValue != null) {
-          setLiked(JSON.parse(jsonValue));
-        }
-      })
-      .catch(console.log);
-  }, []);
-
-  useEffect(readFavoriteBooks, []);
+  //TODO Read favoriteBooks and FavoriteChapters using a Firestore Subscription inside the app;
 
   const contextValue: IFavoriteContext = {
     liked,
     toggleLikedBook,
     toggleLikedChapter,
+    storeFavoriteBooks,
+    storeFavoriteChapters,
   };
 
   return (

@@ -2,7 +2,8 @@ import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { Card } from "react-native-paper";
 import useData, { Chapter } from "../context/FetchContext";
 import useFavorite from "../context/FavoriteContext";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
+import useAuthContext from "../context/AuthContext";
 
 type Props = {
   onPress: () => void;
@@ -17,6 +18,7 @@ export default function FavoriteCard({
   picture,
   bookId,
 }: Readonly<Props>) {
+  const { user } = useAuthContext();
   const { chapterCache } = useData();
   const { liked, toggleLikedBook, toggleLikedChapter } = useFavorite();
 
@@ -36,7 +38,9 @@ export default function FavoriteCard({
         <Text style={styles.chapterTitle}>{item.title}</Text>
 
         <Pressable
-          onPress={() => toggleLikedChapter(bookId, item.id)}
+          onPress={() => {
+            toggleLikedChapter(bookId, item.id);
+          }}
           style={styles.chapterPressable}
         >
           <Text>X</Text>
