@@ -12,9 +12,9 @@ type Props = NativeStackScreenProps<StackParamList, "SignupPage">;
 export default function SignupPage({ navigation }: Props) {
   const { user, initializing } = useAuthContext();
 
-  const [email, setEmail] = useState<string>();
-  const [password, setPassword] = useState<string>("");
-  const [confirmPassword, setconfirmPassword] = useState<string>();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setconfirmPassword] = useState("");
 
   const createUser = () => {
     if (!email) {
