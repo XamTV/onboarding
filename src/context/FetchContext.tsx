@@ -2,6 +2,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -124,12 +125,15 @@ export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
       });
   }, []);
 
-  const contextValue: IDataContext = {
-    books,
-    loading,
-    fetchChapter,
-    chapterCache,
-  };
+  const contextValue: IDataContext = useMemo(
+    () => ({
+      books,
+      loading,
+      fetchChapter,
+      chapterCache,
+    }),
+    [books, loading, fetchChapter, chapterCache]
+  );
 
   return (
     <DataContext.Provider value={contextValue}>{children}</DataContext.Provider>

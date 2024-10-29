@@ -12,17 +12,23 @@ import BookCard from "../components/BookCard";
 import useData, { Book } from "../context/FetchContext";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Modal, Portal, Provider } from "react-native-paper";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { StackParamList } from "../../RootNavigator";
 import useFavorite from "../context/FavoriteContext";
 import useAuthContext from "../context/AuthContext";
 
 type Props = NativeStackScreenProps<StackParamList, "HomePage">;
 
-export default function HomePage({ navigation }: Props) {
+export default function HomePage({ navigation }: Readonly<Props>) {
   const { books } = useData();
-  const { liked } = useFavorite();
-  const { user, initializing } = useAuthContext();
+  const { getFavoritesByUser } = useFavorite();
+  const { user } = useAuthContext();
+
+  useEffect(() => {
+    if (user !== null) {
+      getFavoritesByUser(user.uid);
+    }
+  }, [user]);
 
   const [modalHandle, setModalHandle] = useState<{
     visible: boolean;

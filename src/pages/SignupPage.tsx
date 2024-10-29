@@ -3,19 +3,15 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import auth from "@react-native-firebase/auth";
 import { TextInput } from "react-native-paper";
 import ToastManager, { Toast } from "toastify-react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { StackParamList } from "../../RootNavigator";
 import useAuthContext from "../context/AuthContext";
 import firestore from "@react-native-firebase/firestore";
 
-type Props = NativeStackScreenProps<StackParamList, "SignupPage">;
-
-export default function SignupPage({ navigation }: Props) {
+export default function SignupPage() {
   const { user, initializing } = useAuthContext();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setconfirmPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
   const createUser = () => {
     if (!email) {
@@ -74,7 +70,7 @@ export default function SignupPage({ navigation }: Props) {
           value={email}
           onChangeText={(email) => setEmail(email)}
           mode="outlined"
-          error={!email ? true : false}
+          error={!email}
         />
         <TextInput
           style={styles.formInput}
@@ -83,16 +79,16 @@ export default function SignupPage({ navigation }: Props) {
           onChangeText={(password) => setPassword(password)}
           secureTextEntry={true}
           mode="outlined"
-          error={!password ? true : false}
+          error={!password}
         />
         <TextInput
           style={styles.formInput}
           label="confirmation du mot de passe *"
           value={confirmPassword}
-          onChangeText={(password) => setconfirmPassword(password)}
+          onChangeText={(password) => setConfirmPassword(password)}
           secureTextEntry={true}
           mode="outlined"
-          error={!confirmPassword ? true : false}
+          error={!confirmPassword}
         />
 
         <Pressable style={styles.formButton} onPress={createUser}>

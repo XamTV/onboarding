@@ -2,7 +2,7 @@ import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { Card } from "react-native-paper";
 import useData, { Chapter } from "../context/FetchContext";
 import useFavorite from "../context/FavoriteContext";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import useAuthContext from "../context/AuthContext";
 
 type Props = {
@@ -39,7 +39,9 @@ export default function FavoriteCard({
 
         <Pressable
           onPress={() => {
-            toggleLikedChapter(bookId, item.id);
+            if (user !== null) {
+              toggleLikedChapter(bookId, item.id, user.uid);
+            }
           }}
           style={styles.chapterPressable}
         >
@@ -54,21 +56,29 @@ export default function FavoriteCard({
       <Card.Title titleStyle={styles.title} title={displayTitle} />
       {liked.books[bookId] ? <Card.Cover source={{ uri: picture }} /> : null}
 
-      {chapterCache[bookId].some((chapter) => liked.chapters[chapter.id]) ? (
+      {chapterCache[bookId]?.some((chapter) => liked.chapters[chapter.id]) ? (
         <Text style={styles.subtitleText}>Chapitres</Text>
       ) : null}
 
       <Card.Content>
         <FlatList
-          data={chapterCache[bookId].filter(
-            (chapter) => liked.chapters[chapter.id]
-          )}
+          data={
+            chapterCache[bookId]
+              ? chapterCache[bookId].filter(
+                  (chapter) => liked.chapters[chapter.id]
+                )
+              : []
+          }
           renderItem={renderItem}
         />
       </Card.Content>
       {liked.books[bookId] ? (
         <Pressable
-          onPress={() => toggleLikedBook(bookId)}
+          onPress={() => {
+            if (user !== null) {
+              toggleLikedBook(bookId, user.uid);
+            }
+          }}
           style={styles.chapterPressable}
         >
           <Text>Supprimer le livre des favoris</Text>

@@ -1,32 +1,27 @@
 import { View, FlatList, Pressable, Text, StyleSheet } from "react-native";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import ChapterCard from "../components/ChapterCard";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../RootNavigator";
 import useFavorite from "../context/FavoriteContext";
 import useData, { Chapter } from "../context/FetchContext";
-import axios from "axios";
 import useAuthContext from "../context/AuthContext";
-import firestore from "@react-native-firebase/firestore";
 
 type Props = NativeStackScreenProps<StackParamList, "BookPage">;
 
 export default function BookPage({ navigation, route }: Readonly<Props>) {
-  const { toggleLikedBook, liked, storeFavoriteBooks } = useFavorite();
+  const { toggleLikedBook, liked } = useFavorite();
   const { chapterCache, fetchChapter } = useData();
   const { user } = useAuthContext();
 
   const { bookId } = route.params;
 
   const onFavoritePress = useCallback(() => {
-    toggleLikedBook(bookId);
-  }, [bookId]);
-
-  useEffect(() => {
     if (user !== null) {
-      storeFavoriteBooks(user.uid);
+      toggleLikedBook(bookId, user.uid);
     }
-  }, [liked.books]);
+  }, [bookId, user]);
+
   useEffect(() => fetchChapter(bookId), [bookId]);
 
   const renderItem = useCallback(({ item }: { item: Chapter }) => {

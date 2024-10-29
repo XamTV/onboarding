@@ -28,9 +28,9 @@ type PageQuery = {
 
 type Props = NativeStackScreenProps<StackParamList, "ChapterPage">;
 
-export default function ChapterPage({ navigation, route }: Props) {
+export default function ChapterPage({ route }: Readonly<Props>) {
   const { chapterId, bookId } = route.params;
-  const { liked, toggleLikedChapter, storeFavoriteChapters } = useFavorite();
+  const { liked, toggleLikedChapter } = useFavorite();
   const { user } = useAuthContext();
 
   const [pageDetail, setPageDetail] = useState<Page[]>();
@@ -64,15 +64,9 @@ export default function ChapterPage({ navigation, route }: Props) {
 
   const onFavoritePress = useCallback(() => {
     if (user !== null) {
-      toggleLikedChapter(bookId, chapterId);
+      toggleLikedChapter(bookId, chapterId, user.uid);
     }
   }, [chapterId]);
-
-  useEffect(() => {
-    if (user !== null) {
-      storeFavoriteChapters(user.uid);
-    }
-  }, [liked.chapters]);
 
   const renderItem = useCallback(
     ({ item }: { item: Page }) => {

@@ -1,16 +1,12 @@
-import { useEffect, useState } from "react";
-import { Button, Pressable, StyleSheet, Text, View } from "react-native";
-import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
+import { useState } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import auth from "@react-native-firebase/auth";
 import { TextInput } from "react-native-paper";
 import ToastManager, { Toast } from "toastify-react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { StackParamList } from "../../RootNavigator";
 import useAuthContext from "../context/AuthContext";
 import { Link } from "@react-navigation/native";
 
-type Props = NativeStackScreenProps<StackParamList, "SigninPage">;
-
-export default function SigninPage({ navigation }: Props) {
+export default function SigninPage() {
   const [email, setEmail] = useState<string>();
   const [password, setPassword] = useState<string>();
 

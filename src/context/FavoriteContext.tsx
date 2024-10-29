@@ -1,13 +1,11 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useCallback, useContext, useState } from "react";
-import { useEffect } from "react";
+import React, { useCallback, useContext, useMemo, useState } from "react";
 import firestore from "@react-native-firebase/firestore";
 
 interface IFavoriteContext {
-  toggleLikedBook: (id: number) => void;
-  toggleLikedChapter: (bookIds: number, chapterId: number) => void;
-  storeFavoriteBooks: (uid: string) => void;
-  storeFavoriteChapters: (uid: string) => void;
+  toggleLikedBook: (id: number, uid: string) => void;
+  toggleLikedChapter: (bookIds: number, chapterId: number, uid: string) => void;
+  getFavoritesByUser: (uid: string) => void;
+
   liked: Favorite;
 }
 
@@ -23,59 +21,64 @@ export const FavoriteContextProvider = ({
 }: React.PropsWithChildren) => {
   const [liked, setLiked] = useState<Favorite>({ books: {}, chapters: {} });
 
-  const storageName = "favorite";
-
-  const storeFavoriteBooks = useCallback(
-    (uid: string) => {
+  const toggleLikedBook = useCallback((id: number, uid: string) => {
+    setLiked((prev) => {
+      const updatedBooks = { ...prev.books, [id]: !prev.books[id] };
       firestore()
         .doc(`login/${uid}`)
         .update({
-          likedBooks: [liked.books],
+          likedBooks: [updatedBooks],
         });
-    },
-    [liked.books]
-  );
-
-  const storeFavoriteChapters = useCallback(
-    (uid: string) => {
-      firestore()
-        .doc(`login/${uid}`)
-        .update({
-          likedChapters: [liked.chapters],
-        });
-    },
-    [liked.chapters]
-  );
-
-  const toggleLikedBook = useCallback((id: number) => {
-    setLiked((prev) => ({
-      ...prev,
-      books: { ...prev.books, [id]: !prev.books[id] },
-    }));
+      return {
+        ...prev,
+        books: updatedBooks,
+      };
+    });
   }, []);
 
   const toggleLikedChapter = useCallback(
-    (bookId: number, chapterId: number) => {
-      setLiked((prev) => ({
-        ...prev,
-        chapters: {
+    (bookId: number, chapterId: number, uid: string) => {
+      setLiked((prev) => {
+        const updatedChapters = {
           ...prev.chapters,
           [chapterId]: prev.chapters[chapterId] ? 0 : bookId,
-        },
-      }));
+        };
+        firestore()
+          .doc(`login/${uid}`)
+          .update({
+            likedChapters: [updatedChapters],
+          });
+        return {
+          ...prev,
+          chapters: updatedChapters,
+        };
+      });
     },
     []
   );
 
-  //TODO Read favoriteBooks and FavoriteChapters using a Firestore Subscription inside the app;
+  const getFavoritesByUser = useCallback((uid: string) => {
+    firestore()
+      .doc(`login/${uid}`)
+      .get()
+      .then((res) => {
+        const userData = res.data();
+        setLiked({
+          books: userData?.likedBooks[0] || {},
+          chapters: userData?.likedChapters[0] || {},
+        });
+      });
+  }, []);
 
-  const contextValue: IFavoriteContext = {
-    liked,
-    toggleLikedBook,
-    toggleLikedChapter,
-    storeFavoriteBooks,
-    storeFavoriteChapters,
-  };
+  const contextValue: IFavoriteContext = useMemo(
+    () => ({
+      liked,
+      toggleLikedBook,
+      toggleLikedChapter,
+      getFavoritesByUser,
+    }),
+    [liked, toggleLikedBook, toggleLikedChapter, getFavoritesByUser]
+  );
 
   return (
     <FavoriteContext.Provider value={contextValue}>
