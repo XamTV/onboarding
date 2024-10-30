@@ -56,13 +56,9 @@ export default function FavoriteCard({
 
       <Card.Content>
         <FlatList
-          data={
-            chapterCache[bookId]
-              ? chapterCache[bookId].filter(
-                  (chapter) => liked.chapters[chapter.id]
-                )
-              : []
-          }
+          data={chapterCache[bookId]?.filter(
+            (chapter) => liked.chapters[chapter.id]
+          )}
           renderItem={renderItem}
         />
       </Card.Content>
