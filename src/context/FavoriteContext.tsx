@@ -27,40 +27,46 @@ export const FavoriteContextProvider = ({
   const [liked, setLiked] = useState<Favorite>({ books: {}, chapters: {} });
   const { user } = useAuthContext();
 
-  const toggleLiked = useCallback((bookId: number, chapterId?: number) => {
-    if (user) {
-      if (bookId && chapterId) {
-        setLiked((prev) => {
-          const updatedChapters = {
-            ...prev.chapters,
-            [chapterId]: prev.chapters[chapterId] ? 0 : bookId,
-          };
-          firestore()
-            .doc(`login/${user.uid}`)
-            .update({
-              likedChapters: [updatedChapters],
-            });
-          return {
-            ...prev,
-            chapters: updatedChapters,
-          };
-        });
-      } else if (bookId && !chapterId) {
-        setLiked((prev) => {
-          const updatedBooks = { ...prev.books, [bookId]: !prev.books[bookId] };
-          firestore()
-            .doc(`login/${user.uid}`)
-            .update({
-              likedBooks: [updatedBooks],
-            });
-          return {
-            ...prev,
-            books: updatedBooks,
-          };
-        });
+  const toggleLiked = useCallback(
+    (bookId: number, chapterId?: number) => {
+      if (user) {
+        if (bookId && chapterId) {
+          setLiked((prev) => {
+            const updatedChapters = {
+              ...prev.chapters,
+              [chapterId]: prev.chapters[chapterId] ? 0 : bookId,
+            };
+            firestore()
+              .doc(`login/${user.uid}`)
+              .update({
+                likedChapters: [updatedChapters],
+              });
+            return {
+              ...prev,
+              chapters: updatedChapters,
+            };
+          });
+        } else if (bookId && !chapterId) {
+          setLiked((prev) => {
+            const updatedBooks = {
+              ...prev.books,
+              [bookId]: !prev.books[bookId],
+            };
+            firestore()
+              .doc(`login/${user.uid}`)
+              .update({
+                likedBooks: [updatedBooks],
+              });
+            return {
+              ...prev,
+              books: updatedBooks,
+            };
+          });
+        }
       }
-    }
-  }, []);
+    },
+    [user]
+  );
 
   useEffect(() => {
     if (user) {
