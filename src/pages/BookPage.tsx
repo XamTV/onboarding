@@ -5,22 +5,20 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../RootNavigator";
 import useFavorite from "../context/FavoriteContext";
 import useData, { Chapter } from "../context/FetchContext";
-import useAuthContext from "../context/AuthContext";
 
 type Props = NativeStackScreenProps<StackParamList, "BookPage">;
 
 export default function BookPage({ navigation, route }: Readonly<Props>) {
   const { toggleLikedBook, liked } = useFavorite();
   const { chapterCache, fetchChapter } = useData();
-  const { user } = useAuthContext();
 
   const { bookId } = route.params;
 
-  const onFavoritePress = useCallback(() => {
-    if (user !== null) {
-      toggleLikedBook(bookId, user.uid);
-    }
-  }, [bookId, user]);
+  const onFavoritePress = useCallback(
+    () => toggleLikedBook(bookId),
+
+    [bookId]
+  );
 
   useEffect(() => fetchChapter(bookId), [bookId]);
 

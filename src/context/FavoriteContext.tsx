@@ -9,8 +9,8 @@ import firestore from "@react-native-firebase/firestore";
 import useAuthContext from "./AuthContext";
 
 interface IFavoriteContext {
-  toggleLikedBook: (id: number, uid: string) => void;
-  toggleLikedChapter: (bookIds: number, chapterId: number, uid: string) => void;
+  toggleLikedBook: (id: number) => void;
+  toggleLikedChapter: (bookIds: number, chapterId: number) => void;
 
   liked: Favorite;
 }
@@ -28,38 +28,42 @@ export const FavoriteContextProvider = ({
   const [liked, setLiked] = useState<Favorite>({ books: {}, chapters: {} });
   const { user } = useAuthContext();
 
-  const toggleLikedBook = useCallback((id: number, uid: string) => {
-    setLiked((prev) => {
-      const updatedBooks = { ...prev.books, [id]: !prev.books[id] };
-      firestore()
-        .doc(`login/${uid}`)
-        .update({
-          likedBooks: [updatedBooks],
-        });
-      return {
-        ...prev,
-        books: updatedBooks,
-      };
-    });
-  }, []);
-
-  const toggleLikedChapter = useCallback(
-    (bookId: number, chapterId: number, uid: string) => {
+  const toggleLikedBook = useCallback((id: number) => {
+    if (user !== null) {
       setLiked((prev) => {
-        const updatedChapters = {
-          ...prev.chapters,
-          [chapterId]: prev.chapters[chapterId] ? 0 : bookId,
-        };
+        const updatedBooks = { ...prev.books, [id]: !prev.books[id] };
         firestore()
-          .doc(`login/${uid}`)
+          .doc(`login/${user.uid}`)
           .update({
-            likedChapters: [updatedChapters],
+            likedBooks: [updatedBooks],
           });
         return {
           ...prev,
-          chapters: updatedChapters,
+          books: updatedBooks,
         };
       });
+    }
+  }, []);
+
+  const toggleLikedChapter = useCallback(
+    (bookId: number, chapterId: number) => {
+      if (user !== null) {
+        setLiked((prev) => {
+          const updatedChapters = {
+            ...prev.chapters,
+            [chapterId]: prev.chapters[chapterId] ? 0 : bookId,
+          };
+          firestore()
+            .doc(`login/${user.uid}`)
+            .update({
+              likedChapters: [updatedChapters],
+            });
+          return {
+            ...prev,
+            chapters: updatedChapters,
+          };
+        });
+      }
     },
     []
   );
