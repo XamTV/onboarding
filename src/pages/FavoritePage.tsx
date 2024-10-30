@@ -12,13 +12,6 @@ export default function FavoritePage({ navigation }: Readonly<Props>) {
   const { books, fetchChapter } = useData();
   const { liked } = useFavorite();
 
-  const likedBookIds = useMemo(
-    () =>
-      Object.keys(liked.books)
-        .map((bookId) => parseInt(bookId))
-        .filter((bookId) => liked.books[bookId]),
-    [liked.books]
-  );
   const bookIdsOfLikedChapters = useMemo(
     () =>
       Object.values(liked.chapters).filter(
@@ -26,12 +19,6 @@ export default function FavoritePage({ navigation }: Readonly<Props>) {
       ),
     [liked.chapters]
   );
-  useEffect(() => {
-    likedBookIds.forEach((likedBookId) => fetchChapter(likedBookId));
-  }, [likedBookIds]);
-  useEffect(() => {
-    bookIdsOfLikedChapters.forEach((likedBookId) => fetchChapter(likedBookId));
-  }, [bookIdsOfLikedChapters]);
 
   return (
     <View>
