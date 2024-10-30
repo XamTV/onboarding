@@ -29,7 +29,7 @@ type Props = NativeStackScreenProps<StackParamList, "ChapterPage">;
 
 export default function ChapterPage({ route }: Readonly<Props>) {
   const { chapterId, bookId } = route.params;
-  const { liked, toggleLikedChapter } = useFavorite();
+  const { liked, toggleLiked } = useFavorite();
 
   const [pageDetail, setPageDetail] = useState<Page[]>();
 
@@ -61,7 +61,7 @@ export default function ChapterPage({ route }: Readonly<Props>) {
   );
 
   const onFavoritePress = useCallback(
-    () => toggleLikedChapter(bookId, chapterId),
+    () => toggleLiked(bookId, chapterId),
 
     [chapterId]
   );

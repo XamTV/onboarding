@@ -9,13 +9,13 @@ import useData, { Chapter } from "../context/FetchContext";
 type Props = NativeStackScreenProps<StackParamList, "BookPage">;
 
 export default function BookPage({ navigation, route }: Readonly<Props>) {
-  const { toggleLikedBook, liked } = useFavorite();
+  const { toggleLiked, liked } = useFavorite();
   const { chapterCache, fetchChapter } = useData();
 
   const { bookId } = route.params;
 
   const onFavoritePress = useCallback(
-    () => toggleLikedBook(bookId),
+    () => toggleLiked(bookId),
 
     [bookId]
   );

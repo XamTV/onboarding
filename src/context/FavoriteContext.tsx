@@ -9,8 +9,7 @@ import firestore from "@react-native-firebase/firestore";
 import useAuthContext from "./AuthContext";
 
 interface IFavoriteContext {
-  toggleLikedBook: (id: number) => void;
-  toggleLikedChapter: (bookIds: number, chapterId: number) => void;
+  toggleLiked: (bookIds: number, chapterId?: number) => void;
 
   liked: Favorite;
 }
@@ -28,26 +27,9 @@ export const FavoriteContextProvider = ({
   const [liked, setLiked] = useState<Favorite>({ books: {}, chapters: {} });
   const { user } = useAuthContext();
 
-  const toggleLikedBook = useCallback((id: number) => {
+  const toggleLiked = useCallback((bookId: number, chapterId?: number) => {
     if (user !== null) {
-      setLiked((prev) => {
-        const updatedBooks = { ...prev.books, [id]: !prev.books[id] };
-        firestore()
-          .doc(`login/${user.uid}`)
-          .update({
-            likedBooks: [updatedBooks],
-          });
-        return {
-          ...prev,
-          books: updatedBooks,
-        };
-      });
-    }
-  }, []);
-
-  const toggleLikedChapter = useCallback(
-    (bookId: number, chapterId: number) => {
-      if (user !== null) {
+      if (bookId && chapterId) {
         setLiked((prev) => {
           const updatedChapters = {
             ...prev.chapters,
@@ -64,9 +46,22 @@ export const FavoriteContextProvider = ({
           };
         });
       }
-    },
-    []
-  );
+      if (bookId && !chapterId) {
+        setLiked((prev) => {
+          const updatedBooks = { ...prev.books, [bookId]: !prev.books[bookId] };
+          firestore()
+            .doc(`login/${user.uid}`)
+            .update({
+              likedBooks: [updatedBooks],
+            });
+          return {
+            ...prev,
+            books: updatedBooks,
+          };
+        });
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (user) {
@@ -95,10 +90,9 @@ export const FavoriteContextProvider = ({
   const contextValue: IFavoriteContext = useMemo(
     () => ({
       liked,
-      toggleLikedBook,
-      toggleLikedChapter,
+      toggleLiked,
     }),
-    [liked, toggleLikedBook, toggleLikedChapter]
+    [liked, toggleLiked]
   );
 
   return (

@@ -3,7 +3,6 @@ import { Card } from "react-native-paper";
 import useData, { Chapter } from "../context/FetchContext";
 import useFavorite from "../context/FavoriteContext";
 import { useCallback } from "react";
-import useAuthContext from "../context/AuthContext";
 
 type Props = {
   onPress: () => void;
@@ -18,9 +17,8 @@ export default function FavoriteCard({
   picture,
   bookId,
 }: Readonly<Props>) {
-  const { user } = useAuthContext();
   const { chapterCache } = useData();
-  const { liked, toggleLikedBook, toggleLikedChapter } = useFavorite();
+  const { liked, toggleLiked } = useFavorite();
 
   const renderItem = useCallback(({ item }: { item: Chapter }) => {
     return (
@@ -38,11 +36,7 @@ export default function FavoriteCard({
         <Text style={styles.chapterTitle}>{item.title}</Text>
 
         <Pressable
-          onPress={() => {
-            if (user !== null) {
-              toggleLikedChapter(bookId, item.id, user.uid);
-            }
-          }}
+          onPress={() => toggleLiked(bookId, item.id)}
           style={styles.chapterPressable}
         >
           <Text>X</Text>
@@ -74,11 +68,7 @@ export default function FavoriteCard({
       </Card.Content>
       {liked.books[bookId] ? (
         <Pressable
-          onPress={() => {
-            if (user !== null) {
-              toggleLikedBook(bookId, user.uid);
-            }
-          }}
+          onPress={() => toggleLiked(bookId)}
           style={styles.chapterPressable}
         >
           <Text>Supprimer le livre des favoris</Text>
