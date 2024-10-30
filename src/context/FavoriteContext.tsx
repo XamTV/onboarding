@@ -1,10 +1,16 @@
-import React, { useCallback, useContext, useMemo, useState } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import firestore from "@react-native-firebase/firestore";
+import useAuthContext from "./AuthContext";
 
 interface IFavoriteContext {
   toggleLikedBook: (id: number, uid: string) => void;
   toggleLikedChapter: (bookIds: number, chapterId: number, uid: string) => void;
-  getFavoritesByUser: (uid: string) => void;
 
   liked: Favorite;
 }
@@ -20,6 +26,7 @@ export const FavoriteContextProvider = ({
   children,
 }: React.PropsWithChildren) => {
   const [liked, setLiked] = useState<Favorite>({ books: {}, chapters: {} });
+  const { user } = useAuthContext();
 
   const toggleLikedBook = useCallback((id: number, uid: string) => {
     setLiked((prev) => {
@@ -57,27 +64,37 @@ export const FavoriteContextProvider = ({
     []
   );
 
-  const getFavoritesByUser = useCallback((uid: string) => {
-    firestore()
-      .doc(`login/${uid}`)
-      .get()
-      .then((res) => {
-        const userData = res.data();
-        setLiked({
-          books: userData?.likedBooks[0] || {},
-          chapters: userData?.likedChapters[0] || {},
-        });
+  useEffect(() => {
+    if (user) {
+      const userDocRef = firestore().collection("login").doc(`${user.uid}`);
+      userDocRef.get().then((doc) => {
+        if (!doc.exists) {
+          userDocRef.set({
+            email: user.email,
+            uid: user.uid,
+            likedBooks: [],
+            likedChapters: [],
+          });
+          setLiked({ books: {}, chapters: {} });
+        }
+        if (doc.exists) {
+          const data = doc.data();
+          setLiked({
+            books: data?.likedBooks[0] || {},
+            chapters: data?.likedChapters[0] || {},
+          });
+        }
       });
-  }, []);
+    }
+  }, [user]);
 
   const contextValue: IFavoriteContext = useMemo(
     () => ({
       liked,
       toggleLikedBook,
       toggleLikedChapter,
-      getFavoritesByUser,
     }),
-    [liked, toggleLikedBook, toggleLikedChapter, getFavoritesByUser]
+    [liked, toggleLikedBook, toggleLikedChapter]
   );
 
   return (

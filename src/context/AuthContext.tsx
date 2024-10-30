@@ -6,7 +6,6 @@ import React, {
   useState,
 } from "react";
 import auth, { FirebaseAuthTypes } from "@react-native-firebase/auth";
-import firestore from "@react-native-firebase/firestore";
 
 interface IAuthContext {
   user: FirebaseAuthTypes.User | null;
@@ -31,20 +30,6 @@ export const AuthContextProvider = ({ children }: React.PropsWithChildren) => {
     const subscriber = auth().onAuthStateChanged(onAuthUserChange);
     return subscriber;
   }, []);
-
-  useEffect(() => {
-    if (user) {
-      firestore()
-        .collection("login")
-        .doc(`${user.uid}`)
-        .set({
-          email: user.email,
-          uid: user.uid,
-          likedBooks: [null],
-          likedChapters: [null],
-        });
-    }
-  }, [user]);
 
   const contextValue: IAuthContext = useMemo(
     () => ({
