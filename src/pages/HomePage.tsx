@@ -11,8 +11,8 @@ import {
 import BookCard from "../components/BookCard";
 import useData, { Book } from "../context/FetchContext";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Modal, Portal, Provider } from "react-native-paper";
-import { useMemo, useState } from "react";
+import { Modal, Portal, Provider, TextInput } from "react-native-paper";
+import { useEffect, useMemo, useState } from "react";
 import { StackParamList } from "../../RootNavigator";
 import useAuthContext from "../context/AuthContext";
 
@@ -28,6 +28,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
   }>({ visible: false, selected: undefined });
   const [levelFilter, setLevelFilter] = useState("");
   const [subjectFilter, setSubjectFilter] = useState("");
+  const [textFilter, setTextFilter] = useState(" ");
 
   const levels: string[] = useMemo(
     () => [
@@ -47,13 +48,21 @@ export default function HomePage({ navigation }: Readonly<Props>) {
     [books]
   );
 
+  const removeDiacritics = (text: string) =>
+    text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
   const filteredData = books.filter((book) => {
     const validLevel =
       !levelFilter || book.levels.some((level) => level.name === levelFilter);
     const validSubject =
       !subjectFilter ||
       book.subjects.some((subject) => subject.name === subjectFilter);
-    return validSubject && validLevel;
+    const validText =
+      !textFilter ||
+      removeDiacritics(book.displayTitle?.toLowerCase() || "").includes(
+        removeDiacritics(textFilter.toLowerCase())
+      );
+    return validSubject && validLevel && validText;
   });
 
   return user ? (
@@ -142,6 +151,13 @@ export default function HomePage({ navigation }: Readonly<Props>) {
             <Text style={style.buttonText}>Mes Favoris</Text>
           </Pressable>
         </View>
+        <TextInput
+          style={style.textFilterInput}
+          label="Rechercher un livre"
+          value={textFilter}
+          onChangeText={(textFilter) => setTextFilter(textFilter)}
+          mode="outlined"
+        />
         <FlatList<Book>
           data={filteredData}
           renderItem={({ item }) =>
@@ -210,5 +226,9 @@ const style = StyleSheet.create({
   buttonText: {
     textAlign: "center",
     fontSize: 16,
+  },
+  textFilterInput: {
+    minWidth: 200,
+    marginHorizontal: "auto",
   },
 });
