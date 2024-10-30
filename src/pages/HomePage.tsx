@@ -78,6 +78,9 @@ export default function HomePage({ navigation }: Readonly<Props>) {
     [textFilter]
   );
 
+  const removeDiacritics = (text: string) =>
+    text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
   const filteredData = books.filter((book) => {
     const validLevel =
       !levelFilter || book.levels.some((level) => level.name === levelFilter);
