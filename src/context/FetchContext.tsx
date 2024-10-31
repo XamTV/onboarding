@@ -97,7 +97,7 @@ export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
 
   const fetchChapter = useCallback((bookId: number) => {
     if (cachedChapterRef.current.has(bookId)) {
-      return console.info("Already in cache", bookId);
+      return console.info(chapterCache);
     }
     console.info("Not in cache");
 

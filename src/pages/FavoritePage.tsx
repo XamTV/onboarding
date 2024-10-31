@@ -4,12 +4,12 @@ import useFavorite from "../context/FavoriteContext";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../RootNavigator";
 import FavoriteCard from "../components/FavoriteCard";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
 type Props = NativeStackScreenProps<StackParamList, "FavoritePage">;
 
 export default function FavoritePage({ navigation }: Readonly<Props>) {
-  const { books, fetchChapter } = useData();
+  const { books } = useData();
   const { liked } = useFavorite();
 
   const bookIdsOfLikedChapters = useMemo(

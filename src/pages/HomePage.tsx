@@ -12,7 +12,7 @@ import BookCard from "../components/BookCard";
 import useData, { Book } from "../context/FetchContext";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Modal, Portal, Provider, TextInput } from "react-native-paper";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { StackParamList } from "../../RootNavigator";
 import useAuthContext from "../context/AuthContext";
 
@@ -28,7 +28,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
   }>({ visible: false, selected: undefined });
   const [levelFilter, setLevelFilter] = useState("");
   const [subjectFilter, setSubjectFilter] = useState("");
-  const [textFilter, setTextFilter] = useState(" ");
+  const [textFilter, setTextFilter] = useState("");
 
   const levels: string[] = useMemo(
     () => [
@@ -51,6 +51,11 @@ export default function HomePage({ navigation }: Readonly<Props>) {
   const removeDiacritics = (text: string) =>
     text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
+  const normalizedTextFilter = useMemo(
+    () => removeDiacritics(textFilter.toLowerCase()),
+    [textFilter]
+  );
+
   const filteredData = books.filter((book) => {
     const validLevel =
       !levelFilter || book.levels.some((level) => level.name === levelFilter);
@@ -60,7 +65,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
     const validText =
       !textFilter ||
       removeDiacritics(book.displayTitle?.toLowerCase() || "").includes(
-        removeDiacritics(textFilter.toLowerCase())
+        normalizedTextFilter
       );
     return validSubject && validLevel && validText;
   });
