@@ -99,7 +99,7 @@ export default function ChapterPage({ route }: Readonly<Props>) {
       </Pressable>
       <Text style={style.title}>
         P.{sortedPages[0]?.page} - P.
-        {sortedPages[sortedPages.length - 1]?.page}{" "}
+        {sortedPages[sortedPages.length - 1]?.page}
       </Text>
       <FlatList<Page> data={sortedPages} renderItem={renderItem} />
     </View>

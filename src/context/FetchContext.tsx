@@ -6,7 +6,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import axios from "axios";
+import { gql, useLazyQuery, useQuery } from "@apollo/client";
 
 export type Book = {
   id: number;
@@ -18,11 +18,9 @@ export type Book = {
 };
 
 type BookQuery = {
-  data: {
-    viewer: {
-      books: {
-        hits: Book[];
-      };
+  viewer: {
+    books: {
+      hits: Book[];
     };
   };
 };
@@ -35,15 +33,12 @@ export type Chapter = {
 };
 
 type ChapterQuery = {
-  data: {
-    viewer: {
-      chapters: {
-        hits: Chapter[];
-      };
+  viewer: {
+    chapters: {
+      hits: Chapter[];
     };
   };
 };
-
 type Subject = {
   name: string;
 };
@@ -61,69 +56,74 @@ interface IDataContext {
 
 const DataContext = React.createContext({} as IDataContext);
 
+const BOOKS_QUERY = gql`
+  query GetBooks {
+    viewer {
+      books {
+        hits {
+          id
+          displayTitle
+          url
+          subjects {
+            name
+          }
+          levels {
+            name
+          }
+          valid
+        }
+      }
+    }
+  }
+`;
+
+const CHAPTERS_QUERY = gql`
+  query GetChapters($bookId: Int!) {
+    viewer {
+      chapters(bookIds: [$bookId]) {
+        hits {
+          id
+          title
+          url
+          valid
+        }
+      }
+    }
+  }
+`;
+
 export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
   const [books, setBooks] = useState<Book[]>([]);
   const [chapterCache, setChapterCache] = useState<
     Record<number, Array<Chapter>>
   >({});
   const cachedChapterRef = useRef<Set<number>>(new Set());
-  const [loading, setLoading] = useState(false);
+  const { loading, data: bookData } = useQuery<BookQuery>(BOOKS_QUERY);
+  const [fetchChaptersQuery] = useLazyQuery<ChapterQuery>(CHAPTERS_QUERY);
 
   useEffect(() => {
-    (async () => {
-      try {
-        setLoading(true);
-        const response = await axios.post<BookQuery>(
-          "https://api-preprod.lelivrescolaire.fr/graph",
-          {
-            query:
-              "query{viewer{books{hits{id displayTitle url subjects{name}levels{name}valid}}}}",
-          },
-          {
-            headers: {
-              "Content-Type": "application/json; charset=utf-8",
-            },
-          }
-        );
-        const result: Book[] = response.data.data.viewer.books.hits;
-        setBooks(result);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
-
-  const fetchChapter = useCallback((bookId: number) => {
-    if (cachedChapterRef.current.has(bookId)) {
-      return console.info(chapterCache);
+    if (bookData) {
+      setBooks(bookData.viewer.books.hits);
     }
-    console.info("Not in cache");
+  }, [bookData]);
 
-    axios
-      .post<ChapterQuery>(
-        "https://api-preprod.lelivrescolaire.fr/graph",
-        {
-          query:
-            "query chapters($bookId:Int){viewer{chapters(bookIds:[$bookId]){hits{id title url valid  }}}}",
-          variables: { bookId },
-        },
-        {
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-          },
+  const fetchChapter = useCallback(
+    (bookId: number) => {
+      if (cachedChapterRef.current.has(bookId)) {
+        return console.info("Chapters already in cache:", chapterCache);
+      }
+      console.log("ici");
+      fetchChaptersQuery({ variables: { bookId } }).then((res) => {
+        if (res.data) {
+          const result: Chapter[] = res.data.viewer.chapters.hits;
+          setChapterCache((prev) => ({ ...prev, [bookId]: result }));
+          cachedChapterRef.current.add(bookId);
+          console.info("Chapters fetched and cached:", result);
         }
-      )
-      .then((res) => {
-        const result: Chapter[] = res.data.data.viewer.chapters.hits;
-        setChapterCache((prev) => ({ ...prev, [bookId]: result }));
-        cachedChapterRef.current.add(bookId);
-      })
-      .catch((err) => {
-        console.error(err);
       });
-  }, []);
+    },
+    [fetchChaptersQuery]
+  );
 
   const contextValue: IDataContext = useMemo(
     () => ({

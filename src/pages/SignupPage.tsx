@@ -27,15 +27,10 @@ export default function SignupPage() {
     auth()
       .createUserWithEmailAndPassword(email, password)
       .then((res) => {
-        firestore()
-          .collection("login")
-          .doc(`${res.user.uid}`)
-          .set({
-            email: res.user.email,
-            uid: res.user.uid,
-            likedBooks: [null],
-            likedChapters: [null],
-          });
+        firestore().collection("login").doc(`${res.user.uid}`).set({
+          email: res.user.email,
+          uid: res.user.uid,
+        });
 
         Toast.success("compte crée");
       })
