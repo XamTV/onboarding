@@ -39,7 +39,9 @@ export const FavoriteContextProvider = ({
             firestore()
               .doc(`login/${user.uid}`)
               .update({
-                likedChapters: [updatedChapters],
+                [`likedChapters.${chapterId}`]: prev.chapters[chapterId]
+                  ? 0
+                  : bookId,
               });
             return {
               ...prev,
@@ -55,7 +57,7 @@ export const FavoriteContextProvider = ({
             firestore()
               .doc(`login/${user.uid}`)
               .update({
-                likedBooks: [updatedBooks],
+                [`likedBooks.${bookId}`]: !prev.books[bookId],
               });
             return {
               ...prev,
@@ -76,8 +78,6 @@ export const FavoriteContextProvider = ({
           userDocRef.set({
             email: user.email,
             uid: user.uid,
-            likedBooks: [],
-            likedChapters: [],
           });
           setLiked({ books: {}, chapters: {} });
         }
