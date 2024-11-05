@@ -51,7 +51,7 @@ interface IDataContext {
   books: Book[];
   loading: boolean;
   fetchChapter: (bookId: number) => void;
-  chapterCache: Record<number, Array<Chapter>>;
+  chapters: Record<number, Array<Chapter>>;
 }
 
 const DataContext = React.createContext({} as IDataContext);
@@ -93,30 +93,18 @@ const CHAPTERS_QUERY = gql`
 `;
 
 export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
-  const [books, setBooks] = useState<Book[]>([]);
-  const [chapterCache, setChapterCache] = useState<
-    Record<number, Array<Chapter>>
-  >({});
+  const [chapters, setChapters] = useState<Record<number, Array<Chapter>>>({});
   const cachedChapterRef = useRef<Set<number>>(new Set());
   const { loading, data: bookData } = useQuery<BookQuery>(BOOKS_QUERY);
   const [fetchChaptersQuery] = useLazyQuery<ChapterQuery>(CHAPTERS_QUERY);
-
-  useEffect(() => {
-    if (bookData) {
-      setBooks(bookData.viewer.books.hits);
-    }
-  }, [bookData]);
+  const books = bookData?.viewer.books.hits || [];
 
   const fetchChapter = useCallback(
     (bookId: number) => {
-      if (cachedChapterRef.current.has(bookId)) {
-        return console.info("Chapters already in cache:", chapterCache);
-      }
-      console.log("ici");
       fetchChaptersQuery({ variables: { bookId } }).then((res) => {
         if (res.data) {
           const result: Chapter[] = res.data.viewer.chapters.hits;
-          setChapterCache((prev) => ({ ...prev, [bookId]: result }));
+          setChapters((prev) => ({ ...prev, [bookId]: result }));
           cachedChapterRef.current.add(bookId);
           console.info("Chapters fetched and cached:", result);
         }
@@ -130,9 +118,9 @@ export const DataContextProvider = ({ children }: React.PropsWithChildren) => {
       books,
       loading,
       fetchChapter,
-      chapterCache,
+      chapters,
     }),
-    [books, loading, fetchChapter, chapterCache]
+    [books, loading, fetchChapter, chapters]
   );
 
   return (

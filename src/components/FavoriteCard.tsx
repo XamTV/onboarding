@@ -17,7 +17,7 @@ export default function FavoriteCard({
   picture,
   bookId,
 }: Readonly<Props>) {
-  const { chapterCache } = useData();
+  const { chapters } = useData();
   const { liked, toggleLiked } = useFavorite();
 
   const renderItem = useCallback(({ item }: { item: Chapter }) => {
@@ -50,13 +50,13 @@ export default function FavoriteCard({
       <Card.Title titleStyle={styles.title} title={displayTitle} />
       {liked.books[bookId] ? <Card.Cover source={{ uri: picture }} /> : null}
 
-      {chapterCache[bookId]?.some((chapter) => liked.chapters[chapter.id]) ? (
+      {chapters[bookId]?.some((chapter) => liked.chapters[chapter.id]) ? (
         <Text style={styles.subtitleText}>Chapitres</Text>
       ) : null}
 
       <Card.Content>
         <FlatList
-          data={chapterCache[bookId]?.filter(
+          data={chapters[bookId]?.filter(
             (chapter) => liked.chapters[chapter.id]
           )}
           renderItem={renderItem}
