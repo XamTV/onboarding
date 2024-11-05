@@ -21,27 +21,25 @@ export default function FavoritePage({ navigation }: Readonly<Props>) {
   );
 
   return (
-    <View>
-      <FlatList<Book>
-        data={books.filter(
-          (book) =>
-            liked.books[book.id] ||
-            bookIdsOfLikedChapters.some((bookId) => bookId === book.id)
-        )}
-        renderItem={({ item }) => (
-          <FavoriteCard
-            onPress={() =>
-              navigation.navigate("BookPage", {
-                bookId: item.id,
-                displayTitle: item.displayTitle,
-              })
-            }
-            displayTitle={item.displayTitle}
-            picture={item.url}
-            bookId={item.id}
-          />
-        )}
-      />
-    </View>
+    <FlatList<Book>
+      data={books.filter(
+        (book) =>
+          liked.books[book.id] ||
+          bookIdsOfLikedChapters.some((bookId) => bookId === book.id)
+      )}
+      renderItem={({ item }) => (
+        <FavoriteCard
+          onPress={() =>
+            navigation.navigate("BookPage", {
+              bookId: item.id,
+              displayTitle: item.displayTitle,
+            })
+          }
+          displayTitle={item.displayTitle}
+          picture={item.url}
+          bookId={item.id}
+        />
+      )}
+    />
   );
 }
