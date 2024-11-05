@@ -18,6 +18,12 @@ import useAuthContext from "../context/AuthContext";
 
 type Props = NativeStackScreenProps<StackParamList, "HomePage">;
 
+const removeDiacritics = (text: string) =>
+  text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
 export default function HomePage({ navigation }: Readonly<Props>) {
   const { books } = useData();
   const { user } = useAuthContext();
@@ -48,8 +54,25 @@ export default function HomePage({ navigation }: Readonly<Props>) {
     [books]
   );
 
-  const removeDiacritics = (text: string) =>
-    text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  const [cachedBooksTextData, setCachedBooksTextData] = useState<{
+    [key: string]: string;
+  }>({});
+
+  useMemo(() => {
+    const newCache: { [key: string]: string } = {};
+    books.forEach((book) => {
+      newCache[book.id] = [
+        removeDiacritics(book.displayTitle?.toLowerCase() || ""),
+        ...book.subjects.map((subject) =>
+          removeDiacritics(subject.name.toLowerCase())
+        ),
+        ...book.levels.map((level) =>
+          removeDiacritics(level.name.toLowerCase())
+        ),
+      ].join(" ");
+    });
+    setCachedBooksTextData(newCache);
+  }, [books]);
 
   const normalizedTextFilter = useMemo(
     () => removeDiacritics(textFilter.toLowerCase()),
@@ -64,9 +87,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
       book.subjects.some((subject) => subject.name === subjectFilter);
     const validText =
       !textFilter ||
-      removeDiacritics(book.displayTitle?.toLowerCase() || "").includes(
-        normalizedTextFilter
-      );
+      cachedBooksTextData[book.id].includes(normalizedTextFilter);
     return validSubject && validLevel && validText;
   });
 
@@ -160,7 +181,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
           style={style.textFilterInput}
           label="Rechercher un livre"
           value={textFilter}
-          onChangeText={(textFilter) => setTextFilter(textFilter)}
+          onChangeText={setTextFilter}
           mode="outlined"
         />
         <FlatList<Book>
