@@ -29,42 +29,37 @@ export const FavoriteContextProvider = ({
 
   const toggleLiked = useCallback(
     (bookId: number, chapterId?: number) => {
-      if (user) {
-        if (bookId && chapterId) {
-          setLiked((prev) => {
-            const updatedChapters = {
-              ...prev.chapters,
-              [chapterId]: prev.chapters[chapterId] ? 0 : bookId,
-            };
+      if (!user) return;
+
+      if (bookId && chapterId) {
+        firestore()
+          .doc(`login/${user.uid}`)
+          .get()
+          .then((doc) => {
+            const currentLiked = doc.data()?.likedChapters || {};
             firestore()
               .doc(`login/${user.uid}`)
               .update({
-                [`likedChapters.${chapterId}`]: prev.chapters[chapterId]
+                [`likedChapters.${chapterId}`]: currentLiked[chapterId]
                   ? 0
                   : bookId,
               });
-            return {
-              ...prev,
-              chapters: updatedChapters,
-            };
           });
-        } else if (bookId && !chapterId) {
-          setLiked((prev) => {
-            const updatedBooks = {
-              ...prev.books,
-              [bookId]: !prev.books[bookId],
-            };
+        return;
+      }
+
+      if (bookId && !chapterId) {
+        firestore()
+          .doc(`login/${user.uid}`)
+          .get()
+          .then((doc) => {
+            const currentLiked = doc.data()?.likedBooks || {};
             firestore()
               .doc(`login/${user.uid}`)
               .update({
-                [`likedBooks.${bookId}`]: !prev.books[bookId],
+                [`likedBooks.${bookId}`]: !currentLiked[bookId],
               });
-            return {
-              ...prev,
-              books: updatedBooks,
-            };
           });
-        }
       }
     },
     [user]
@@ -72,23 +67,22 @@ export const FavoriteContextProvider = ({
 
   useEffect(() => {
     if (user) {
-      const userDocRef = firestore().collection("login").doc(`${user.uid}`);
-      userDocRef.get().then((doc) => {
-        if (!doc.exists) {
-          userDocRef.set({
-            email: user.email,
-            uid: user.uid,
-          });
-          setLiked({ books: {}, chapters: {} });
-        }
+      const userDocRef = firestore().collection("login").doc(user.uid);
+
+      const unsubscribe = userDocRef.onSnapshot((doc) => {
         if (doc.exists) {
           const data = doc.data();
           setLiked({
-            books: data?.likedBooks[0] || {},
-            chapters: data?.likedChapters[0] || {},
+            books: data?.likedBooks || {},
+            chapters: data?.likedChapters || {},
           });
+        } else {
+          userDocRef.set({ email: user.email, uid: user.uid });
+          setLiked({ books: {}, chapters: {} });
         }
       });
+
+      return () => unsubscribe();
     }
   }, [user]);
 

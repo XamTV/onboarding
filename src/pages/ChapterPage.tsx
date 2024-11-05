@@ -92,7 +92,7 @@ export default function ChapterPage({ route }: Readonly<Props>) {
         onPress={onFavoritePress}
       >
         <Text style={style.buttonText}>
-          {liked.chapters[chapterId] !== true
+          {liked.chapters[chapterId] === 0
             ? "Ajouter aux favoris"
             : "Retirer des favoris"}
         </Text>
