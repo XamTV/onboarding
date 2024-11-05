@@ -68,8 +68,7 @@ export default function SigninPage() {
             <Text style={styles.FormButtonText}>Se connecter</Text>
           </Pressable>
           <Link style={styles.link} to={{ screen: "SignupPage" }}>
-            {" "}
-            Pas de compte ?{" "}
+            Pas de compte ?
           </Link>
         </View>
       </View>

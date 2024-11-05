@@ -55,123 +55,118 @@ export default function HomePage({ navigation }: Readonly<Props>) {
       book.subjects.some((subject) => subject.name === subjectFilter);
     return validSubject && validLevel;
   });
-  if (books.length === 0) {
-    return (
-      <View style={[style.loaderContainer, style.horizontal]}>
-        <ActivityIndicator size="large" color="#00ff00" />
-      </View>
-    );
-  }
 
-  return (
-    user && (
-      <Provider>
-        <Portal>
-          <Modal
-            style={style.modalContainer}
-            visible={modalHandle.visible}
-            onDismiss={() => setModalHandle({ visible: false })}
-          >
-            {modalHandle.selected === "Levels" ? (
-              <FlatList<string>
-                style={style.filterList}
-                data={levels}
-                renderItem={({ item }) => (
-                  <Button
-                    title={item}
-                    onPress={() => {
-                      setLevelFilter(item);
-                      setModalHandle({ visible: false });
-                    }}
-                  />
-                )}
-              />
-            ) : (
-              <FlatList<string>
-                style={style.filterList}
-                data={subjects}
-                renderItem={({ item }) => (
-                  <Button
-                    title={item}
-                    onPress={() => {
-                      setSubjectFilter(item);
-                      setModalHandle({ visible: false });
-                    }}
-                  />
-                )}
-              />
-            )}
-
-            <Button
-              title="Réinitialiser le filtre"
-              onPress={() => {
-                if (modalHandle.selected === "Levels") {
-                  setLevelFilter("");
-                } else if (modalHandle.selected === "Subject") {
-                  setSubjectFilter("");
-                }
-                setModalHandle({ visible: false });
-              }}
-            />
-          </Modal>
-        </Portal>
-        <View style={style.container}>
-          <Text style={style.buttonText}>
-            {user && user.email !== null ? `Bonjour, ${user.email}` : "Bonjour"}
-          </Text>
-          <View style={style.buttonContainer}>
-            <Pressable
-              style={style.buttons}
-              onPress={() => {
-                setModalHandle({ visible: true, selected: "Levels" });
-              }}
-            >
-              <Text style={style.buttonText}>
-                {levelFilter ? `${levelFilter}` : "Tous niveaux"}
-              </Text>
-            </Pressable>
-            <Pressable
-              style={style.buttons}
-              onPress={() => {
-                setModalHandle({ visible: true, selected: "Subject" });
-              }}
-            >
-              <Text style={style.buttonText}>
-                {subjectFilter ? `${subjectFilter}` : "Tous sujets"}
-              </Text>
-            </Pressable>
-
-            <Pressable
-              style={style.buttons}
-              onPress={() => {
-                navigation.navigate("FavoritePage");
-              }}
-            >
-              <Text style={style.buttonText}>Mes Favoris</Text>
-            </Pressable>
-          </View>
-          <FlatList<Book>
-            data={filteredData}
-            renderItem={({ item }) =>
-              item.valid ? (
-                <BookCard
-                  bookId={item.id}
-                  picture={item.url}
-                  displayTitle={item.displayTitle}
+  return user ? (
+    <Provider>
+      <Portal>
+        <Modal
+          style={style.modalContainer}
+          visible={modalHandle.visible}
+          onDismiss={() => setModalHandle({ visible: false })}
+        >
+          {modalHandle.selected === "Levels" ? (
+            <FlatList<string>
+              style={style.filterList}
+              data={levels}
+              renderItem={({ item }) => (
+                <Button
+                  title={item}
                   onPress={() => {
-                    navigation.navigate("BookPage", {
-                      bookId: item.id,
-                      displayTitle: item.displayTitle,
-                    });
+                    setLevelFilter(item);
+                    setModalHandle({ visible: false });
                   }}
                 />
-              ) : null
-            }
+              )}
+            />
+          ) : (
+            <FlatList<string>
+              style={style.filterList}
+              data={subjects}
+              renderItem={({ item }) => (
+                <Button
+                  title={item}
+                  onPress={() => {
+                    setSubjectFilter(item);
+                    setModalHandle({ visible: false });
+                  }}
+                />
+              )}
+            />
+          )}
+
+          <Button
+            title="Réinitialiser le filtre"
+            onPress={() => {
+              if (modalHandle.selected === "Levels") {
+                setLevelFilter("");
+              } else if (modalHandle.selected === "Subject") {
+                setSubjectFilter("");
+              }
+              setModalHandle({ visible: false });
+            }}
           />
+        </Modal>
+      </Portal>
+      <View style={style.container}>
+        <Text style={style.buttonText}>
+          {user && user.email !== null ? `Bonjour, ${user.email}` : "Bonjour"}
+        </Text>
+        <View style={style.buttonContainer}>
+          <Pressable
+            style={style.buttons}
+            onPress={() => {
+              setModalHandle({ visible: true, selected: "Levels" });
+            }}
+          >
+            <Text style={style.buttonText}>
+              {levelFilter ? `${levelFilter}` : "Tous niveaux"}
+            </Text>
+          </Pressable>
+          <Pressable
+            style={style.buttons}
+            onPress={() => {
+              setModalHandle({ visible: true, selected: "Subject" });
+            }}
+          >
+            <Text style={style.buttonText}>
+              {subjectFilter ? `${subjectFilter}` : "Tous sujets"}
+            </Text>
+          </Pressable>
+
+          <Pressable
+            style={style.buttons}
+            onPress={() => {
+              navigation.navigate("FavoritePage");
+            }}
+          >
+            <Text style={style.buttonText}>Mes Favoris</Text>
+          </Pressable>
         </View>
-      </Provider>
-    )
-  );
+        <FlatList<Book>
+          data={filteredData}
+          renderItem={({ item }) =>
+            item.valid ? (
+              <BookCard
+                bookId={item.id}
+                picture={item.url}
+                displayTitle={item.displayTitle}
+                onPress={() => {
+                  navigation.navigate("BookPage", {
+                    bookId: item.id,
+                    displayTitle: item.displayTitle,
+                  });
+                }}
+              />
+            ) : null
+          }
+        />
+      </View>
+    </Provider>
+  ) : books.length === 0 ? (
+    <View style={[style.loaderContainer, style.horizontal]}>
+      <ActivityIndicator size="large" color="#00ff00" />
+    </View>
+  ) : null;
 }
 const style = StyleSheet.create({
   container: {
