@@ -117,13 +117,6 @@ export default function HomePage({ navigation }: Readonly<Props>) {
     return validSubject && validLevel && validText;
   });
 
-  if (books.length === 0 || !user)
-    return (
-      <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>{t("emptyPages")}</Text>
-        <ActivityIndicator size="large" color="#00ff00" />
-      </View>
-    );
   if (loading) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
@@ -201,9 +194,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
       </Portal>
       <View style={style.container}>
         <Text style={style.buttonText}>
-          {user && user.email !== null
-            ? `${t("welcome")}, ${user.email}`
-            : t("welcome")}
+          {t("welcome")}, {user && user.email !== null ? user.email : ""}
         </Text>
         <View style={style.buttonContainer}>
           <Pressable
