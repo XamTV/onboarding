@@ -17,6 +17,7 @@ import useAuthContext from "../context/AuthContext";
 import { BOOKS_QUERY } from "../service/Queries";
 import { useQuery } from "@apollo/client";
 import * as R from "remeda";
+import { useTranslation } from "react-i18next";
 
 type Props = NativeStackScreenProps<StackParamList, "HomePage">;
 export type Book = {
@@ -54,6 +55,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
   const { loading, error, data: bookData } = useQuery<BookQuery>(BOOKS_QUERY);
   const books = bookData?.viewer.books.hits || [];
   const { user } = useAuthContext();
+  const { t } = useTranslation();
 
   const [modalHandle, setModalHandle] = useState<{
     visible: boolean;
@@ -115,13 +117,6 @@ export default function HomePage({ navigation }: Readonly<Props>) {
     return validSubject && validLevel && validText;
   });
 
-  if (books.length === 0 || !user) {
-    return (
-      <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>Aie, cette page semble ne pas contenir de livres …</Text>
-      </View>
-    );
-  }
   if (loading) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
@@ -129,17 +124,19 @@ export default function HomePage({ navigation }: Readonly<Props>) {
       </View>
     );
   }
-  if (books.length === 0 || !user)
+  if (books.length === 0 || !user) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
         <Text>{t("emptyPages")}</Text>
       </View>
     );
-
+  }
   if (error) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>{t("error", { message: error.message })}</Text>
+        <Text>
+          {t("error")} : {error.message}
+        </Text>
       </View>
     );
   }
@@ -183,7 +180,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
           )}
 
           <Button
-            title="Réinitialiser le filtre"
+            title={"filterReset"}
             onPress={() => {
               if (modalHandle.selected === "Levels") {
                 setLevelFilter("");
@@ -197,7 +194,9 @@ export default function HomePage({ navigation }: Readonly<Props>) {
       </Portal>
       <View style={style.container}>
         <Text style={style.buttonText}>
-          {t("welcome")}, {user && user.email !== null ? user.email : ""}
+          {user && user.email !== null
+            ? `${t("welcome")}, ${user.email}`
+            : t("welcome")}
         </Text>
         <View style={style.buttonContainer}>
           <Pressable
@@ -207,7 +206,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
             }}
           >
             <Text style={style.buttonText}>
-              {levelFilter ? `${levelFilter}` : "Tous niveaux"}
+              {levelFilter ? `${levelFilter}` : t("categories.levels")}
             </Text>
           </Pressable>
           <Pressable
@@ -217,7 +216,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
             }}
           >
             <Text style={style.buttonText}>
-              {subjectFilter ? `${subjectFilter}` : "Tous sujets"}
+              {subjectFilter ? `${subjectFilter}` : t("categories.subjects")}
             </Text>
           </Pressable>
 
@@ -227,12 +226,12 @@ export default function HomePage({ navigation }: Readonly<Props>) {
               navigation.navigate("FavoritePage");
             }}
           >
-            <Text style={style.buttonText}>{t("favorites.myFavorites")} </Text>
+            <Text style={style.buttonText}>{t("myFavorites")} </Text>
           </Pressable>
         </View>
         <TextInput
           style={style.textFilterInput}
-          label="Rechercher un livre"
+          label={t("searchBooks")}
           value={textFilter}
           onChangeText={setTextFilter}
           mode="outlined"

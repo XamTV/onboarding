@@ -3,6 +3,7 @@ import { FavoriteContextProvider } from "./src/context/FavoriteContext";
 import { AuthContextProvider } from "./src/context/AuthContext";
 import RootNavigator from "./RootNavigator";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import "./i18next";
 
 const client = new ApolloClient({
   uri: "https://api-preprod.lelivrescolaire.fr/graph/",
