@@ -134,9 +134,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
   if (error) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>
-          {t("error")} : {error.message}
-        </Text>
+        <Text>{t("error", { message: error.message })}</Text>
       </View>
     );
   }
