@@ -10,6 +10,7 @@ import { PAGES_QUERY } from "../service/Queries";
 import { useQuery } from "@apollo/client";
 import { ActivityIndicator } from "react-native-paper";
 import useAuthContext from "../context/AuthContext";
+import { useTranslation } from "react-i18next";
 
 type Page = {
   id: number;
@@ -33,7 +34,7 @@ export default function ChapterPage({ route }: Readonly<Props>) {
   const { chapterId, bookId } = route.params;
   const { liked, toggleLiked } = useFavorite();
   const { user } = useAuthContext();
-
+  const { t } = useTranslation();
   const {
     loading,
     error,
@@ -70,28 +71,26 @@ export default function ChapterPage({ route }: Readonly<Props>) {
     [sortedPages]
   );
 
-  if (Object.keys(pages).length === 0 || !user) {
-    return (
-      <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>Aie, ce chapitre semble ne pas contenir de pages …</Text>
-      </View>
-    );
-  }
   if (loading) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
-        <ActivityIndicator size="large" color="#00ff00" />
+        <ActivityIndicator size="large" />
       </View>
     );
   }
-
   if (error) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>Error: {error.message}</Text>
+        <Text>{t("error")}</Text>
       </View>
     );
   }
+  if (Object.keys(pages).length === 0 || !user)
+    return (
+      <View style={[style.loaderContainer, style.horizontal]}>
+        <Text>{t("emptyPages")} </Text>
+      </View>
+    );
 
   return (
     <View>
@@ -106,13 +105,15 @@ export default function ChapterPage({ route }: Readonly<Props>) {
       >
         <Text style={style.buttonText}>
           {liked.chapters[chapterId] === 0
-            ? "Ajouter aux favoris"
-            : "Retirer des favoris"}
+            ? t("favorites.addToFavorites")
+            : t("favorites.removeFromFavorites")}
         </Text>
       </Pressable>
       <Text style={style.title}>
-        P.{sortedPages[0]?.page} - P.
-        {sortedPages[sortedPages.length - 1]?.page}
+        {t("chapterRange", {
+          from: sortedPages[0]?.page,
+          to: sortedPages[sortedPages.length - 1]?.page,
+        })}
       </Text>
       <FlatList<Page> data={sortedPages} renderItem={renderItem} />
     </View>

@@ -5,6 +5,7 @@ import { useCallback } from "react";
 import { CHAPTERS_QUERY } from "../service/Queries";
 import { useQuery } from "@apollo/client";
 import { Chapter, ChapterQuery } from "../pages/BookPage";
+import { useTranslation } from "react-i18next";
 
 type Props = {
   onPress: () => void;
@@ -27,6 +28,7 @@ export default function FavoriteCard({
   const chapters = chapterData?.viewer.chapters.hits;
 
   const { liked, toggleLiked } = useFavorite();
+  const { t } = useTranslation();
 
   const renderItem = useCallback(({ item }: { item: Chapter }) => {
     return (
@@ -53,6 +55,19 @@ export default function FavoriteCard({
     );
   }, []);
 
+  if (Object.keys(chapters).length === 0)
+    return (
+      <View style={[styles.loaderContainer, styles.horizontal]}>
+        <Text>
+          {t("emptyPages", {
+            prefix: "ce",
+            container: "livre",
+            data: "chapitres",
+          })}
+        </Text>
+      </View>
+    );
+
   return (
     <Card style={styles.bookcard} onPress={onPress}>
       <Card.Title titleStyle={styles.title} title={displayTitle} />
@@ -73,7 +88,7 @@ export default function FavoriteCard({
           onPress={() => toggleLiked(bookId)}
           style={styles.chapterPressable}
         >
-          <Text>Supprimer le livre des favoris</Text>
+          <Text>{t("favorites.removeFromFavorites")} </Text>
         </Pressable>
       ) : null}
     </Card>
@@ -120,5 +135,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 32,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  horizontal: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 10,
   },
 });

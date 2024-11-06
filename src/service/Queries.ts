@@ -10,9 +10,11 @@ export const BOOKS_QUERY = gql`
           url
           subjects {
             name
+            id
           }
           levels {
             name
+            id
           }
           valid
         }

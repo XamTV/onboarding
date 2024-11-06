@@ -9,6 +9,7 @@ import { Button } from "react-native";
 import auth from "@react-native-firebase/auth";
 import useAuthContext from "./src/context/AuthContext";
 import { NavigationContainer } from "@react-navigation/native";
+import { useTranslation } from "react-i18next";
 
 export type StackParamList = {
   SigninPage: undefined;
@@ -22,7 +23,7 @@ function RootNavigator() {
   const Stack = createNativeStackNavigator<StackParamList>();
 
   const { user } = useAuthContext();
-
+  const { t } = useTranslation();
   return (
     <NavigationContainer>
       {user ? (
@@ -32,7 +33,10 @@ function RootNavigator() {
             component={HomePage}
             options={{
               headerLeft: () => (
-                <Button title="Deconnexion" onPress={() => auth().signOut()} />
+                <Button
+                  title={t("disconnect")}
+                  onPress={() => auth().signOut()}
+                />
               ),
             }}
           />

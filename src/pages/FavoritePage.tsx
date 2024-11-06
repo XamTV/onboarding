@@ -9,12 +9,14 @@ import { useQuery } from "@apollo/client";
 import { ActivityIndicator, Text } from "react-native-paper";
 import useAuthContext from "../context/AuthContext";
 import { BookQuery, Book } from "./HomePage";
+import { useTranslation } from "react-i18next";
 
 type Props = NativeStackScreenProps<StackParamList, "FavoritePage">;
 
 export default function FavoritePage({ navigation }: Readonly<Props>) {
   const { liked } = useFavorite();
   const { user } = useAuthContext();
+  const { t } = useTranslation();
   const { loading, error, data: bookData } = useQuery<BookQuery>(BOOKS_QUERY);
   const books = bookData?.viewer.books.hits || [];
   const bookIdsOfLikedChapters = useMemo(
@@ -28,7 +30,7 @@ export default function FavoritePage({ navigation }: Readonly<Props>) {
   if (books.length === 0 || !user) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>Aie, cette page semble ne pas contenir de favoris …</Text>
+        <Text>{t("emptyPages")} </Text>
       </View>
     );
   }
@@ -43,7 +45,7 @@ export default function FavoritePage({ navigation }: Readonly<Props>) {
   if (error) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>Error: {error.message}</Text>
+        <Text>{t("errors.fromQuery", { message: error.message })}</Text>
       </View>
     );
   }

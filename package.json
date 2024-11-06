@@ -1,6 +1,7 @@
 {
   "name": "onboarding",
   "version": "1.0.0",
+  "license": "UNLICENSED",
   "main": "expo/AppEntry.js",
   "scripts": {
     "start": "expo start",

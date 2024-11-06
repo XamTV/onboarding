@@ -5,9 +5,11 @@ import { ActivityIndicator, TextInput } from "react-native-paper";
 import ToastManager, { Toast } from "toastify-react-native";
 import useAuthContext from "../context/AuthContext";
 import firestore from "@react-native-firebase/firestore";
+import { useTranslation } from "react-i18next";
 
 export default function SignupPage() {
   const { user, initializing } = useAuthContext();
+  const { t } = useTranslation();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,13 +17,13 @@ export default function SignupPage() {
 
   const createUser = () => {
     if (!email) {
-      return Toast.error("L'adresse email est requise");
+      return Toast.error(t("errors.emailRequired"));
     }
     if (password.length < 6) {
-      return Toast.error("Votre mot de passe doit faire plus de 6 caractères");
+      return Toast.error("errors.passwordLength");
     }
     if (password !== confirmPassword) {
-      return Toast.error("Les mots de passe ne sont pas identique");
+      return Toast.error("errors.passwordsDoesntMatch");
     }
 
     auth()
@@ -32,15 +34,15 @@ export default function SignupPage() {
           uid: res.user.uid,
         });
 
-        Toast.success("compte crée");
+        Toast.success(t("success.accountCreated"));
       })
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
-          Toast.error("Cette adresse email est déjà utilisée");
+          Toast.error(t("errors.emailAlreadyInUse"));
         }
 
         if (error.code === "auth/invalid-email") {
-          Toast.error("Cette adresse email est invalide");
+          Toast.error("errors.emailInvalid");
         }
 
         console.error(error);
@@ -67,7 +69,7 @@ export default function SignupPage() {
         />
         <TextInput
           style={styles.formInput}
-          label="email *"
+          label={t("requiredInput.email")}
           value={email}
           onChangeText={(email) => setEmail(email)}
           mode="outlined"
@@ -75,7 +77,7 @@ export default function SignupPage() {
         />
         <TextInput
           style={styles.formInput}
-          label="mot de passe *"
+          label={t("requiredInput.password")}
           value={password}
           onChangeText={(password) => setPassword(password)}
           secureTextEntry={true}
@@ -84,7 +86,7 @@ export default function SignupPage() {
         />
         <TextInput
           style={styles.formInput}
-          label="confirmation du mot de passe *"
+          label={t("requiredInput.confirmPassword")}
           value={confirmPassword}
           onChangeText={(password) => setConfirmPassword(password)}
           secureTextEntry={true}
@@ -93,7 +95,7 @@ export default function SignupPage() {
         />
 
         <Pressable style={styles.formButton} onPress={createUser}>
-          <Text style={styles.FormButtonText}>Créer mon compte</Text>
+          <Text style={styles.FormButtonText}>{t("accountCreation")} </Text>
         </Pressable>
       </View>
     );

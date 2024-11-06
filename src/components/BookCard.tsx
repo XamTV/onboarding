@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { StyleSheet, TextStyle } from "react-native";
 import { Card, Text } from "react-native-paper";
 
@@ -14,6 +15,7 @@ export default function BookCard({
   picture,
   displayTitle,
 }: Readonly<Props>) {
+  const { t } = useTranslation();
   return (
     <Card style={styles.bookcard} onPress={onPress}>
       <Card.Title titleStyle={styles.title} title={displayTitle} />
@@ -21,6 +23,7 @@ export default function BookCard({
       <Card.Cover source={{ uri: picture }} />
       <Card.Content>
         <Text>ref. {bookId} </Text>
+        <Text>{t("reference", { bookId })} </Text>
       </Card.Content>
     </Card>
   );

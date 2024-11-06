@@ -129,11 +129,17 @@ export default function HomePage({ navigation }: Readonly<Props>) {
       </View>
     );
   }
+  if (books.length === 0 || !user)
+    return (
+      <View style={[style.loaderContainer, style.horizontal]}>
+        <Text>{t("emptyPages")}</Text>
+      </View>
+    );
 
   if (error) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>Error: {error.message}</Text>
+        <Text>{t("error", { message: error.message })}</Text>
       </View>
     );
   }
@@ -191,7 +197,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
       </Portal>
       <View style={style.container}>
         <Text style={style.buttonText}>
-          {user && user.email !== null ? `Bonjour, ${user.email}` : "Bonjour"}
+          {t("welcome")}, {user && user.email !== null ? user.email : ""}
         </Text>
         <View style={style.buttonContainer}>
           <Pressable
@@ -221,7 +227,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
               navigation.navigate("FavoritePage");
             }}
           >
-            <Text style={style.buttonText}>Mes Favoris</Text>
+            <Text style={style.buttonText}>{t("favorites.myFavorites")} </Text>
           </Pressable>
         </View>
         <TextInput
