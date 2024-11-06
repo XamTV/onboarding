@@ -6,6 +6,8 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../RootNavigator";
 import PageCard from "../components/PageCard";
 import useFavorite from "../context/FavoriteContext";
+import { PAGES_QUERY } from "../service/Queries";
+import { useLazyQuery } from "@apollo/client";
 
 type Page = {
   id: number;
@@ -16,11 +18,9 @@ type Page = {
 };
 
 type PageQuery = {
-  data: {
-    viewer: {
-      pages: {
-        hits: Page[];
-      };
+  viewer: {
+    pages: {
+      hits: Page[];
     };
   };
 };
@@ -31,33 +31,26 @@ export default function ChapterPage({ route }: Readonly<Props>) {
   const { chapterId, bookId } = route.params;
   const { liked, toggleLiked } = useFavorite();
 
-  const [pageDetail, setPageDetail] = useState<Page[]>();
+  const [pages, setPages] = useState<Record<number, Array<Page>>>({});
+  const [fetchPageQuery] = useLazyQuery<PageQuery>(PAGES_QUERY);
 
-  useEffect(() => {
-    axios
-      .post<PageQuery>(
-        "https://api-preprod.lelivrescolaire.fr/graph",
-        {
-          query:
-            "query pages($chapterId:Int){viewer{pages(chapterIds:[$chapterId]){hits{id title picture page valid}}}}",
-          variables: { chapterId },
-        },
-
-        {
-          headers: {
-            "Content-Type": "application/json; charset=utf-8",
-          },
+  const fetchChapter = useCallback(
+    (chapterId: number) => {
+      fetchPageQuery({ variables: { chapterId } }).then((res) => {
+        if (res.data) {
+          const result: Page[] = res.data.viewer.pages.hits;
+          setPages((prev) => ({ ...prev, [chapterId]: result }));
         }
-      )
-      .then((res) => {
-        const result: Page[] = res.data.data.viewer.pages.hits;
-        setPageDetail(result);
       });
-  }, []);
+    },
+    [fetchPageQuery]
+  );
+
+  useEffect(() => fetchChapter(chapterId), [chapterId]);
 
   const sortedPages = useMemo(
-    () => (pageDetail ? R.sortBy(pageDetail, R.prop("page")) : []),
-    [pageDetail]
+    () => (pages ? R.sortBy(Object.values(pages).flat(), R.prop("page")) : []),
+    [pages]
   );
 
   const onFavoritePress = useCallback(
