@@ -117,6 +117,13 @@ export default function HomePage({ navigation }: Readonly<Props>) {
     return validSubject && validLevel && validText;
   });
 
+  if (books.length === 0 || !user)
+    return (
+      <View style={[style.loaderContainer, style.horizontal]}>
+        <Text>{t("emptyPages")}</Text>
+        <ActivityIndicator size="large" color="#00ff00" />
+      </View>
+    );
   if (loading) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
@@ -194,7 +201,9 @@ export default function HomePage({ navigation }: Readonly<Props>) {
       </Portal>
       <View style={style.container}>
         <Text style={style.buttonText}>
-          {t("welcome")}, {user && user.email !== null ? user.email : ""}
+          {user && user.email !== null
+            ? `${t("welcome")}, ${user.email}`
+            : t("welcome")}
         </Text>
         <View style={style.buttonContainer}>
           <Pressable
@@ -224,7 +233,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
               navigation.navigate("FavoritePage");
             }}
           >
-            <Text style={style.buttonText}>{t("favorites.myFavorites")} </Text>
+            <Text style={style.buttonText}>{t("myFavorites")} </Text>
           </Pressable>
         </View>
         <TextInput
