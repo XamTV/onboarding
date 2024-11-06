@@ -1,4 +1,4 @@
-import { FlatList } from "react-native";
+import { FlatList, StyleSheet, View } from "react-native";
 import useFavorite from "../context/FavoriteContext";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../RootNavigator";
@@ -6,13 +6,16 @@ import FavoriteCard from "../components/FavoriteCard";
 import { useMemo } from "react";
 import { BOOKS_QUERY } from "../service/Queries";
 import { useQuery } from "@apollo/client";
+import { ActivityIndicator, Text } from "react-native-paper";
+import useAuthContext from "../context/AuthContext";
 import { BookQuery, Book } from "./HomePage";
 
 type Props = NativeStackScreenProps<StackParamList, "FavoritePage">;
 
 export default function FavoritePage({ navigation }: Readonly<Props>) {
   const { liked } = useFavorite();
-  const { data: bookData } = useQuery<BookQuery>(BOOKS_QUERY);
+  const { user } = useAuthContext();
+  const { loading, error, data: bookData } = useQuery<BookQuery>(BOOKS_QUERY);
   const books = bookData?.viewer.books.hits || [];
   const bookIdsOfLikedChapters = useMemo(
     () =>
@@ -21,6 +24,28 @@ export default function FavoritePage({ navigation }: Readonly<Props>) {
       ),
     [liked.chapters]
   );
+
+  if (books.length === 0 || !user)
+    return (
+      <View style={[style.loaderContainer, style.horizontal]}>
+        <Text>Aie, cette page semble vide …</Text>
+      </View>
+    );
+  if (loading) {
+    return (
+      <View style={[style.loaderContainer, style.horizontal]}>
+        <ActivityIndicator size="large" color="#00ff00" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[style.loaderContainer, style.horizontal]}>
+        <Text>Error: {error.message}</Text>
+      </View>
+    );
+  }
 
   return (
     <FlatList<Book>
@@ -45,3 +70,15 @@ export default function FavoritePage({ navigation }: Readonly<Props>) {
     />
   );
 }
+
+const style = StyleSheet.create({
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  horizontal: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 10,
+  },
+});

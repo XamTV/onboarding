@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import auth from "@react-native-firebase/auth";
-import { TextInput } from "react-native-paper";
+import { ActivityIndicator, TextInput } from "react-native-paper";
 import ToastManager, { Toast } from "toastify-react-native";
 import useAuthContext from "../context/AuthContext";
 import firestore from "@react-native-firebase/firestore";
@@ -47,7 +47,12 @@ export default function SignupPage() {
       });
   };
 
-  if (initializing) return null;
+  if (initializing)
+    return (
+      <View style={[styles.loaderContainer, styles.horizontal]}>
+        <ActivityIndicator size="large" color="#00ff00" />
+      </View>
+    );
 
   if (!user) {
     return (
@@ -123,5 +128,14 @@ const styles = StyleSheet.create({
   toastText: {
     fontSize: 16,
     maxWidth: 200,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  horizontal: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 10,
   },
 });

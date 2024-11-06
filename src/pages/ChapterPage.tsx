@@ -8,6 +8,8 @@ import PageCard from "../components/PageCard";
 import useFavorite from "../context/FavoriteContext";
 import { PAGES_QUERY } from "../service/Queries";
 import { useQuery } from "@apollo/client";
+import { ActivityIndicator } from "react-native-paper";
+import useAuthContext from "../context/AuthContext";
 
 type Page = {
   id: number;
@@ -30,8 +32,13 @@ type Props = NativeStackScreenProps<StackParamList, "ChapterPage">;
 export default function ChapterPage({ route }: Readonly<Props>) {
   const { chapterId, bookId } = route.params;
   const { liked, toggleLiked } = useFavorite();
+  const { user } = useAuthContext();
 
-  const { data: pageData } = useQuery<PageQuery>(PAGES_QUERY, {
+  const {
+    loading,
+    error,
+    data: pageData,
+  } = useQuery<PageQuery>(PAGES_QUERY, {
     variables: { chapterId },
     fetchPolicy: "cache-first",
   });
@@ -62,6 +69,28 @@ export default function ChapterPage({ route }: Readonly<Props>) {
     },
     [sortedPages]
   );
+
+  if (Object.keys(pages).length === 0 || !user)
+    return (
+      <View style={[style.loaderContainer, style.horizontal]}>
+        <Text>Aie, cette page semble vide …</Text>
+      </View>
+    );
+  if (loading) {
+    return (
+      <View style={[style.loaderContainer, style.horizontal]}>
+        <ActivityIndicator size="large" color="#00ff00" />
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={[style.loaderContainer, style.horizontal]}>
+        <Text>Error: {error.message}</Text>
+      </View>
+    );
+  }
 
   return (
     <View>
@@ -112,5 +141,14 @@ const style = StyleSheet.create({
   },
   buttonText: {
     fontSize: 16,
+  },
+  loaderContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  horizontal: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    padding: 10,
   },
 });

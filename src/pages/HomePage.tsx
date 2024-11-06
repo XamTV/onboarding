@@ -51,7 +51,7 @@ const removeDiacritics = (text: string) =>
     .replace(/[\u0300-\u036f]/g, "");
 
 export default function HomePage({ navigation }: Readonly<Props>) {
-  const { data: bookData } = useQuery<BookQuery>(BOOKS_QUERY);
+  const { loading, error, data: bookData } = useQuery<BookQuery>(BOOKS_QUERY);
   const books = bookData?.viewer.books.hits || [];
   const { user } = useAuthContext();
 
@@ -118,9 +118,25 @@ export default function HomePage({ navigation }: Readonly<Props>) {
   if (books.length === 0 || !user)
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
+        <Text>Aie, cette page semble vide …</Text>
+      </View>
+    );
+  if (loading) {
+    return (
+      <View style={[style.loaderContainer, style.horizontal]}>
         <ActivityIndicator size="large" color="#00ff00" />
       </View>
     );
+  }
+
+  if (error) {
+    return (
+      <View style={[style.loaderContainer, style.horizontal]}>
+        <Text>Error: {error.message}</Text>
+      </View>
+    );
+  }
+
   return (
     <Provider>
       <Portal>
