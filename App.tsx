@@ -1,4 +1,3 @@
-import { DataContextProvider } from "./src/context/FetchContext";
 import { FavoriteContextProvider } from "./src/context/FavoriteContext";
 
 import { AuthContextProvider } from "./src/context/AuthContext";
@@ -14,11 +13,9 @@ function App() {
   return (
     <ApolloProvider client={client}>
       <AuthContextProvider>
-        <DataContextProvider>
-          <FavoriteContextProvider>
-            <RootNavigator />
-          </FavoriteContextProvider>
-        </DataContextProvider>
+        <FavoriteContextProvider>
+          <RootNavigator />
+        </FavoriteContextProvider>
       </AuthContextProvider>
     </ApolloProvider>
   );

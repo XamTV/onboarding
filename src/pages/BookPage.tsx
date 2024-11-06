@@ -1,23 +1,51 @@
 import { View, FlatList, Pressable, Text, StyleSheet } from "react-native";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ChapterCard from "../components/ChapterCard";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../RootNavigator";
 import useFavorite from "../context/FavoriteContext";
-import useData, { Chapter } from "../context/FetchContext";
+import { CHAPTERS_QUERY } from "../service/Queries";
+import { useLazyQuery } from "@apollo/client";
+
+export type Chapter = {
+  id: number;
+  title: string;
+  url: string;
+  valid: boolean;
+};
+
+export type ChapterQuery = {
+  viewer: {
+    chapters: {
+      hits: Chapter[];
+    };
+  };
+};
 
 type Props = NativeStackScreenProps<StackParamList, "BookPage">;
 
 export default function BookPage({ navigation, route }: Readonly<Props>) {
   const { toggleLiked, liked } = useFavorite();
-  const { chapterCache, fetchChapter } = useData();
-
+  const [chapters, setChapters] = useState<Record<number, Array<Chapter>>>({});
+  const [fetchChaptersQuery] = useLazyQuery<ChapterQuery>(CHAPTERS_QUERY);
   const { bookId } = route.params;
 
   const onFavoritePress = useCallback(
     () => toggleLiked(bookId),
 
     [bookId]
+  );
+
+  const fetchChapter = useCallback(
+    (bookId: number) => {
+      fetchChaptersQuery({ variables: { bookId } }).then((res) => {
+        if (res.data) {
+          const result: Chapter[] = res.data.viewer.chapters.hits;
+          setChapters((prev) => ({ ...prev, [bookId]: result }));
+        }
+      });
+    },
+    [fetchChaptersQuery]
   );
 
   useEffect(() => fetchChapter(bookId), [bookId]);
@@ -55,7 +83,7 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
             : "Retirer des favoris"}
         </Text>
       </Pressable>
-      <FlatList<Chapter> data={chapterCache[bookId]} renderItem={renderItem} />
+      <FlatList<Chapter> data={chapters[bookId]} renderItem={renderItem} />
     </View>
   );
 }

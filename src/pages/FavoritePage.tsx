@@ -1,17 +1,43 @@
-import { FlatList, View } from "react-native";
-import useData, { Book } from "../context/FetchContext";
+import { FlatList } from "react-native";
 import useFavorite from "../context/FavoriteContext";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../RootNavigator";
 import FavoriteCard from "../components/FavoriteCard";
 import { useMemo } from "react";
+import { BOOKS_QUERY } from "../service/Queries";
+import { useQuery } from "@apollo/client";
+
+export type Book = {
+  id: number;
+  displayTitle: string;
+  url: string;
+  subjects: Subject[];
+  levels: Level[];
+  valid: boolean;
+};
+
+export type BookQuery = {
+  viewer: {
+    books: {
+      hits: Book[];
+    };
+  };
+};
+
+export type Subject = {
+  name: string;
+};
+
+export type Level = {
+  name: string;
+};
 
 type Props = NativeStackScreenProps<StackParamList, "FavoritePage">;
 
 export default function FavoritePage({ navigation }: Readonly<Props>) {
-  const { books } = useData();
   const { liked } = useFavorite();
-
+  const { data: bookData } = useQuery<BookQuery>(BOOKS_QUERY);
+  const books = bookData?.viewer.books.hits || [];
   const bookIdsOfLikedChapters = useMemo(
     () =>
       Object.values(liked.chapters).filter(

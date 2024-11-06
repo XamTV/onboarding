@@ -1,8 +1,10 @@
 import { FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 import { Card } from "react-native-paper";
-import useData, { Chapter } from "../context/FetchContext";
 import useFavorite from "../context/FavoriteContext";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { CHAPTERS_QUERY } from "../service/Queries";
+import { useLazyQuery } from "@apollo/client";
+import { Chapter, ChapterQuery } from "../pages/BookPage";
 
 type Props = {
   onPress: () => void;
@@ -17,8 +19,24 @@ export default function FavoriteCard({
   picture,
   bookId,
 }: Readonly<Props>) {
-  const { chapters } = useData();
+  const [chapters, setChapters] = useState<Record<number, Array<Chapter>>>({});
+  const [fetchChaptersQuery] = useLazyQuery<ChapterQuery>(CHAPTERS_QUERY);
+
   const { liked, toggleLiked } = useFavorite();
+
+  const fetchChapter = useCallback(
+    (bookId: number) => {
+      fetchChaptersQuery({ variables: { bookId } }).then((res) => {
+        if (res.data) {
+          const result: Chapter[] = res.data.viewer.chapters.hits;
+          setChapters((prev) => ({ ...prev, [bookId]: result }));
+        }
+      });
+    },
+    [fetchChaptersQuery]
+  );
+
+  useEffect(() => fetchChapter(bookId), [bookId]);
 
   const renderItem = useCallback(({ item }: { item: Chapter }) => {
     return (

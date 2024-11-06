@@ -9,15 +9,40 @@ import {
   Text,
 } from "react-native";
 import BookCard from "../components/BookCard";
-import useData, { Book } from "../context/FetchContext";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Modal, Portal, Provider, TextInput } from "react-native-paper";
 import { useMemo, useState } from "react";
 import { StackParamList } from "../../RootNavigator";
 import useAuthContext from "../context/AuthContext";
+import { BOOKS_QUERY } from "../service/Queries";
+import { useQuery } from "@apollo/client";
 import * as R from "remeda";
 
 type Props = NativeStackScreenProps<StackParamList, "HomePage">;
+export type Book = {
+  id: number;
+  displayTitle: string;
+  url: string;
+  subjects: Subject[];
+  levels: Level[];
+  valid: boolean;
+};
+
+export type BookQuery = {
+  viewer: {
+    books: {
+      hits: Book[];
+    };
+  };
+};
+
+export type Subject = {
+  name: string;
+};
+
+export type Level = {
+  name: string;
+};
 
 const removeDiacritics = (text: string) =>
   text
@@ -26,7 +51,8 @@ const removeDiacritics = (text: string) =>
     .replace(/[\u0300-\u036f]/g, "");
 
 export default function HomePage({ navigation }: Readonly<Props>) {
-  const { books } = useData();
+  const { data: bookData } = useQuery<BookQuery>(BOOKS_QUERY);
+  const books = bookData?.viewer.books.hits || [];
   const { user } = useAuthContext();
 
   const [modalHandle, setModalHandle] = useState<{
@@ -78,9 +104,6 @@ export default function HomePage({ navigation }: Readonly<Props>) {
     [textFilter]
   );
 
-  const removeDiacritics = (text: string) =>
-    text.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
   const filteredData = books.filter((book) => {
     const validLevel =
       !levelFilter || book.levels.some((level) => level.name === levelFilter);
@@ -92,7 +115,13 @@ export default function HomePage({ navigation }: Readonly<Props>) {
     return validSubject && validLevel && validText;
   });
 
-  return user ? (
+  if (books.length === 0 || !user)
+    return (
+      <View style={[style.loaderContainer, style.horizontal]}>
+        <ActivityIndicator size="large" color="#00ff00" />
+      </View>
+    );
+  return (
     <Provider>
       <Portal>
         <Modal
@@ -205,11 +234,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
         />
       </View>
     </Provider>
-  ) : books.length === 0 ? (
-    <View style={[style.loaderContainer, style.horizontal]}>
-      <ActivityIndicator size="large" color="#00ff00" />
-    </View>
-  ) : null;
+  );
 }
 const style = StyleSheet.create({
   container: {
