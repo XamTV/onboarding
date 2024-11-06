@@ -85,13 +85,13 @@ export default function ChapterPage({ route }: Readonly<Props>) {
       </View>
     );
   }
-  if (Object.keys(pages).length === 0 || !user)
+  if (Object.keys(pages).length === 0 || !user) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
         <Text>{t("emptyPages.chapterPage")}</Text>
       </View>
     );
-
+  }
   return (
     <View>
       <Pressable

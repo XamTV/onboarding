@@ -55,7 +55,7 @@ export default function FavoriteCard({
     );
   }, []);
 
-  if (!chapters || Object.keys(chapters).length === 0)
+  if (!chapters || Object.keys(chapters).length === 0) {
     return (
       <View style={[styles.loaderContainer, styles.horizontal]}>
         <Text>
@@ -67,7 +67,7 @@ export default function FavoriteCard({
         </Text>
       </View>
     );
-
+  }
   return (
     <Card style={styles.bookcard} onPress={onPress}>
       <Card.Title titleStyle={styles.title} title={displayTitle} />
