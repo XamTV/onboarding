@@ -35,7 +35,7 @@ const resources = {
       filterReset: "Réinitialiser le filtre",
       noAccount: "Pas de compte ?",
       password: "mot de passe",
-      reference: "ref.{{bookId‡}} ",
+      reference: "ref.{{bookId}} ",
       requiredInput: {
         email: "email *",
         password: "mot de passe *",
