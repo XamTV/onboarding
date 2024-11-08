@@ -15,6 +15,7 @@ import { Modal, Portal, Provider, TextInput } from "react-native-paper";
 import { useMemo, useState } from "react";
 import { StackParamList } from "../../RootNavigator";
 import useAuthContext from "../context/AuthContext";
+import * as R from "remeda";
 
 type Props = NativeStackScreenProps<StackParamList, "HomePage">;
 
@@ -54,24 +55,22 @@ export default function HomePage({ navigation }: Readonly<Props>) {
     [books]
   );
 
-  const [cachedBooksTextData, setCachedBooksTextData] = useState<{
-    [key: string]: string;
-  }>({});
+  const cacheBooksTextData = useMemo(() => {
+    return R.fromEntries(
+      books.map((book) => [
+        book.id,
 
-  useMemo(() => {
-    const newCache: { [key: string]: string } = {};
-    books.forEach((book) => {
-      newCache[book.id] = [
-        removeDiacritics(book.displayTitle?.toLowerCase() || ""),
-        ...book.subjects.map((subject) =>
-          removeDiacritics(subject.name.toLowerCase())
-        ),
-        ...book.levels.map((level) =>
-          removeDiacritics(level.name.toLowerCase())
-        ),
-      ].join(" ");
-    });
-    setCachedBooksTextData(newCache);
+        [
+          removeDiacritics(book.displayTitle?.toLowerCase() || ""),
+          ...book.subjects.map((subject) =>
+            removeDiacritics(subject.name.toLowerCase())
+          ),
+          ...book.levels.map((level) =>
+            removeDiacritics(level.name.toLowerCase())
+          ),
+        ].join(" "),
+      ])
+    );
   }, [books]);
 
   const normalizedTextFilter = useMemo(
@@ -86,8 +85,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
       !subjectFilter ||
       book.subjects.some((subject) => subject.name === subjectFilter);
     const validText =
-      !textFilter ||
-      cachedBooksTextData[book.id].includes(normalizedTextFilter);
+      !textFilter || cacheBooksTextData[book.id].includes(normalizedTextFilter);
     return validSubject && validLevel && validText;
   });
 
