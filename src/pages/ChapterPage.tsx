@@ -88,7 +88,13 @@ export default function ChapterPage({ route }: Readonly<Props>) {
   if (Object.keys(pages).length === 0 || !user)
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>{t("emptyPages")} </Text>
+        <Text>
+          {t("emptyPages", {
+            prefix: "ce",
+            container: "chapitre",
+            data: "pages",
+          })}
+        </Text>
       </View>
     );
 

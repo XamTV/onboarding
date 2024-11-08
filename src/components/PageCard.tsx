@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { StyleSheet, Text } from "react-native";
 import { Card } from "react-native-paper";
 
@@ -14,6 +15,8 @@ export default function PageCard({
   pagePicture,
   pageNumber,
 }: Readonly<Props>) {
+  const { t } = useTranslation();
+
   return (
     <Card style={styles.bookcard}>
       <Card.Content style={styles.container}>
@@ -21,7 +24,9 @@ export default function PageCard({
           <Card.Cover style={styles.picture} source={{ uri: pagePicture }} />
         )}
         <Text style={styles.title}>{pageTitle}</Text>
-        <Text style={styles.pageNumber}>p.{pageNumber}</Text>
+        <Text style={styles.pageNumber}>
+          {t("pageNumber", { pageNumber })}{" "}
+        </Text>
       </Card.Content>
     </Card>
   );

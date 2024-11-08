@@ -15,7 +15,8 @@ const resources = {
       chapterRange: "P.{{from}} - P.{{to}} ",
       disconnect: "Deconnexion",
       email: "email",
-      emptyPages: "Aie, cette page semble vide …",
+      emptyPages:
+        "Aie, {{prefix}} {{container}} semble ne pas contenir de {{data}} ",
       errors: {
         fromQuery: "Erreur : {{message}} ",
         emptyPasswordField: "Le champ mot de passe ne peut pas être vide",
@@ -34,6 +35,7 @@ const resources = {
       },
       filterReset: "Réinitialiser le filtre",
       noAccount: "Pas de compte ?",
+      pageNumber: "p.{{pageNumber}} ",
       password: "mot de passe",
       reference: "ref.{{bookId}} ",
       requiredInput: {
