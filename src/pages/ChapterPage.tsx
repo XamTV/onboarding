@@ -1,13 +1,13 @@
 import { View, FlatList, Text, StyleSheet, Pressable } from "react-native";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import axios from "axios";
+import { useCallback, useMemo } from "react";
+
 import * as R from "remeda";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../RootNavigator";
 import PageCard from "../components/PageCard";
 import useFavorite from "../context/FavoriteContext";
 import { PAGES_QUERY } from "../service/Queries";
-import { useLazyQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 
 type Page = {
   id: number;
@@ -31,22 +31,12 @@ export default function ChapterPage({ route }: Readonly<Props>) {
   const { chapterId, bookId } = route.params;
   const { liked, toggleLiked } = useFavorite();
 
-  const [pages, setPages] = useState<Record<number, Array<Page>>>({});
-  const [fetchPageQuery] = useLazyQuery<PageQuery>(PAGES_QUERY);
+  const { data: pageData } = useQuery<PageQuery>(PAGES_QUERY, {
+    variables: { chapterId },
+    fetchPolicy: "cache-first",
+  });
 
-  const fetchChapter = useCallback(
-    (chapterId: number) => {
-      fetchPageQuery({ variables: { chapterId } }).then((res) => {
-        if (res.data) {
-          const result: Page[] = res.data.viewer.pages.hits;
-          setPages((prev) => ({ ...prev, [chapterId]: result }));
-        }
-      });
-    },
-    [fetchPageQuery]
-  );
-
-  useEffect(() => fetchChapter(chapterId), [chapterId]);
+  const pages = pageData?.viewer.pages.hits || [];
 
   const sortedPages = useMemo(
     () => (pages ? R.sortBy(Object.values(pages).flat(), R.prop("page")) : []),

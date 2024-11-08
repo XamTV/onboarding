@@ -1,11 +1,11 @@
 import { View, FlatList, Pressable, Text, StyleSheet } from "react-native";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback } from "react";
 import ChapterCard from "../components/ChapterCard";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../RootNavigator";
 import useFavorite from "../context/FavoriteContext";
 import { CHAPTERS_QUERY } from "../service/Queries";
-import { useLazyQuery } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 
 export type Chapter = {
   id: number;
@@ -25,30 +25,19 @@ export type ChapterQuery = {
 type Props = NativeStackScreenProps<StackParamList, "BookPage">;
 
 export default function BookPage({ navigation, route }: Readonly<Props>) {
-  const { toggleLiked, liked } = useFavorite();
-  const [chapters, setChapters] = useState<Record<number, Array<Chapter>>>({});
-  const [fetchChaptersQuery] = useLazyQuery<ChapterQuery>(CHAPTERS_QUERY);
   const { bookId } = route.params;
+  const { toggleLiked, liked } = useFavorite();
+  const { data: chapterData } = useQuery<ChapterQuery>(CHAPTERS_QUERY, {
+    variables: { bookId },
+    fetchPolicy: "cache-first",
+  });
+  const chapters = { [bookId]: chapterData?.viewer.chapters.hits };
 
   const onFavoritePress = useCallback(
     () => toggleLiked(bookId),
 
     [bookId]
   );
-
-  const fetchChapter = useCallback(
-    (bookId: number) => {
-      fetchChaptersQuery({ variables: { bookId } }).then((res) => {
-        if (res.data) {
-          const result: Chapter[] = res.data.viewer.chapters.hits;
-          setChapters((prev) => ({ ...prev, [bookId]: result }));
-        }
-      });
-    },
-    [fetchChaptersQuery]
-  );
-
-  useEffect(() => fetchChapter(bookId), [bookId]);
 
   const renderItem = useCallback(({ item }: { item: Chapter }) => {
     return item.valid ? (
