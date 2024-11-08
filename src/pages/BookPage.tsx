@@ -6,6 +6,7 @@ import { StackParamList } from "../../RootNavigator";
 import useFavorite from "../context/FavoriteContext";
 import { CHAPTERS_QUERY } from "../service/Queries";
 import { useQuery } from "@apollo/client";
+import { useTranslation } from "react-i18next";
 import { ActivityIndicator } from "react-native-paper";
 
 export type Chapter = {
@@ -28,6 +29,7 @@ type Props = NativeStackScreenProps<StackParamList, "BookPage">;
 export default function BookPage({ navigation, route }: Readonly<Props>) {
   const { bookId } = route.params;
   const { toggleLiked, liked } = useFavorite();
+  const { t } = useTranslation();
   const {
     loading,
     error,
@@ -61,27 +63,32 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
     ) : null;
   }, []);
 
+  if (loading)
+    return (
+      <View style={[style.loaderContainer, style.horizontal]}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
+
+  if (error)
+    return (
+      <View style={[style.loaderContainer, style.horizontal]}>
+        <Text>{t("error")}</Text>
+      </View>
+    );
+
   if (Object.keys(chapters).length === 0)
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>Aie, ce livre semble ne pas contenir de chapitres …</Text>
+        <Text>
+          {t("emptyPages", {
+            prefix: "ce",
+            container: "livre",
+            data: "chapitres",
+          })}{" "}
+        </Text>
       </View>
     );
-  if (loading) {
-    return (
-      <View style={[style.loaderContainer, style.horizontal]}>
-        <ActivityIndicator size="large" color="#00ff00" />
-      </View>
-    );
-  }
-
-  if (error) {
-    return (
-      <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>Error: {error.message}</Text>
-      </View>
-    );
-  }
 
   return (
     <View style={style.bookPageContainer}>
@@ -95,8 +102,8 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
       >
         <Text style={style.buttonText}>
           {liked.books[bookId] !== true
-            ? "Ajouter aux favoris"
-            : "Retirer des favoris"}
+            ? t("favorites.addToFavorites")
+            : t("favorites.removeFromFavorites")}
         </Text>
       </Pressable>
       <FlatList<Chapter> data={chapters[bookId]} renderItem={renderItem} />
