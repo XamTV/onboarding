@@ -36,7 +36,7 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
     variables: { bookId },
     fetchPolicy: "cache-first",
   });
-  const chapters = { [bookId]: chapterData?.viewer.chapters.hits };
+  const chapters = chapterData?.viewer.chapters.hits;
 
   const onFavoritePress = useCallback(
     () => toggleLiked(bookId),
@@ -100,7 +100,7 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
             : "Retirer des favoris"}
         </Text>
       </Pressable>
-      <FlatList<Chapter> data={chapters[bookId]} renderItem={renderItem} />
+      <FlatList<Chapter> data={chapters} renderItem={renderItem} />
     </View>
   );
 }

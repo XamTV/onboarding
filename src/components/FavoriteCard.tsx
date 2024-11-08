@@ -55,7 +55,7 @@ export default function FavoriteCard({
     );
   }, []);
 
-  if (Object.keys(chapters).length === 0)
+  if (!chapters || Object.keys(chapters).length === 0)
     return (
       <View style={[styles.loaderContainer, styles.horizontal]}>
         <Text>
@@ -74,7 +74,7 @@ export default function FavoriteCard({
       {liked.books[bookId] ? <Card.Cover source={{ uri: picture }} /> : null}
 
       {chapters?.some((chapter) => liked.chapters[chapter.id]) ? (
-        <Text style={styles.subtitleText}>Chapitres</Text>
+        <Text style={styles.subtitleText}>{t("chapters")} </Text>
       ) : null}
 
       <Card.Content>
