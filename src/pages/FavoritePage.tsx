@@ -30,13 +30,7 @@ export default function FavoritePage({ navigation }: Readonly<Props>) {
   if (books.length === 0 || !user) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>
-          {t("emptyPages", {
-            prefix: "cette",
-            container: "page",
-            data: "favoris",
-          })}
-        </Text>
+        <Text>{t("emptyPages.favoritePage")}</Text>
       </View>
     );
   }

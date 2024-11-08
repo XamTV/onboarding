@@ -127,13 +127,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
   if (books.length === 0 || !user) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>
-          {t("emptyPages", {
-            prefix: "cette",
-            container: "page",
-            data: "livre",
-          })}
-        </Text>
+        <Text>{t("emptyPages.homePage")}</Text>
       </View>
     );
   }

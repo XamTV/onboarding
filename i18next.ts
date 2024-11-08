@@ -15,8 +15,14 @@ const resources = {
       chapterRange: "P.{{from}} - P.{{to}} ",
       disconnect: "Deconnexion",
       email: "email",
-      emptyPages:
-        "Aie, {{prefix}} {{container}} semble ne pas contenir de {{data}} ",
+      emptyPages: {
+        bookPage:
+          "Aie, il semblerait qu'il n'y ait pas de chapitres pour ce livre …",
+        chapterPage:
+          "Aie, il semblerait qu'il n'y ait pas de pages pour ce chapitre …",
+        homePage: "Aie, il semblerait qu'il n'y ait pas de livres …",
+        favoritePage: "Aie, il semblerait que vous n'ayez pas de favoris …",
+      },
       errors: {
         fromQuery: "Erreur : {{message}} ",
         emptyPasswordField: "Le champ mot de passe ne peut pas être vide",
