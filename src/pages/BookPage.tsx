@@ -67,7 +67,7 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
   if (loading) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#00ff00" />
       </View>
     );
   }
@@ -78,12 +78,20 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
       </View>
     );
   }
-  if (!chapters || chapters.length === 0)
+
+  if (!chapters || Object.keys(chapters).length === 0) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>{t("emptyPages.chapterPage")}</Text>
+        <Text>
+          {t("emptyPages", {
+            prefix: "ce",
+            container: "livre",
+            data: "chapitres",
+          })}{" "}
+        </Text>
       </View>
     );
+  }
 
   return (
     <View style={style.bookPageContainer}>
