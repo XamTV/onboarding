@@ -82,13 +82,7 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
   if (!chapters || Object.keys(chapters).length === 0) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>
-          {t("emptyPages", {
-            prefix: "ce",
-            container: "livre",
-            data: "chapitres",
-          })}{" "}
-        </Text>
+        <Text>{t("emptyPages.bookPage")}</Text>
       </View>
     );
   }
