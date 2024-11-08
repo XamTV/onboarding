@@ -22,7 +22,6 @@ export default function BookCard({
 
       <Card.Cover source={{ uri: picture }} />
       <Card.Content>
-        <Text>ref. {bookId} </Text>
         <Text>{t("reference", { bookId })} </Text>
       </Card.Content>
     </Card>

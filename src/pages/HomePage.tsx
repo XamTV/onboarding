@@ -232,7 +232,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
               navigation.navigate("FavoritePage");
             }}
           >
-            <Text style={style.buttonText}>{t("myFavorites")} </Text>
+            <Text style={style.buttonText}>{t("favorites.myFavorites")} </Text>
           </Pressable>
         </View>
         <TextInput
