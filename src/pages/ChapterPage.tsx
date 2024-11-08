@@ -73,7 +73,7 @@ export default function ChapterPage({ route }: Readonly<Props>) {
   if (Object.keys(pages).length === 0 || !user)
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>Aie, cette page semble vide …</Text>
+        <Text>Aie, ce chapitre semble ne pas contenir de pages …</Text>
       </View>
     );
   if (loading) {

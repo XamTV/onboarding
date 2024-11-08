@@ -118,7 +118,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
   if (books.length === 0 || !user)
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>Aie, cette page semble vide …</Text>
+        <Text>Aie, cette page semble ne pas contenir de livres …</Text>
       </View>
     );
   if (loading) {

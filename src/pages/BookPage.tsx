@@ -64,7 +64,7 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
   if (Object.keys(chapters).length === 0)
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>Aie, cette page semble vide …</Text>
+        <Text>Aie, ce livre semble ne pas contenir de chapitres …</Text>
       </View>
     );
   if (loading) {
