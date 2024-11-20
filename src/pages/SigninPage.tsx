@@ -2,10 +2,11 @@ import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import auth from "@react-native-firebase/auth";
 import { ActivityIndicator, TextInput } from "react-native-paper";
-import ToastManager, { Toast } from "toastify-react-native";
 import useAuthContext from "../context/AuthContext";
 import { Link } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
+import { useSnackbar } from "../context/SnackBarContext";
+import { SnackBar } from "../components/SnackBar";
 
 export default function SigninPage() {
   const [email, setEmail] = useState<string>();
@@ -14,20 +15,34 @@ export default function SigninPage() {
 
   const { user, initializing } = useAuthContext();
 
+  const snackbar = useSnackbar();
+
   const handleConnexion = () => {
     if (!password) {
-      return Toast.error(t("errors.emptyPasswordField"));
+      snackbar.enqueue(t("errors.emptyPasswordField"));
+
+      return;
     }
     if (!email) {
-      return Toast.error(t("errors.emptyEmailField"));
+      snackbar.enqueue(t("errors.emptyEmailField"));
+
+      return;
     }
     auth()
       .signInWithEmailAndPassword(email, password)
 
       .catch((error) => {
-        Toast.error(
-          t([`errors.${error.code}`, "errors.unspecific"], { code: error.code })
-        );
+        if (error.code === "auth/email-already-in-use") {
+          snackbar.enqueue(t("errors.emailAlreadyInUse"));
+        }
+
+        if (error.code === "auth/invalid-email") {
+          snackbar.enqueue(t("errors.emailInvalid"));
+        }
+        if (error.code === "auth/invalid-credential") {
+          snackbar.enqueue(t("errors.emailAndOrPasswordInvalid"));
+        }
+        console.error(`${error}`);
       });
   };
 
@@ -42,12 +57,6 @@ export default function SigninPage() {
   if (!user) {
     return (
       <View style={styles.formContainer}>
-        <ToastManager
-          positionValue={320}
-          animationIn={`slideInRight`}
-          animationOut={`slideOutLeft`}
-          textStyle={styles.toastText}
-        />
         <TextInput
           style={styles.formInput}
           label={t("email")}
@@ -70,6 +79,9 @@ export default function SigninPage() {
           <Link style={styles.link} to={{ screen: "SignupPage" }}>
             {t("noAccount")}
           </Link>
+        </View>
+        <View style={styles.snackBarContainer}>
+          <SnackBar />
         </View>
       </View>
     );
@@ -108,12 +120,6 @@ const styles = StyleSheet.create({
   link: {
     color: "purple",
   },
-
-  toastText: {
-    fontSize: 16,
-    maxWidth: 200,
-  },
-
   loaderContainer: {
     flex: 1,
     justifyContent: "center",
@@ -122,5 +128,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 10,
+  },
+  snackBarContainer: {
+    alignItems: "center",
+    marginTop: 70,
+  },
+  snackBarText: {
+    fontSize: 14,
+    color: "white",
   },
 });

@@ -4,6 +4,7 @@ import { AuthContextProvider } from "./src/context/AuthContext";
 import RootNavigator from "./RootNavigator";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import "./i18next";
+import { SnackbarProvider } from "./src/context/SnackBarContext";
 
 const client = new ApolloClient({
   uri: "https://api-preprod.lelivrescolaire.fr/graph/",
@@ -13,11 +14,13 @@ const client = new ApolloClient({
 function App() {
   return (
     <ApolloProvider client={client}>
-      <AuthContextProvider>
-        <FavoriteContextProvider>
-          <RootNavigator />
-        </FavoriteContextProvider>
-      </AuthContextProvider>
+      <SnackbarProvider>
+        <AuthContextProvider>
+          <FavoriteContextProvider>
+            <RootNavigator />
+          </FavoriteContextProvider>
+        </AuthContextProvider>
+      </SnackbarProvider>
     </ApolloProvider>
   );
 }

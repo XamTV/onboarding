@@ -2,7 +2,10 @@ import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import auth from "@react-native-firebase/auth";
 import { ActivityIndicator, TextInput } from "react-native-paper";
-import ToastManager, { Toast } from "toastify-react-native";
+
+import { useSnackbar } from "../context/SnackBarContext";
+import { SnackBar } from "../components/SnackBar";
+
 import useAuthContext from "../context/AuthContext";
 import firestore from "@react-native-firebase/firestore";
 import { useTranslation } from "react-i18next";
@@ -15,15 +18,23 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const snackbar = useSnackbar();
+
   const createUser = () => {
     if (!email) {
-      return Toast.error(t("errors.emailRequired"));
+      snackbar.enqueue(t("errors.emailRequired"));
+
+      return;
     }
     if (password.length < 6) {
-      return Toast.error(t("errors.passwordLength"));
+      snackbar.enqueue(t("errors.passwordLength"));
+
+      return;
     }
     if (password !== confirmPassword) {
-      return Toast.error(t("errors.passwordsDontMatch"));
+      snackbar.enqueue(t("errors.passwordsDoesntMatch"));
+
+      return;
     }
 
     auth()
@@ -33,13 +44,17 @@ export default function SignupPage() {
           email: res.user.email,
           uid: res.user.uid,
         });
-
-        Toast.success(t("success.accountCreated"));
       })
       .catch((error) => {
-        Toast.error(
-          t([`errors.${error.code}`, "errors.unspecific"], { code: error.code })
-        );
+        if (error.code === "auth/email-already-in-use") {
+          snackbar.enqueue(t("errors.emailAlreadyInUse"));
+        }
+
+        if (error.code === "auth/invalid-email") {
+          snackbar.enqueue(t("errors.emailInvalid"));
+        }
+
+        console.error(error);
       });
   };
 
@@ -54,13 +69,6 @@ export default function SignupPage() {
   if (!user) {
     return (
       <View style={styles.formContainer}>
-        <ToastManager
-          position="top"
-          positionValue={300}
-          animationIn={`slideInRight`}
-          animationOut={`slideOutLeft`}
-          textStyle={styles.toastText}
-        />
         <TextInput
           style={styles.formInput}
           label={t("requiredInput.email")}
@@ -91,6 +99,9 @@ export default function SignupPage() {
         <Pressable style={styles.formButton} onPress={createUser}>
           <Text style={styles.FormButtonText}>{t("accountCreation")} </Text>
         </Pressable>
+        <View style={styles.snackBarContainer}>
+          <SnackBar />
+        </View>
       </View>
     );
   }
@@ -122,10 +133,6 @@ const styles = StyleSheet.create({
   formInput: {
     marginTop: 8,
   },
-  toastText: {
-    fontSize: 16,
-    maxWidth: 200,
-  },
   loaderContainer: {
     flex: 1,
     justifyContent: "center",
@@ -134,5 +141,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 10,
+  },
+  snackBarContainer: {
+    alignItems: "center",
+    marginTop: 70,
+  },
+  snackBarText: {
+    fontSize: 14,
+    color: "white",
   },
 });

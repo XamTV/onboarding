@@ -10,6 +10,7 @@ const resources = {
         subjects: "Tous sujets",
         levels: "Tous niveaux",
       },
+      close: "Fermer",
       connect: "Se connecter",
       chapters: "Chapitres",
       chapterRange: "P.{{from}} - P.{{to}}",
