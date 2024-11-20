@@ -6,31 +6,7 @@ import FavoriteCard from "../components/FavoriteCard";
 import { useMemo } from "react";
 import { BOOKS_QUERY } from "../service/Queries";
 import { useQuery } from "@apollo/client";
-
-export type Book = {
-  id: number;
-  displayTitle: string;
-  url: string;
-  subjects: Subject[];
-  levels: Level[];
-  valid: boolean;
-};
-
-export type BookQuery = {
-  viewer: {
-    books: {
-      hits: Book[];
-    };
-  };
-};
-
-export type Subject = {
-  name: string;
-};
-
-export type Level = {
-  name: string;
-};
+import { BookQuery, Book } from "./HomePage";
 
 type Props = NativeStackScreenProps<StackParamList, "FavoritePage">;
 
