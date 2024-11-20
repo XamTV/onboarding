@@ -47,12 +47,13 @@ export default function SignupPage() {
       });
   };
 
-  if (initializing)
+  if (initializing) {
     return (
       <View style={[styles.loaderContainer, styles.horizontal]}>
         <ActivityIndicator size="large" color="#00ff00" />
       </View>
     );
+  }
 
   if (!user) {
     return (

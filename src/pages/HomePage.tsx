@@ -115,12 +115,13 @@ export default function HomePage({ navigation }: Readonly<Props>) {
     return validSubject && validLevel && validText;
   });
 
-  if (books.length === 0 || !user)
+  if (books.length === 0 || !user) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
         <Text>Aie, cette page semble ne pas contenir de livres …</Text>
       </View>
     );
+  }
   if (loading) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>

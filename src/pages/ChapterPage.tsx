@@ -70,12 +70,13 @@ export default function ChapterPage({ route }: Readonly<Props>) {
     [sortedPages]
   );
 
-  if (Object.keys(pages).length === 0 || !user)
+  if (Object.keys(pages).length === 0 || !user) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
         <Text>Aie, ce chapitre semble ne pas contenir de pages …</Text>
       </View>
     );
+  }
   if (loading) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>

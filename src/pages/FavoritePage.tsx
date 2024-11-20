@@ -25,12 +25,13 @@ export default function FavoritePage({ navigation }: Readonly<Props>) {
     [liked.chapters]
   );
 
-  if (books.length === 0 || !user)
+  if (books.length === 0 || !user) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
         <Text>Aie, cette page semble ne pas contenir de favoris …</Text>
       </View>
     );
+  }
   if (loading) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>

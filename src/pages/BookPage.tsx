@@ -63,21 +63,23 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
     ) : null;
   }, []);
 
-  if (loading)
+  if (loading) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
         <ActivityIndicator size="large" />
       </View>
     );
+  }
 
-  if (error)
+  if (error) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
         <Text>{t("error")}</Text>
       </View>
     );
+  }
 
-  if (Object.keys(chapters).length === 0)
+  if (Object.keys(chapters).length === 0) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
         <Text>
@@ -89,6 +91,7 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
         </Text>
       </View>
     );
+  }
 
   return (
     <View style={style.bookPageContainer}>
