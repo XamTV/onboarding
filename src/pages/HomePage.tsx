@@ -61,7 +61,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
         book.id,
 
         [
-          removeDiacritics(book.displayTitle?.toLowerCase() || ""),
+          removeDiacritics(book.displayTitle?.toLowerCase() ?? ""),
           ...book.subjects.map((subject) =>
             removeDiacritics(subject.name.toLowerCase())
           ),
