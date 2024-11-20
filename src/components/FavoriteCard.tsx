@@ -24,7 +24,7 @@ export default function FavoriteCard({
     fetchPolicy: "cache-first",
   });
 
-  const chapters = { [bookId]: chapterData?.viewer.chapters.hits };
+  const chapters = chapterData?.viewer.chapters.hits;
 
   const { liked, toggleLiked } = useFavorite();
 
@@ -58,15 +58,13 @@ export default function FavoriteCard({
       <Card.Title titleStyle={styles.title} title={displayTitle} />
       {liked.books[bookId] ? <Card.Cover source={{ uri: picture }} /> : null}
 
-      {chapters[bookId]?.some((chapter) => liked.chapters[chapter.id]) ? (
+      {chapters?.some((chapter) => liked.chapters[chapter.id]) ? (
         <Text style={styles.subtitleText}>Chapitres</Text>
       ) : null}
 
       <Card.Content>
         <FlatList
-          data={chapters[bookId]?.filter(
-            (chapter) => liked.chapters[chapter.id]
-          )}
+          data={chapters?.filter((chapter) => liked.chapters[chapter.id])}
           renderItem={renderItem}
         />
       </Card.Content>
