@@ -20,10 +20,10 @@ export default function SignupPage() {
       return Toast.error(t("errors.emailRequired"));
     }
     if (password.length < 6) {
-      return Toast.error("errors.passwordLength");
+      return Toast.error(t("errors.passwordLength"));
     }
     if (password !== confirmPassword) {
-      return Toast.error("errors.passwordsDoesntMatch");
+      return Toast.error(t("errors.passwordsDoesntMatch"));
     }
 
     auth()
@@ -37,15 +37,9 @@ export default function SignupPage() {
         Toast.success(t("success.accountCreated"));
       })
       .catch((error) => {
-        if (error.code === "auth/email-already-in-use") {
-          Toast.error(t("errors.emailAlreadyInUse"));
-        }
-
-        if (error.code === "auth/invalid-email") {
-          Toast.error("errors.emailInvalid");
-        }
-
-        console.error(error);
+        Toast.error(
+          t([`errors.${error.code}`, "errors.unspecific"], { code: error.code })
+        );
       });
   };
 

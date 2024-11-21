@@ -23,12 +23,17 @@ const resources = {
         homePage: "Aie, il semblerait qu'il n'y ait pas de livres …",
         favoritePage: "Aie, il semblerait que vous n'ayez pas de favoris …",
       },
+      error: {
+        unspecific: "Something went wrong.",
+        "404": "The page was not found.",
+      },
       errors: {
+        unspecific: "Erreur inconnu : {{code}}",
+        "auth/email-already-in-use": "Cet adresse email est deja utilisé",
+        "auth/invalid-email": "Adresse email invalide",
         fromQuery: "Erreur : {{message}} ",
         emptyPasswordField: "Le champ mot de passe ne peut pas être vide",
         emptyEmailField: "Le champ email ne peut pas être vide ",
-        emailAlreadyInUse: "Cet adresse email est deja utilisé",
-        emailInvalid: "Adresse email invalide",
         emailAndOrPasswordInvalid: "Email et/ou mot de passe invalide",
         emailRequired: "L'adresse email est requise",
         passwordLength: "Votre mot de passe doit faire plus de 6 caractères",
@@ -59,6 +64,7 @@ const resources = {
 };
 
 i18n.use(initReactI18next).init({
+  fallbackLng: "fr",
   resources,
   lng: "fr",
   interpolation: {
