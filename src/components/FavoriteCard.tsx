@@ -55,7 +55,7 @@ export default function FavoriteCard({
     );
   }, []);
 
-  if (!chapters || Object.keys(chapters).length === 0) {
+  if (!chapters || chapters.length === 0) {
     return (
       <View style={[styles.loaderContainer, styles.horizontal]}>
         <Text>
