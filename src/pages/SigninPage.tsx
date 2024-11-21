@@ -25,17 +25,9 @@ export default function SigninPage() {
       .signInWithEmailAndPassword(email, password)
 
       .catch((error) => {
-        if (error.code === "auth/email-already-in-use") {
-          Toast.error(t("errors.emailAlreadyInUse"));
-        }
-
-        if (error.code === "auth/invalid-email") {
-          Toast.error(t("errors.emailInvalid"));
-        }
-        if (error.code === "auth/invalid-credential") {
-          Toast.error(t("errors.emailAndOrPasswordInvalid"));
-        }
-        console.error(`${error}`);
+        Toast.error(
+          t([`errors.${error.code}`, "errors.unspecific"], { code: error.code })
+        );
       });
   };
 
