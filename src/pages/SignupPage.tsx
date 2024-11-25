@@ -23,7 +23,7 @@ export default function SignupPage() {
       return Toast.error(t("errors.passwordLength"));
     }
     if (password !== confirmPassword) {
-      return Toast.error(t("errors.passwordsDoesntMatch"));
+      return Toast.error(t("errors.passwordsDontMatch"));
     }
 
     auth()

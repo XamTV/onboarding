@@ -58,13 +58,7 @@ export default function FavoriteCard({
   if (!chapters || chapters.length === 0) {
     return (
       <View style={[styles.loaderContainer, styles.horizontal]}>
-        <Text>
-          {t("emptyPages", {
-            prefix: "ce",
-            container: "livre",
-            data: "chapitres",
-          })}
-        </Text>
+        <Text>{t("emptyPages.favorites")}</Text>
       </View>
     );
   }
