@@ -43,8 +43,10 @@ export default function SignupPage() {
         firestore().collection("login").doc(`${res.user.uid}`).set({
           email: res.user.email,
           uid: res.user.uid,
+          role: "student",
         });
       })
+
       .catch((error) => {
         if (error.code === "auth/email-already-in-use") {
           snackbar.enqueue(t("errors.emailAlreadyInUse"));

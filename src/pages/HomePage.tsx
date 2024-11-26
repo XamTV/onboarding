@@ -192,7 +192,9 @@ export default function HomePage({ navigation }: Readonly<Props>) {
       </Portal>
       <View style={style.container}>
         <Text style={style.buttonText}>
-          {t("welcomeMessage", {user : user?.email !== null ? user.email : ""})}
+          {t("welcomeMessage", {
+            user: user?.email !== null ? user.email : "",
+          })}
         </Text>
         <View style={style.buttonContainer}>
           <Pressable

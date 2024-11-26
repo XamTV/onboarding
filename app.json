@@ -15,7 +15,7 @@
     "ios": {
       "supportsTablet": true,
       "googleServicesFile": "./GoogleService-Info.plist",
-      "bundleIdentifier": "com.siruplab.onboarding"
+      "bundleIdentifier": "com.siruplab.onboarding",
     },
     "android": {
       "adaptiveIcon": {
@@ -29,6 +29,7 @@
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
       "@react-native-firebase/crashlytics",
+      
       [
         "expo-build-properties",
         {

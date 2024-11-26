@@ -9,7 +9,7 @@ import useFavorite from "../context/FavoriteContext";
 import { PAGES_QUERY } from "../service/Queries";
 import { useQuery } from "@apollo/client";
 import { ActivityIndicator } from "react-native-paper";
-import useAuthContext from "../context/AuthContext";
+import useAuthContext, { UserData } from "../context/AuthContext";
 import { useTranslation } from "react-i18next";
 
 type Page = {
@@ -33,7 +33,7 @@ type Props = NativeStackScreenProps<StackParamList, "ChapterPage">;
 export default function ChapterPage({ route }: Readonly<Props>) {
   const { chapterId, bookId } = route.params;
   const { liked, toggleLiked } = useFavorite();
-  const { user } = useAuthContext();
+  const { user, userData } = useAuthContext();
   const { t } = useTranslation();
   const {
     loading,
@@ -92,6 +92,9 @@ export default function ChapterPage({ route }: Readonly<Props>) {
       </View>
     );
   }
+
+  console.log("ChapterPage =>", userData?.role);
+
   return (
     <View>
       <Pressable
@@ -109,6 +112,7 @@ export default function ChapterPage({ route }: Readonly<Props>) {
             : t("favorites.removeFromFavorites")}
         </Text>
       </Pressable>
+
       <Text style={style.title}>
         {t("chapterRange", {
           from: sortedPages[0]?.page,
