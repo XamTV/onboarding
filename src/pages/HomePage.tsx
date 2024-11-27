@@ -11,7 +11,7 @@ import {
 import BookCard from "../components/BookCard";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Modal, Portal, Provider, TextInput } from "react-native-paper";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { StackParamList } from "../../RootNavigator";
 import useAuthContext from "../context/AuthContext";
 import { BOOKS_QUERY } from "../service/Queries";
@@ -51,6 +51,8 @@ const removeDiacritics = (text: string) =>
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "");
 
+ 
+
 export default function HomePage({ navigation }: Readonly<Props>) {
   const { loading, error, data: bookData } = useQuery<BookQuery>(BOOKS_QUERY);
   const books = bookData?.viewer.books.hits || [];
@@ -64,6 +66,10 @@ export default function HomePage({ navigation }: Readonly<Props>) {
   const [levelFilter, setLevelFilter] = useState("");
   const [subjectFilter, setSubjectFilter] = useState("");
   const [textFilter, setTextFilter] = useState("");
+
+ useEffect(() => {
+    
+  }, []);
 
   const levels: string[] = useMemo(
     () => [

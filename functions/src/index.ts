@@ -1,3 +1,4 @@
+
 /**
  * Import function triggers from their respective submodules:
  *
@@ -9,21 +10,44 @@
 
 import './config/firebase';
 
-import {setGlobalOptions} from 'firebase-functions/options';
+import admin from 'firebase-admin';
 import {onCall} from 'firebase-functions/v2/https';
 
-setGlobalOptions({
-  region: 'europe-west1',
-});
 
 // Start writing functions
 // https://firebase.google.com/docs/functions/typescript
 
-// export const helloWorld = onRequest((request, response) => {
+// export const teacherNotification = onRequest((request, response) => {
 //   logger.info('Hello logs!', {structuredData: true});
 //   response.send('Hello from Firebase!');
 // });
+type teacherNotificationParams
+= {
+  chapterId: number;
+  bookId: number;
+}
+export const teacherNotification = onCall<teacherNotificationParams>(async (req, _res) => {
+  try {
+    const {chapterId, bookId} = req.data;
+    const userDoc = await admin.firestore().doc(`login/${req.auth?.uid}`).get();
+    const studentIds : string[] = userDoc.data()?.students || [];
 
-export const helloWorld = onCall((req, _res) => {
-  return (req.auth?.uid);
+    const tokens = await Promise.all(studentIds.map(async (studentId: string) => {
+      const studentDoc = await admin.firestore().doc(`login/${studentId}`).get();
+      return studentDoc.data()?.notification_token;
+    }));
+
+    await admin.messaging().sendEachForMulticast({
+      tokens,
+      notification: {
+        title: 'Bonjour',
+        body: `Veuillez consulter le chapitre ${chapterId} du livre ${bookId}`,
+      },
+
+    });
+    return {result: 'Success'};
+  } catch (error) {
+    console.error('Error fetching document:', error);
+    return {error: 'Error fetching document'};
+  }
 });

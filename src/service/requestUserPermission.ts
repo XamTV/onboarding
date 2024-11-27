@@ -1,5 +1,4 @@
-import { FirebaseAuthTypes } from "@react-native-firebase/auth";
-import messaging, { getToken } from "@react-native-firebase/messaging";
+import messaging from "@react-native-firebase/messaging";
 import { PermissionsAndroid } from "react-native";
 import firestore from "@react-native-firebase/firestore";
 

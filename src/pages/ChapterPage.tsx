@@ -9,8 +9,10 @@ import useFavorite from "../context/FavoriteContext";
 import { PAGES_QUERY } from "../service/Queries";
 import { useQuery } from "@apollo/client";
 import { ActivityIndicator } from "react-native-paper";
-import useAuthContext, { UserData } from "../context/AuthContext";
+import useAuthContext from "../context/AuthContext";
 import { useTranslation } from "react-i18next";
+import functions from '@react-native-firebase/functions';
+
 
 type Page = {
   id: number;
@@ -92,9 +94,6 @@ export default function ChapterPage({ route }: Readonly<Props>) {
       </View>
     );
   }
-
-  console.log("ChapterPage =>", userData?.role);
-
   return (
     <View>
       <Pressable
@@ -112,6 +111,26 @@ export default function ChapterPage({ route }: Readonly<Props>) {
             : t("favorites.removeFromFavorites")}
         </Text>
       </Pressable>
+
+      {
+        //TODO Switch Text to i18next
+      }
+      {userData?.role === "teacher" ? (
+        <Pressable
+          style={[style.buttons, style.notificationButton]}
+          onPress={()=> functions()
+      .httpsCallable('teacherNotification')( {chapterId, bookId})
+      .then(response => {
+        console.info(response.data);
+      })
+      .catch(error => {
+        console.error("Error calling teacherNotification function:", error as Error);
+      })}
+          
+        >
+          <Text>Send Notification</Text>
+        </Pressable>
+      ) : null}
 
       <Text style={style.title}>
         {t("chapterRange", {
@@ -156,5 +175,8 @@ const style = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 10,
+  },
+  notificationButton: {
+    backgroundColor: "lightblue",
   },
 });
