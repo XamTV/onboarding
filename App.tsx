@@ -9,6 +9,7 @@ import { SnackbarProvider } from "./src/context/SnackBarContext";
 import { useEffect , useRef} from "react";
 import { AppState,  } from "react-native";
 
+import { getMessaging, onMessage, setBackgroundMessageHandler, getInitialNotification } from "@react-native-firebase/messaging";
 
 const client = new ApolloClient({
   uri: "https://api-preprod.lelivrescolaire.fr/graph/",
@@ -21,26 +22,9 @@ if (__DEV__) {
   functions().useEmulator("10.0.2.2", 5001);
 }
 
+
+
 function App() {
-  const appState = useRef(AppState.currentState);
-
-  useEffect(() => {
-    const subscription = AppState.addEventListener('change', nextAppState => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === 'active'
-      ) {
-        console.log('App has come to the foreground!');
-      }
-
-      appState.current = nextAppState;
-      console.log('AppState', appState.current);
-    });
-
-    return () => {
-      subscription.remove();
-    };
-  }, []);
   return (
     <ApolloProvider client={client}>
       <SnackbarProvider>
