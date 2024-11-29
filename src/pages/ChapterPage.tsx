@@ -1,5 +1,5 @@
-import { View, FlatList, Text, StyleSheet, Pressable } from "react-native";
-import { useCallback, useMemo } from "react";
+import { View, FlatList, Text, StyleSheet, Pressable, Platform } from "react-native";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import * as R from "remeda";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -12,7 +12,17 @@ import { ActivityIndicator } from "react-native-paper";
 import useAuthContext from "../context/AuthContext";
 import { useTranslation } from "react-i18next";
 import functions from '@react-native-firebase/functions';
+import { getMessaging, onMessage, setBackgroundMessageHandler } from "@react-native-firebase/messaging";
 
+const getLogs = (log: string) => {
+
+  if ( Platform.OS === "android") {
+    console.log("android", log)
+  } else {
+    console.log("ios", log)
+  }
+
+}
 
 type Page = {
   id: number;
@@ -20,6 +30,7 @@ type Page = {
   picture: string;
   page: number;
   valid: boolean;
+  chapter: {title : string}
 };
 
 type PageQuery = {
@@ -33,7 +44,11 @@ type PageQuery = {
 type Props = NativeStackScreenProps<StackParamList, "ChapterPage">;
 
 export default function ChapterPage({ route }: Readonly<Props>) {
-  const { chapterId, bookId } = route.params;
+  console.log("route", route)
+  const { chapterId, bookId, title } = route.params;
+
+  const [open, setOpen] = useState(false);
+
   const { liked, toggleLiked } = useFavorite();
   const { user, userData } = useAuthContext();
   const { t } = useTranslation();
@@ -43,10 +58,14 @@ export default function ChapterPage({ route }: Readonly<Props>) {
     data: pageData,
   } = useQuery<PageQuery>(PAGES_QUERY, {
     variables: { chapterId },
-    fetchPolicy: "cache-first",
+    fetchPolicy: "cache-and-network",
   });
 
   const pages = pageData?.viewer.pages.hits || [];
+
+
+getLogs(`BookId === ${bookId} //// ChapterId === ${chapterId}`)
+  
 
   const sortedPages = useMemo(
     () => (pages ? R.sortBy(Object.values(pages).flat(), R.prop("page")) : []),
@@ -72,6 +91,8 @@ export default function ChapterPage({ route }: Readonly<Props>) {
     },
     [sortedPages]
   );
+
+  
 
   if (loading) {
     return (
@@ -118,15 +139,15 @@ export default function ChapterPage({ route }: Readonly<Props>) {
       {userData?.role === "teacher" ? (
         <Pressable
           style={[style.buttons, style.notificationButton]}
-          onPress={()=> functions()
-      .httpsCallable('teacherNotification')( {chapterId, bookId})
-      .then(response => {
-        console.info(response.data);
-      })
-      .catch(error => {
-        console.error("Error calling teacherNotification function:", error as Error);
-      })}
-          
+          onPress={() => functions()
+            .httpsCallableFromUrl('http://127.0.0.1:5001/onboarding-89c59/europe-west1/teacherNotification')({ bookId, title, chapterId  })
+            .then(response => {
+              console.info(response.data);
+              setOpen(true)
+            })
+            .catch(error => {
+              console.error("Error calling teacherNotification function:", error as Error);
+            })}
         >
           <Text>Send Notification</Text>
         </Pressable>

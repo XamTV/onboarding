@@ -1,8 +1,10 @@
 {
   "expo": {
     "name": "onboarding",
-    "slug": "onboarding",
     "version": "1.0.0",
+    "slug": "onboarding",
+    "scheme": "com.siruplab.onboarding",
+    "platforms": ["ios", "android", "web"],
     "jsEngine": "hermes",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,7 +17,7 @@
     "ios": {
       "supportsTablet": true,
       "googleServicesFile": "./GoogleService-Info.plist",
-      "bundleIdentifier": "com.siruplab.onboarding",
+      "bundleIdentifier": "com.siruplab.onboarding"
     },
     "android": {
       "adaptiveIcon": {
@@ -29,7 +31,7 @@
       "@react-native-firebase/app",
       "@react-native-firebase/auth",
       "@react-native-firebase/crashlytics",
-      
+
       [
         "expo-build-properties",
         {

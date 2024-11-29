@@ -48,6 +48,9 @@ export const PAGES_QUERY = gql`
           picture
           page
           valid
+          chapter{
+            title
+          }
         }
       }
     }

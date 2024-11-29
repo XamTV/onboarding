@@ -22,6 +22,7 @@ module.exports = {
     "jest.config.js",
     "metro.config.js",
     "index.js",
+    "lib",
   ],
   plugins: [
     "@typescript-eslint", // https://typescript-eslint.io/

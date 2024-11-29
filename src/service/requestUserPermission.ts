@@ -24,7 +24,11 @@ export async function requestUserPermission(uid: string) {
     if (permission === PermissionsAndroid.RESULTS.GRANTED) {
       await messaging().registerDeviceForRemoteMessages();
       const token = await messaging().getToken();
-      firestore().doc(`login/${uid}`).update({ notification_token: token });
+      const userDoc = firestore().doc(`login/${uid}`);
+      const userSnapshot = await userDoc.get();
+      const existingTokens = userSnapshot.data()?.notification_tokens || [];
+      const updatedTokens = Array.from(new Set([...existingTokens, token]));
+      await userDoc.update({ notification_tokens: updatedTokens });
     }
   } catch (error) {
     console.error("Permission request failed", error);
