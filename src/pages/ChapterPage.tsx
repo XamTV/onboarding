@@ -1,8 +1,11 @@
-import { View, FlatList, Text, StyleSheet, Pressable, Platform } from "react-native";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { View, FlatList, Text, StyleSheet, Pressable } from "react-native";
+import { useCallback, useMemo } from "react";
 
 import * as R from "remeda";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import {
+  NativeStackNavigationProp,
+  NativeStackScreenProps,
+} from "@react-navigation/native-stack";
 import { StackParamList } from "../../RootNavigator";
 import PageCard from "../components/PageCard";
 import useFavorite from "../context/FavoriteContext";
@@ -11,18 +14,8 @@ import { useQuery } from "@apollo/client";
 import { ActivityIndicator } from "react-native-paper";
 import useAuthContext from "../context/AuthContext";
 import { useTranslation } from "react-i18next";
-import functions from '@react-native-firebase/functions';
-import { getMessaging, onMessage, setBackgroundMessageHandler } from "@react-native-firebase/messaging";
-
-const getLogs = (log: string) => {
-
-  if ( Platform.OS === "android") {
-    console.log("android", log)
-  } else {
-    console.log("ios", log)
-  }
-
-}
+import functions from "@react-native-firebase/functions";
+import { useNavigation } from "@react-navigation/native";
 
 type Page = {
   id: number;
@@ -30,7 +23,7 @@ type Page = {
   picture: string;
   page: number;
   valid: boolean;
-  chapter: {title : string}
+  chapter: { title: string };
 };
 
 type PageQuery = {
@@ -43,12 +36,16 @@ type PageQuery = {
 
 type Props = NativeStackScreenProps<StackParamList, "ChapterPage">;
 
+type HomeScreenNavigationProp = NativeStackNavigationProp<
+  StackParamList,
+  "HomePage"
+>;
+
 export default function ChapterPage({ route }: Readonly<Props>) {
-  const { chapterId, bookId, title } = route.params;
+  const { chapterId, bookId, chapterTitle, bookTitle } = route.params;
 
-
-  const [open, setOpen] = useState(false);
-
+  const isChapterParsed =
+    typeof chapterId === "string" ? parseInt(chapterId) : chapterId;
 
   const { liked, toggleLiked } = useFavorite();
   const { user, userData } = useAuthContext();
@@ -58,17 +55,41 @@ export default function ChapterPage({ route }: Readonly<Props>) {
     error,
     data: pageData,
   } = useQuery<PageQuery>(PAGES_QUERY, {
-    /** chapterId need an Integer not a number */
-    variables: { chapterId: parseInt(chapterId)},
-    fetchPolicy: "no-cache",
-    
+    variables: {
+      chapterId: isChapterParsed,
+    },
+    fetchPolicy: "cache-first",
   });
 
+  const teacherNotificationUrl =
+    "https://teachernotification-hb7zfd533a-ew.a.run.app";
+
+  // for local test :
+  // const teacherNotificationUrl =
+  //   "http://127.0.0.1:5001/onboarding-89c59/europe-west1/teacherNotification";
+
+  const handleNotification = () => {
+    functions()
+      .httpsCallableFromUrl(teacherNotificationUrl)({
+        bookId,
+        bookTitle,
+        chapterTitle,
+        chapterId,
+      })
+      .then((response) => {
+        console.info(response.data);
+      })
+      .catch((error) => {
+        console.error(
+          "Error calling teacherNotification function:",
+          error as Error
+        );
+      });
+  };
+
+  const navigation = useNavigation<HomeScreenNavigationProp>();
+
   const pages = pageData?.viewer.pages.hits || [];
-
-
-getLogs(`BookId === ${bookId} //// ChapterId === ${chapterId}`)
-  
 
   const sortedPages = useMemo(
     () => (pages ? R.sortBy(Object.values(pages).flat(), R.prop("page")) : []),
@@ -76,7 +97,7 @@ getLogs(`BookId === ${bookId} //// ChapterId === ${chapterId}`)
   );
 
   const onFavoritePress = useCallback(
-    () => toggleLiked(bookId, chapterId),
+    () => toggleLiked(bookId, isChapterParsed),
 
     [chapterId]
   );
@@ -95,8 +116,6 @@ getLogs(`BookId === ${bookId} //// ChapterId === ${chapterId}`)
     [sortedPages]
   );
 
-  
-
   if (loading) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
@@ -114,7 +133,7 @@ getLogs(`BookId === ${bookId} //// ChapterId === ${chapterId}`)
   if (Object.keys(pages).length === 0 || !user) {
     return (
       <View style={[style.loaderContainer, style.horizontal]}>
-        <Text>{"emptyPages.chapterPage"}</Text>
+        <Text>{t("emptyPages.chapterPage")}</Text>
       </View>
     );
   }
@@ -123,42 +142,35 @@ getLogs(`BookId === ${bookId} //// ChapterId === ${chapterId}`)
       <Pressable
         style={[
           style.buttons,
-          liked.chapters[chapterId]
+          liked.chapters[isChapterParsed]
             ? style.favoriteRemovebutton
             : style.favoriteAddbutton,
         ]}
         onPress={onFavoritePress}
       >
         <Text style={style.buttonText}>
-          {liked.chapters[chapterId] === 0
-            ? ("favorites.addToFavorites")
-            : ("favorites.removeFromFavorites")}
+          {liked.chapters[isChapterParsed] === 0
+            ? t("favorites.addToFavorites")
+            : t("favorites.removeFromFavorites")}
         </Text>
       </Pressable>
+      <Pressable
+        style={[style.buttons, style.notificationButton]}
+        onPress={() => navigation.navigate("HomePage")}
+      >
+        <Text style={style.buttonText}>{t("homePage")}</Text>
+      </Pressable>
 
-      {
-        //TODO Switch Text to i18next
-      }
       {userData?.role === "teacher" ? (
         <Pressable
           style={[style.buttons, style.notificationButton]}
-          onPress={() => functions()
-            .httpsCallableFromUrl('http://127.0.0.1:5001/onboarding-89c59/europe-west1/teacherNotification')({ bookId, title, chapterId  })
-            .then(response => {
-              console.info(response.data);
-              setOpen(true)
-            })
-            .catch(error => {
-              console.error("Error calling teacherNotification function:", error as Error);
-            })}
+          onPress={handleNotification}
         >
-          <Text>Send Notification</Text>
+          <Text>{t("sendNotification")}</Text>
         </Pressable>
       ) : null}
 
-      <Text style={style.title}>
-        
-      </Text>
+      <Text style={style.title}></Text>
       <FlatList<Page> data={sortedPages} renderItem={renderItem} />
     </View>
   );

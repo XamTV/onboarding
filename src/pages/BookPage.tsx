@@ -14,6 +14,9 @@ export type Chapter = {
   title: string;
   url: string;
   valid: boolean;
+  book: {
+    title: string;
+  };
 };
 
 export type ChapterQuery = {
@@ -56,8 +59,9 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
         onPress={() => {
           navigation.navigate("ChapterPage", {
             chapterId: item.id,
-            title: item.title,
+            chapterTitle: item.title,
             bookId,
+            bookTitle: item.book.title,
           });
         }}
       />

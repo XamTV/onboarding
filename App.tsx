@@ -6,10 +6,6 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
 import functions from "@react-native-firebase/functions";
 import "./i18next";
 import { SnackbarProvider } from "./src/context/SnackBarContext";
-import { useEffect , useRef} from "react";
-import { AppState,  } from "react-native";
-
-import { getMessaging, onMessage, setBackgroundMessageHandler, getInitialNotification } from "@react-native-firebase/messaging";
 
 const client = new ApolloClient({
   uri: "https://api-preprod.lelivrescolaire.fr/graph/",
@@ -21,8 +17,6 @@ if (__DEV__) {
   // If you are running on a physical device, replace http://localhost with the local ip of your PC. (http://192.168.x.x)
   functions().useEmulator("10.0.2.2", 5001);
 }
-
-
 
 function App() {
   return (

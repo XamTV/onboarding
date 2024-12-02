@@ -1,57 +1,41 @@
-// import * as Linking from "expo-linking";
-// import messaging from "@react-native-firebase/messaging";
+import * as Linking from "expo-linking";
+import messaging from "@react-native-firebase/messaging";
 
-// const useNotifications = () => {
-//   // Fonction pour gérer l'URL initiale de l'app
-//   const getAppInitialURL = async () => {
-//     // Vérification du lien profond au lancement de l'app
-//     const url = await Linking.getInitialURL();
-//     if (typeof url === "string") {
-//       console.log("getInitialUrl", url);
-//       return url;
-//     }
+const useNotifications = () => {
+  const getInitialURL = async (): Promise<string | null> => {
+    const url = await Linking.getInitialURL();
 
-//     // Vérification d'une notification reçue lorsque l'application est lancée depuis le background
-//     const message = await messaging().getInitialNotification();
-//     console.log("Message", message);
+    if (url != null) {
+      return url;
+    }
 
-//     const deeplinkURL = message?.data?.url;
-//     console.log("deepLinks", deeplinkURL);
+    const message = await messaging().getInitialNotification();
 
-//     if (typeof deeplinkURL === "string") {
-//       return deeplinkURL;
-//     }
-//   };
+    const deeplinkURL = message?.data?.url;
+    if (typeof deeplinkURL === "string") {
+      console.log("Deep link URL from notification:", deeplinkURL);
+      return deeplinkURL;
+    }
+    return null;
+  };
 
-//   // Fonction pour s'abonner aux liens profonds pendant l'exécution de l'app
-//   const subscribeToDeepLinks = (listener: (url: string) => void) => {
-//     // Écoute des événements de changement de lien profond dans l'app
-//     const onReceiveURL = ({ url }: { url: string }) => {
-//       console.log("OnReceiveUrl", url);
-//       listener(url); // Appelle le listener avec l'URL reçue
-//     };
+  const subscribe = (listener: (url: string) => void) => {
+    const eventListenerSubscription = Linking.addEventListener(
+      "url",
+      ({ url }: { url: string }) => listener(url)
+    );
 
-//     // Abonnement aux événements de lien profond
-//     const linkingSubscription = Linking.addEventListener("url", onReceiveURL);
+    const unsubscribe = messaging().onNotificationOpenedApp((remoteMessage) => {
+      const url = remoteMessage.data?.url;
+      if (url) listener(url as string);
+    });
 
-//     // Écoute les notifications lorsque l'app est en arrière-plan ou fermée
-//     const unsubscribe = messaging().onNotificationOpenedApp((remoteMessage) => {
-//       const url = remoteMessage.data?.url;
-//       console.log("remoteMessage", remoteMessage);
+    return () => {
+      eventListenerSubscription.remove();
+      unsubscribe();
+    };
+  };
 
-//       if (typeof url === "string") {
-//         listener(url); // Appelle le listener avec l'URL de la notification
-//       }
-//     });
-
-//     // Retourne une fonction pour annuler l'abonnement au démontage du hook
-//     return () => {
-//       linkingSubscription.remove(); // Désabonne de l'événement "url"
-//       unsubscribe(); // Désabonne de l'événement de notification
-//     };
-//   };
-
-//   return { getAppInitialURL, subscribeToDeepLinks };
-// };
-
-// export default useNotifications;
+  return { getInitialURL, subscribe };
+};
+export default useNotifications;

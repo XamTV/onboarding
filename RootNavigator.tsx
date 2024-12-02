@@ -10,20 +10,19 @@ import auth from "@react-native-firebase/auth";
 import useAuthContext from "./src/context/AuthContext";
 import { NavigationContainer } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
-import * as Linking from "expo-linking";
-import messaging, {
-  onNotificationOpenedApp,
-  getInitialNotification,
-} from "@react-native-firebase/messaging";
-import { useEffect, useState } from "react";
-import { Linking as RNLinking } from "react-native";
+import useNotifications from "./src/hooks/useNotifications";
 
 // Définition des paramètres de navigation
 export type StackParamList = {
   SigninPage: undefined;
   HomePage: undefined;
   BookPage: { bookId: number; displayTitle: string };
-  ChapterPage: { chapterId: string; title: string; bookId: number };
+  ChapterPage: {
+    chapterId: number | string;
+    chapterTitle: string;
+    bookId: number;
+    bookTitle: string;
+  };
   FavoritePage: undefined;
   SignupPage: undefined;
 };
@@ -32,7 +31,7 @@ const SCREENS = {
   screens: {
     HomePage: "homepage",
     BookPage: "bookpage/:title",
-    ChapterPage: "chapterpage/:title/:bookId/:chapterId",
+    ChapterPage: "chapterpage/:chapterTitle/:bookId/:chapterId",
     FavoritePage: "favoritepage",
     SigninPage: "signin",
     SignupPage: "signup",
@@ -43,43 +42,15 @@ function RootNavigator() {
   const Stack = createNativeStackNavigator<StackParamList>();
   const { user } = useAuthContext();
   const { t } = useTranslation();
+  const { getInitialURL, subscribe } = useNotifications();
 
   return (
     <NavigationContainer
       linking={{
-        prefixes: [Linking.createURL("/")],
+        prefixes: ["com.siruplab.onboarding://"],
         config: SCREENS,
-        async getInitialURL() {
-          const url = await RNLinking.getInitialURL();
-          console.log("url", url);
-          if (url != null) {
-            return url;
-          }
-
-          /** Si une notification est reçu d'un deeplink au lancement de l'app. On check si il vient d'une notification  */
-          const message = await getInitialNotification(messaging);
-
-          console.log("message", message);
-          return message?.data?.url as string;
-        },
-        subscribe(listener) {
-          const eventListenerSubscription = Linking.addEventListener(
-            "url",
-            ({ url }: { url: string }) => listener(url)
-          );
-
-          const unsubscribe = messaging().onNotificationOpenedApp(
-            (remoteMessage) => {
-              const url = remoteMessage.data?.url;
-              if (url) listener(url as string);
-            }
-          );
-
-          return () => {
-            eventListenerSubscription.remove();
-            unsubscribe;
-          };
-        },
+        getInitialURL,
+        subscribe,
       }}
     >
       {user ? (
@@ -104,7 +75,9 @@ function RootNavigator() {
           <Stack.Screen
             name="ChapterPage"
             component={ChapterPage}
-            options={({ route }) => ({ title: route.params.title })}
+            options={({ route }) => ({
+              title: route.params.chapterTitle,
+            })}
           />
           <Stack.Screen name="FavoritePage" component={FavoritePage} />
         </Stack.Navigator>

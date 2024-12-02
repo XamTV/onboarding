@@ -32,6 +32,9 @@ export const CHAPTERS_QUERY = gql`
           title
           url
           valid
+          book {
+            title
+          }
         }
       }
     }
@@ -48,7 +51,7 @@ export const PAGES_QUERY = gql`
           picture
           page
           valid
-          chapter{
+          chapter {
             title
           }
         }

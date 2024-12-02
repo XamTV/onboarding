@@ -46,6 +46,7 @@ const resources = {
         removeFromFavorites: "Retirer des favoris",
       },
       filterReset: "Réinitialiser le filtre",
+      homePage: "Page d'accueil",
       noAccount: "Pas de compte ?",
       pageNumber: "p.{{pageNumber}}",
       password: "mot de passe",
@@ -56,6 +57,7 @@ const resources = {
         confirmPassword: "confirmation du mot de passe *",
       },
       searchBooks: "Rechercher un livre",
+      sendNotification: "Envoyer la notification",
       success: {
         accountCreated: "Compte crée",
       },
