@@ -170,6 +170,12 @@ export default function ChapterPage({ route }: Readonly<Props>) {
         </Pressable>
       ) : null}
 
+      <Text style={style.title}>
+        {t("chapterRange", {
+          from: sortedPages[0]?.page,
+          to: sortedPages[sortedPages.length - 1]?.page,
+        })}
+      </Text>
       <Text style={style.title}></Text>
       <FlatList<Page> data={sortedPages} renderItem={renderItem} />
     </View>

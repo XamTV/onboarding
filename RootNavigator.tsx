@@ -75,9 +75,7 @@ function RootNavigator() {
           <Stack.Screen
             name="ChapterPage"
             component={ChapterPage}
-            options={({ route }) => ({
-              title: route.params.chapterTitle,
-            })}
+            options={({ route }) => ({ title: route.params.chapterTitle })}
           />
           <Stack.Screen name="FavoritePage" component={FavoritePage} />
         </Stack.Navigator>
