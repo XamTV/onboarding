@@ -1,5 +1,5 @@
 import { View, FlatList, Text, StyleSheet, Pressable } from "react-native";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import * as R from "remeda";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
@@ -34,10 +34,14 @@ type PageQuery = {
   };
 };
 
+
+
 export default function ChapterPage({
   route,
 }: Readonly<NativeStackScreenProps<StackParamList, "ChapterPage">>) {
   const { chapterId, bookId, chapterTitle, bookTitle } = route.params;
+  const [maxStudent, setMaxStudent] = useState(0);
+  const [currentStudent, setCurrentStudent] = useState(0);
 
   const isChapterParsed =
     typeof chapterId === "string" ? parseInt(chapterId) : chapterId;
@@ -58,10 +62,19 @@ export default function ChapterPage({
     fetchPolicy: "cache-first",
   });
 
+  useEffect(() => {
+    const unsubscribe = firebase
+      .firestore()
+      .doc("notification/opened")
+      .onSnapshot((doc) => setCurrentStudent(doc.data()?.students));
+
+    return () => unsubscribe();
+  }, []);
+
   const teacherNotificationUrl =
     "https://teachernotification-hb7zfd533a-ew.a.run.app";
 
-  // for local test :
+  // // for local test :
   // const teacherNotificationUrl =
   //   "http://127.0.0.1:5001/onboarding-89c59/europe-west1/teacherNotification";
 
@@ -159,12 +172,17 @@ export default function ChapterPage({
       </Pressable>
 
       {userData?.role === "teacher" ? (
-        <Pressable
-          style={[style.buttons, style.notificationButton]}
-          onPress={handleNotification}
-        >
-          <Text>{t("sendNotification")}</Text>
-        </Pressable>
+        <>
+          <Pressable
+            style={[style.buttons, style.notificationButton]}
+            onPress={handleNotification}
+          >
+            <Text>{t("sendNotification")}</Text>
+          </Pressable>
+          <Text>
+            {currentStudent} / {maxStudent}
+          </Text>
+        </>
       ) : null}
 
       <Text style={style.title}>
