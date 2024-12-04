@@ -1,6 +1,7 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
 import "intl-pluralrules";
+import { requestPermission } from "@react-native-firebase/messaging";
 
 const resources = {
   fr: {

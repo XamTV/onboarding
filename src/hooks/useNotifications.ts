@@ -13,7 +13,6 @@ const useNotifications = () => {
 
     const deeplinkURL = message?.data?.url;
     if (typeof deeplinkURL === "string") {
-      console.log("Deep link URL from notification:", deeplinkURL);
       return deeplinkURL;
     }
     return null;
