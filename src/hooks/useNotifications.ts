@@ -64,6 +64,7 @@ const useNotifications = () => {
     const deeplinkURL = message?.data?.url;
     const uid = message?.data?.uid;
     if (typeof deeplinkURL === "string") {
+      notification();
       return deeplinkURL;
     }
     if (typeof uid === "string") {
