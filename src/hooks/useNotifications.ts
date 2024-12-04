@@ -42,7 +42,7 @@ const useNotifications = () => {
       if (error instanceof Error) {
         console.error(t("errors.transaction", { message: error.message }));
       }
-      console.error("ici", JSON.stringify(error));
+      console.error(JSON.stringify(error));
     }
   };
 
