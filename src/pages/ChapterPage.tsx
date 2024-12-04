@@ -99,6 +99,16 @@ export default function ChapterPage({
       });
   };
 
+  const getColorIndicator = () => {
+    if (currentStudent === maxStudent && currentStudent !== 0) {
+      return "green";
+    } else if (currentStudent > 0) {
+      return "red";
+    } else if (currentStudent === 0 && maxStudent === 0) {
+      return "transparent";
+    }
+  };
+
   const pages = pageData?.viewer.pages.hits || [];
 
   const sortedPages = useMemo(
@@ -173,15 +183,17 @@ export default function ChapterPage({
 
       {userData?.role === "teacher" ? (
         <>
+          <Text
+            style={[style.notificationText, { color: getColorIndicator() }]}
+          >
+            {t("notification.openedBy", { currentStudent, maxStudent })}
+          </Text>
           <Pressable
             style={[style.buttons, style.notificationButton]}
             onPress={handleNotification}
           >
             <Text>{t("sendNotification")}</Text>
           </Pressable>
-          <Text>
-            {currentStudent} / {maxStudent}
-          </Text>
         </>
       ) : null}
 
@@ -237,6 +249,13 @@ const style = StyleSheet.create({
   },
   notificationButton: {
     backgroundColor: "lightblue",
+  },
+  notificationText: {
+    textAlign: "center",
+    marginHorizontal: "auto",
+    marginVertical: 8,
+    maxWidth: 200,
+    fontWeight: "500",
   },
   snackBarContainer: {
     alignItems: "center",

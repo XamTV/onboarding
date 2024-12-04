@@ -53,6 +53,10 @@ const resources = {
       filterReset: "Réinitialiser le filtre",
       homePage: "Page d'accueil",
       noAccount: "Pas de compte ?",
+      notification: {
+        openedBy:
+          "{{currentStudent}}/{{maxStudent}} élèves sont au bon chapitre",
+      },
       pageNumber: "p.{{pageNumber}}",
       password: "mot de passe",
       reference: "ref.{{bookId}}",
