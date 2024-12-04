@@ -71,12 +71,12 @@ export default function ChapterPage({
     return () => unsubscribe();
   }, []);
 
-  // const teacherNotificationUrl =
-  //   "https://teachernotification-hb7zfd533a-ew.a.run.app";
+  const teacherNotificationUrl =
+    "https://teachernotification-hb7zfd533a-ew.a.run.app";
 
   // // for local test :
-  const teacherNotificationUrl =
-    "http://127.0.0.1:5001/onboarding-89c59/europe-west1/teacherNotification";
+  // const teacherNotificationUrl =
+  //   "http://127.0.0.1:5001/onboarding-89c59/europe-west1/teacherNotification";
 
   const handleNotification = () => {
     functions()
