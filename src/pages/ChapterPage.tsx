@@ -14,8 +14,9 @@ import { useTranslation } from "react-i18next";
 import functions from "@react-native-firebase/functions";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { useSnackbar } from "../context/SnackBarContext";
-import { use } from "i18next";
+import { firebase } from "@react-native-firebase/firestore";
 import { SnackBar } from "../components/SnackBar";
+
 
 type Page = {
   id: number;
@@ -33,6 +34,11 @@ type PageQuery = {
     };
   };
 };
+
+type NotificationResponse = {
+  result: number;
+
+}
 
 
 
@@ -88,8 +94,15 @@ export default function ChapterPage({
       })
       .then((response) => {
         console.info(response.data);
+         const result = response.data as NotificationResponse;
+        setMaxStudent(result.result);
+        setCurrentStudent(0);
+        firebase.firestore().doc("notification/opened").set({
+          students: 0,
+        });
+        snackbar.enqueue(t("success.notificationSent"));
 
-        snackbar.enqueue(t("succes.notificationSent"));
+       
       })
       .catch((error) => {
         if (error instanceof Error) {
