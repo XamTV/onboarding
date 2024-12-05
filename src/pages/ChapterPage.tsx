@@ -2,10 +2,7 @@ import { View, FlatList, Text, StyleSheet, Pressable } from "react-native";
 import { useCallback, useMemo } from "react";
 
 import * as R from "remeda";
-import {
-  NativeStackNavigationProp,
-  NativeStackScreenProps,
-} from "@react-navigation/native-stack";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../RootNavigator";
 import PageCard from "../components/PageCard";
 import useFavorite from "../context/FavoriteContext";
@@ -15,7 +12,9 @@ import { ActivityIndicator } from "react-native-paper";
 import useAuthContext from "../context/AuthContext";
 import { useTranslation } from "react-i18next";
 import functions from "@react-native-firebase/functions";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { useSnackbar } from "../context/SnackBarContext";
+import { use } from "i18next";
 
 type Page = {
   id: number;
@@ -34,14 +33,9 @@ type PageQuery = {
   };
 };
 
-type Props = NativeStackScreenProps<StackParamList, "ChapterPage">;
-
-type HomeScreenNavigationProp = NativeStackNavigationProp<
-  StackParamList,
-  "HomePage"
->;
-
-export default function ChapterPage({ route }: Readonly<Props>) {
+export default function ChapterPage({
+  route,
+}: Readonly<NativeStackScreenProps<StackParamList, "ChapterPage">>) {
   const { chapterId, bookId, chapterTitle, bookTitle } = route.params;
 
   const isChapterParsed =
@@ -49,7 +43,9 @@ export default function ChapterPage({ route }: Readonly<Props>) {
 
   const { liked, toggleLiked } = useFavorite();
   const { user, userData } = useAuthContext();
+  const navigation = useNavigation<NavigationProp<StackParamList>>();
   const { t } = useTranslation();
+  const snackbar = useSnackbar();
   const {
     loading,
     error,
@@ -78,16 +74,16 @@ export default function ChapterPage({ route }: Readonly<Props>) {
       })
       .then((response) => {
         console.info(response.data);
+
+        snackbar.enqueue(t("succes.notificationSent"));
       })
       .catch((error) => {
-        console.error(
-          "Error calling teacherNotification function:",
-          error as Error
-        );
+        if (error instanceof Error) {
+          console.error(t("errors.cloudFunction", { message: error.message }));
+        }
+        console.error(JSON.stringify(error));
       });
   };
-
-  const navigation = useNavigation<HomeScreenNavigationProp>();
 
   const pages = pageData?.viewer.pages.hits || [];
 

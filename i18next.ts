@@ -33,12 +33,16 @@ const resources = {
         "auth/email-already-in-use": "Cet adresse email est deja utilisé",
         "auth/invalid-email": "Adresse email invalide",
         "auth/invalid-credential": "Email et/ou mot de passe invalide",
-        fromQuery: "Erreur : {{message}}",
+        cloudFunction:
+          "Erreur lors de l'appel de la cloudFunction : {{message}}",
+        fromQuery: "Erreur lors de la requête : {{message}}",
         emptyPasswordField: "Le champ mot de passe ne peut pas être vide",
         emptyEmailField: "Le champ email ne peut pas être vide",
         emailRequired: "L'adresse email est requise",
         passwordLength: "Votre mot de passe doit faire plus de 6 caractères",
         passwordsDoesntMatch: "Les mots de passe ne sont pas identique",
+        requestPermission:
+          "Erreur lors de la demande de permission : {{message}}",
       },
       favorites: {
         myFavorites: "Mes Favoris",
@@ -60,6 +64,7 @@ const resources = {
       sendNotification: "Envoyer la notification",
       success: {
         accountCreated: "Compte crée",
+        notificationSent: "Notification envoyée",
       },
       welcomeMessage: `Bonjour {{user}}`,
     },

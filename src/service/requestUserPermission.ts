@@ -1,31 +1,46 @@
 import messaging from "@react-native-firebase/messaging";
 import { PermissionsAndroid, Platform } from "react-native";
 import firestore from "@react-native-firebase/firestore";
+import { t } from "i18next";
 
 export async function requestUserPermission(uid: string) {
   try {
-    const authStatus = await messaging().requestPermission();
-    const iosPermission =
-      authStatus === messaging.AuthorizationStatus.AUTHORIZED;
-    const androidPermission = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
-    );
+    let iosPermission = false;
+    let androidPermission = false;
 
-    if (
-      iosPermission ||
-      androidPermission === PermissionsAndroid.RESULTS.GRANTED
-    ) {
-      if (Platform.OS === "android") {
-        await messaging().registerDeviceForRemoteMessages();
-      }
-      const token = await messaging().getToken();
-      const userDoc = firestore().doc(`login/${uid}`);
-      const userSnapshot = await userDoc.get();
-      const existingTokens = userSnapshot.data()?.notification_tokens || [];
-      const updatedTokens = Array.from(new Set([...existingTokens, token]));
-      await userDoc.update({ notification_tokens: updatedTokens });
+    if (Platform.OS === "ios") {
+      iosPermission =
+        (await messaging().requestPermission()) ===
+        messaging.AuthorizationStatus.AUTHORIZED;
+      androidPermission = true;
     }
+
+    if (Platform.OS === "android") {
+      androidPermission =
+        (await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+        )) === PermissionsAndroid.RESULTS.GRANTED;
+      iosPermission = true;
+    }
+
+    if (!iosPermission || !androidPermission) {
+      return;
+    }
+
+    if (Platform.OS === "android") {
+      await messaging().registerDeviceForRemoteMessages();
+    }
+
+    const token = await messaging().getToken();
+    const userDoc = firestore().doc(`login/${uid}`);
+    const user = await userDoc.get();
+    const existingTokens = user.data()?.notification_tokens || [];
+    const updatedTokens = Array.from(new Set([...existingTokens, token]));
+    await userDoc.update({ notification_tokens: updatedTokens });
   } catch (error) {
-    console.error("Permission request failed", error);
+    if (error instanceof Error) {
+      console.error(t("errors.resquestPermission", { message: error.message }));
+    }
+    console.error(JSON.stringify(error));
   }
 }

@@ -1,11 +1,8 @@
-
-
 import './config/firebase';
 
 import admin from 'firebase-admin';
 import {setGlobalOptions} from 'firebase-functions';
 import {onCall} from 'firebase-functions/v2/https';
-
 
 type teacherNotificationParams = {
   bookId: number;
@@ -16,6 +13,8 @@ type teacherNotificationParams = {
 setGlobalOptions({
   region: 'europe-west1',
 });
+
+export const scheme = 'com.siruplab.onboarding://';
 
 export const teacherNotification = onCall<teacherNotificationParams>(
     async (req, _res) => {
@@ -39,20 +38,19 @@ export const teacherNotification = onCall<teacherNotificationParams>(
           )
         ).flat();
 
-
         const pushReturn = await admin.messaging().sendEachForMulticast({
           tokens,
           data: {
-            url: `com.siruplab.onboarding://chapterpage/${chapterTitle}/${bookId}/${chapterId}`,
+            url: `${scheme}chapterpage/${chapterTitle}/${bookId}/${chapterId}`,
           },
           notification: {
             title: 'Bonjour',
             body: `Veuillez consulter le chapitre ${chapterTitle} du livre ${bookTitle}`,
           },
         });
-        console.info('PushResponse', pushReturn);
+        console.info('PushResponse', pushReturn, tokens);
 
-        return {result: 'Success'};
+        return {result: userDoc.data()?.students.length, test: `Message envoyé à ${pushReturn.successCount} élèves`};
       } catch (error) {
         console.error('Error fetching document:', error);
         return {error: 'Error fetching document'};

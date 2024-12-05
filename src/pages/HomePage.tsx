@@ -199,7 +199,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
       <View style={style.container}>
         <Text style={style.buttonText}>
           {t("welcomeMessage", {
-            user: user?.email !== null ? user.email : "",
+            user: user?.email ?? "",
           })}
         </Text>
         <View style={style.buttonContainer}>

@@ -38,6 +38,8 @@ const SCREENS = {
   },
 };
 
+export const scheme = "com.siruplab.onboarding://";
+
 function RootNavigator() {
   const Stack = createNativeStackNavigator<StackParamList>();
   const { user } = useAuthContext();
@@ -47,7 +49,7 @@ function RootNavigator() {
   return (
     <NavigationContainer
       linking={{
-        prefixes: ["com.siruplab.onboarding://"],
+        prefixes: [scheme],
         config: SCREENS,
         getInitialURL,
         subscribe,

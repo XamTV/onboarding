@@ -4,7 +4,7 @@
     "version": "1.0.0",
     "slug": "onboarding",
     "scheme": "com.siruplab.onboarding",
-    "platforms": ["ios", "android", "web"],
+    "platforms": ["ios", "android"],
     "jsEngine": "hermes",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
