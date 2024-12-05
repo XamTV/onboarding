@@ -15,6 +15,7 @@ import functions from "@react-native-firebase/functions";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { useSnackbar } from "../context/SnackBarContext";
 import { use } from "i18next";
+import { SnackBar } from "../components/SnackBar";
 
 type Page = {
   id: number;
@@ -173,6 +174,11 @@ export default function ChapterPage({
         })}
       </Text>
       <Text style={style.title}></Text>
+      {userData?.role === "teacher" ? (
+        <View style={style.snackBarContainer}>
+          <SnackBar />
+        </View>
+      ) : null}
       <FlatList<Page> data={sortedPages} renderItem={renderItem} />
     </View>
   );
@@ -213,5 +219,9 @@ const style = StyleSheet.create({
   },
   notificationButton: {
     backgroundColor: "lightblue",
+  },
+  snackBarContainer: {
+    alignItems: "center",
+    marginTop: 64,
   },
 });
