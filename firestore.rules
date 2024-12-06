@@ -1,0 +1,23 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+  	function isTeacher(uid) {
+      return request.auth != null
+		  && get(/databases/$(database)/documents/login/$(request.auth.uid)).data.role == "teacher"
+      && uid in get(/databases/$(database)/documents/login/$(request.auth.uid)).data.students
+    }
+    function isUser(uid) {
+    	return request.auth != null && request.auth.uid == uid
+    }
+    match /{login}/ {uid} {
+      
+      allow read : if isTeacher(uid) || isUser(uid)
+      allow write: if isTeacher(uid) || isUser(uid)
+    }
+    
+    match /{notification}/opened {
+    allow read, write : if request.auth !=  null
+    }
+  }
+}
