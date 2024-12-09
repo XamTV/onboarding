@@ -16,7 +16,7 @@ import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { useSnackbar } from "../context/SnackBarContext";
 import { firebase } from "@react-native-firebase/firestore";
 import { SnackBar } from "../components/SnackBar";
-
+import useNotifications from "../hooks/useNotifications";
 
 type Page = {
   id: number;
@@ -37,10 +37,7 @@ type PageQuery = {
 
 type NotificationResponse = {
   result: number;
-
-}
-
-
+};
 
 export default function ChapterPage({
   route,
@@ -48,12 +45,14 @@ export default function ChapterPage({
   const { chapterId, bookId, chapterTitle, bookTitle } = route.params;
   const [maxStudent, setMaxStudent] = useState(0);
   const [currentStudent, setCurrentStudent] = useState(0);
+  const [pendingNotification, setPendingNotification] = useState<string>();
 
   const isChapterParsed =
     typeof chapterId === "string" ? parseInt(chapterId) : chapterId;
 
   const { liked, toggleLiked } = useFavorite();
   const { user, userData } = useAuthContext();
+  const { createNotification } = useNotifications();
   const navigation = useNavigation<NavigationProp<StackParamList>>();
   const { t } = useTranslation();
   const snackbar = useSnackbar();
@@ -69,13 +68,22 @@ export default function ChapterPage({
   });
 
   useEffect(() => {
-    const unsubscribe = firebase
-      .firestore()
-      .doc("notification/opened")
-      .onSnapshot((doc) => setCurrentStudent(doc.data()?.students));
+    
+    
 
-    return () => unsubscribe();
-  }, []);
+      const unsubscribe = firebase
+        .firestore()
+        .doc(`notification/${pendingNotification}`)
+       .onSnapshot((doc) => {
+  const newStudents = doc.data()?.students;
+  setCurrentStudent((prev) => {
+    return newStudents !== prev ? newStudents : prev; 
+  });
+});
+
+      return () => unsubscribe();
+    
+  }, [pendingNotification]);
 
   const teacherNotificationUrl =
     "https://teachernotification-hb7zfd533a-ew.a.run.app";
@@ -85,24 +93,31 @@ export default function ChapterPage({
   //   "http://127.0.0.1:5001/onboarding-89c59/europe-west1/teacherNotification";
 
   const handleNotification = () => {
+    const notificationId = createNotification();
+    setPendingNotification(notificationId);
+   console.log("notificationId", notificationId);
+   
     functions()
       .httpsCallableFromUrl(teacherNotificationUrl)({
         bookId,
         bookTitle,
         chapterTitle,
         chapterId,
+        notificationId
       })
       .then((response) => {
         console.info(response.data);
-         const result = response.data as NotificationResponse;
+        const result = response.data as NotificationResponse;
         setMaxStudent(result.result);
         setCurrentStudent(0);
-        firebase.firestore().doc("notification/opened").set({
-          students: 0,
-        });
+        firebase
+          .firestore()
+          .collection("notification")
+          .doc(notificationId)
+          .set({
+            students: 0,
+          });
         snackbar.enqueue(t("success.notificationSent"));
-
-       
       })
       .catch((error) => {
         if (error instanceof Error) {
@@ -117,7 +132,7 @@ export default function ChapterPage({
       return "green";
     } else if (currentStudent > 0) {
       return "red";
-    } else if (currentStudent === 0 && maxStudent === 0) {
+    } else if (currentStudent === undefined && maxStudent === 0) {
       return "transparent";
     }
   };

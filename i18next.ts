@@ -44,6 +44,7 @@ const resources = {
         passwordsDoesntMatch: "Les mots de passe ne sont pas identique",
         requestPermission:
           "Erreur lors de la demande de permission : {{message}}",
+        transaction: "Erreur lors de la transaction : {{message}}",
       },
       favorites: {
         myFavorites: "Mes Favoris",
