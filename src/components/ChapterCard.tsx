@@ -2,7 +2,7 @@ import { StyleSheet, Text } from "react-native";
 import { Card } from "react-native-paper";
 
 type Props = {
-  chapterId: number;
+  chapterId: number | undefined;
   chapterTitle: string;
   chapterUrl: string;
   onPress?: () => void;
@@ -14,7 +14,7 @@ export default function ChapterCard({
   onPress,
 }: Readonly<Props>) {
   return (
-    <Card style={styles.bookcard} onPress={onPress}>
+    <Card style={styles.bookCard} onPress={onPress}>
       <Card.Content style={styles.container}>
         <Card.Cover
           style={styles.picture}
@@ -33,7 +33,7 @@ export default function ChapterCard({
 }
 
 const styles = StyleSheet.create({
-  bookcard: {
+  bookCard: {
     margin: 20,
   },
   container: {

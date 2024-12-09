@@ -20,30 +20,6 @@ import * as R from "remeda";
 import { useTranslation } from "react-i18next";
 
 type Props = NativeStackScreenProps<StackParamList, "HomePage">;
-export type Book = {
-  id: number;
-  displayTitle: string;
-  url: string;
-  subjects: Subject[];
-  levels: Level[];
-  valid: boolean;
-};
-
-export type BookQuery = {
-  viewer: {
-    books: {
-      hits: Book[];
-    };
-  };
-};
-
-export type Subject = {
-  name: string;
-};
-
-export type Level = {
-  name: string;
-};
 
 const removeDiacritics = (text: string) =>
   text
@@ -56,7 +32,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
     loading,
     error,
     data: bookData,
-  } = useQuery<BookQuery>(BOOKS_QUERY, {
+  } = useQuery(BOOKS_QUERY, {
     fetchPolicy: "cache-first",
   });
   const books = bookData?.viewer.books.hits || [];
@@ -71,7 +47,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
   const [subjectFilter, setSubjectFilter] = useState("");
   const [textFilter, setTextFilter] = useState("");
 
-  const levels: string[] = useMemo(
+  const levels = useMemo(
     () => [
       ...new Set(
         books.flatMap((book) => book.levels.map((level) => level.name))
@@ -80,7 +56,7 @@ export default function HomePage({ navigation }: Readonly<Props>) {
     [books]
   );
 
-  const subjects: string[] = useMemo(
+  const subjects = useMemo(
     () => [
       ...new Set(
         books.flatMap((book) => book.subjects.map((subject) => subject.name))
@@ -240,18 +216,18 @@ export default function HomePage({ navigation }: Readonly<Props>) {
           onChangeText={setTextFilter}
           mode="outlined"
         />
-        <FlatList<Book>
+        <FlatList
           data={filteredData}
           renderItem={({ item }) =>
             item.valid ? (
               <BookCard
                 bookId={item.id}
-                picture={item.url}
-                displayTitle={item.displayTitle}
+                picture={item.url ?? ""}
+                displayTitle={item.displayTitle ?? ""}
                 onPress={() => {
                   navigation.navigate("BookPage", {
                     bookId: item.id,
-                    displayTitle: item.displayTitle,
+                    displayTitle: item.displayTitle ?? "",
                   });
                 }}
               />

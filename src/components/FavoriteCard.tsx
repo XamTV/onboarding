@@ -4,8 +4,9 @@ import useFavorite from "../context/FavoriteContext";
 import { useCallback } from "react";
 import { CHAPTERS_QUERY } from "../service/Queries";
 import { useQuery } from "@apollo/client";
-import { Chapter, ChapterQuery } from "../pages/BookPage";
+
 import { useTranslation } from "react-i18next";
+import { Chapter } from "../gql/graphql";
 
 type Props = {
   onPress: () => void;
@@ -20,7 +21,7 @@ export default function FavoriteCard({
   picture,
   bookId,
 }: Readonly<Props>) {
-  const { data: chapterData } = useQuery<ChapterQuery>(CHAPTERS_QUERY, {
+  const { data: chapterData } = useQuery(CHAPTERS_QUERY, {
     variables: { bookId },
     fetchPolicy: "cache-first",
   });
@@ -46,7 +47,7 @@ export default function FavoriteCard({
         <Text style={styles.chapterTitle}>{item.title}</Text>
 
         <Pressable
-          onPress={() => toggleLiked(bookId, item.id)}
+          onPress={() => item.id !== null && toggleLiked(bookId, item.id)}
           style={styles.chapterPressable}
         >
           <Text>X</Text>
@@ -63,17 +64,21 @@ export default function FavoriteCard({
     );
   }
   return (
-    <Card style={styles.bookcard} onPress={onPress}>
+    <Card style={styles.bookCard} onPress={onPress}>
       <Card.Title titleStyle={styles.title} title={displayTitle} />
       {liked.books[bookId] ? <Card.Cover source={{ uri: picture }} /> : null}
 
-      {chapters?.some((chapter) => liked.chapters[chapter.id]) ? (
+      {chapters?.some(
+        (chapter) => chapter.id !== undefined && liked.chapters[chapter.id]
+      ) ? (
         <Text style={styles.subtitleText}>{t("chapters")} </Text>
       ) : null}
 
       <Card.Content>
         <FlatList
-          data={chapters?.filter((chapter) => liked.chapters[chapter.id])}
+          data={chapters?.filter(
+            (chapter) => chapter.id !== undefined && liked.chapters[chapter.id]
+          )}
           renderItem={renderItem}
         />
       </Card.Content>
@@ -90,7 +95,7 @@ export default function FavoriteCard({
 }
 
 const styles = StyleSheet.create({
-  bookcard: {
+  bookCard: {
     margin: 20,
     padding: 20,
   },

@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
+import { gql } from "../gql";
 
-export const BOOKS_QUERY = gql`
+export const BOOKS_QUERY = gql(`
   query GetBooks {
     viewer {
       books {
@@ -21,9 +21,9 @@ export const BOOKS_QUERY = gql`
       }
     }
   }
-`;
+`);
 
-export const CHAPTERS_QUERY = gql`
+export const CHAPTERS_QUERY = gql(`
   query GetChapters($bookId: Int!) {
     viewer {
       chapters(bookIds: [$bookId]) {
@@ -39,9 +39,9 @@ export const CHAPTERS_QUERY = gql`
       }
     }
   }
-`;
+`);
 
-export const PAGES_QUERY = gql`
+export const PAGES_QUERY = gql(`
   query GetPages($chapterId: Int) {
     viewer {
       pages(chapterIds: [$chapterId]) {
@@ -58,4 +58,4 @@ export const PAGES_QUERY = gql`
       }
     }
   }
-`;
+`);

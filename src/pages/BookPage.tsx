@@ -8,24 +8,7 @@ import { CHAPTERS_QUERY } from "../service/Queries";
 import { useQuery } from "@apollo/client";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator } from "react-native-paper";
-
-export type Chapter = {
-  id: number;
-  title: string;
-  url: string;
-  valid: boolean;
-  book: {
-    title: string;
-  };
-};
-
-export type ChapterQuery = {
-  viewer: {
-    chapters: {
-      hits: Chapter[];
-    };
-  };
-};
+import { Chapter } from "../gql/graphql";
 
 type Props = NativeStackScreenProps<StackParamList, "BookPage">;
 
@@ -38,7 +21,7 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
     loading,
     error,
     data: chapterData,
-  } = useQuery<ChapterQuery>(CHAPTERS_QUERY, {
+  } = useQuery(CHAPTERS_QUERY, {
     variables: { bookId },
     fetchPolicy: "cache-first",
   });
@@ -51,17 +34,17 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
   );
 
   const renderItem = useCallback(({ item }: { item: Chapter }) => {
-    return item.valid ? (
+    return item.valid && item.id ? (
       <ChapterCard
         chapterId={item.id}
-        chapterTitle={item.title}
-        chapterUrl={item.url}
+        chapterTitle={item.title as string}
+        chapterUrl={item.url as string}
         onPress={() => {
           navigation.navigate("ChapterPage", {
-            chapterId: item.id,
-            chapterTitle: item.title,
+            chapterId: item.id ?? "",
+            chapterTitle: item.title ?? "",
             bookId,
-            bookTitle: item.book.title,
+            bookTitle: item.book?.title ?? "",
           });
         }}
       />
@@ -107,7 +90,7 @@ export default function BookPage({ navigation, route }: Readonly<Props>) {
             : "Retirer des favoris"}
         </Text>
       </Pressable>
-      <FlatList<Chapter> data={chapters} renderItem={renderItem} />
+      <FlatList data={chapters} renderItem={renderItem} />
     </View>
   );
 }

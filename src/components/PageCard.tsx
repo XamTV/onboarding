@@ -18,7 +18,7 @@ export default function PageCard({
   const { t } = useTranslation();
 
   return (
-    <Card style={styles.bookcard}>
+    <Card style={styles.bookCard}>
       <Card.Content style={styles.container}>
         {pagePicture !== null && (
           <Card.Cover style={styles.picture} source={{ uri: pagePicture }} />
@@ -33,7 +33,7 @@ export default function PageCard({
 }
 
 const styles = StyleSheet.create({
-  bookcard: {
+  bookCard: {
     margin: 16,
   },
   container: {

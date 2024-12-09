@@ -17,7 +17,7 @@ export default function BookCard({
 }: Readonly<Props>) {
   const { t } = useTranslation();
   return (
-    <Card style={styles.bookcard} onPress={onPress}>
+    <Card style={styles.bookCard} onPress={onPress}>
       <Card.Title titleStyle={styles.title} title={displayTitle} />
 
       <Card.Cover source={{ uri: picture }} />
@@ -29,7 +29,7 @@ export default function BookCard({
 }
 
 const styles = StyleSheet.create({
-  bookcard: {
+  bookCard: {
     margin: 20,
     padding: 20,
   },

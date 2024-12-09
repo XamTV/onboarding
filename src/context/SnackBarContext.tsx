@@ -64,7 +64,7 @@ export const SnackbarProvider = ({ children }: SnackbarProviderProps) => {
         }
       : message;
 
-    setQueue((prevSnackbars) => [...prevSnackbars, newSnackbar]);
+    setQueue((prevSnackbar) => [...prevSnackbar, newSnackbar]);
   };
 
   const clearQueue = () => {
@@ -74,7 +74,7 @@ export const SnackbarProvider = ({ children }: SnackbarProviderProps) => {
   useEffect(() => {
     if (!visible) {
       dequeueTimer.current = setTimeout(() => {
-        setQueue((prevSnackbars) => prevSnackbars.slice(1));
+        setQueue((prevSnackbar) => prevSnackbar.slice(1));
       }, SNACKBAR_FADE_TRANSITION_DURATION);
 
       return () => {

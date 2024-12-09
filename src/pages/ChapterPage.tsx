@@ -17,23 +17,7 @@ import { useSnackbar } from "../context/SnackBarContext";
 import { firebase } from "@react-native-firebase/firestore";
 import { SnackBar } from "../components/SnackBar";
 import useNotifications from "../hooks/useNotifications";
-
-type Page = {
-  id: number;
-  title: string;
-  picture: string;
-  page: number;
-  valid: boolean;
-  chapter: { title: string };
-};
-
-type PageQuery = {
-  viewer: {
-    pages: {
-      hits: Page[];
-    };
-  };
-};
+import { Page } from "../gql/graphql";
 
 type NotificationResponse = {
   result: number;
@@ -60,7 +44,7 @@ export default function ChapterPage({
     loading,
     error,
     data: pageData,
-  } = useQuery<PageQuery>(PAGES_QUERY, {
+  } = useQuery(PAGES_QUERY, {
     variables: {
       chapterId: isChapterParsed,
     },
@@ -128,7 +112,10 @@ export default function ChapterPage({
   const pages = pageData?.viewer.pages.hits || [];
 
   const sortedPages = useMemo(
-    () => (pages ? R.sortBy(Object.values(pages).flat(), R.prop("page")) : []),
+    () =>
+      pages
+        ? R.sortBy(Object.values(pages).flat(), (data) => data.page ?? 0)
+        : [],
     [pages]
   );
 
@@ -140,12 +127,12 @@ export default function ChapterPage({
 
   const renderItem = useCallback(
     ({ item }: { item: Page }) => {
-      return item.valid ? (
+      return item.valid && item.id ? (
         <PageCard
           pageId={item.id}
-          pageTitle={item.title}
-          pagePicture={item.picture}
-          pageNumber={item.page}
+          pageTitle={item.title as string}
+          pagePicture={item.picture as string}
+          pageNumber={item.page as number}
         />
       ) : null;
     },
@@ -225,7 +212,7 @@ export default function ChapterPage({
           <SnackBar />
         </View>
       ) : null}
-      <FlatList<Page> data={sortedPages} renderItem={renderItem} />
+      <FlatList data={sortedPages} renderItem={renderItem} />
     </View>
   );
 }

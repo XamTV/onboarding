@@ -8,7 +8,6 @@ import { BOOKS_QUERY } from "../service/Queries";
 import { useQuery } from "@apollo/client";
 import { ActivityIndicator, Text } from "react-native-paper";
 import useAuthContext from "../context/AuthContext";
-import { BookQuery, Book } from "./HomePage";
 import { useTranslation } from "react-i18next";
 
 type Props = NativeStackScreenProps<StackParamList, "FavoritePage">;
@@ -17,7 +16,7 @@ export default function FavoritePage({ navigation }: Readonly<Props>) {
   const { liked } = useFavorite();
   const { user } = useAuthContext();
   const { t } = useTranslation();
-  const { loading, error, data: bookData } = useQuery<BookQuery>(BOOKS_QUERY);
+  const { loading, error, data: bookData } = useQuery(BOOKS_QUERY);
   const books = bookData?.viewer.books.hits || [];
   const bookIdsOfLikedChapters = useMemo(
     () =>
@@ -51,7 +50,7 @@ export default function FavoritePage({ navigation }: Readonly<Props>) {
   }
 
   return (
-    <FlatList<Book>
+    <FlatList
       data={books.filter(
         (book) =>
           liked.books[book.id] ||
@@ -62,11 +61,11 @@ export default function FavoritePage({ navigation }: Readonly<Props>) {
           onPress={() =>
             navigation.navigate("BookPage", {
               bookId: item.id,
-              displayTitle: item.displayTitle,
+              displayTitle: item.displayTitle ?? "",
             })
           }
-          displayTitle={item.displayTitle}
-          picture={item.url}
+          displayTitle={item.displayTitle ?? ""}
+          picture={item.url ?? ""}
           bookId={item.id}
         />
       )}
