@@ -120,7 +120,7 @@ export default function ChapterPage({
       return "green";
     } else if (currentStudent > 0) {
       return "red";
-    } else if (currentStudent === 0 && maxStudent === 0) {
+    } else if (currentStudent === undefined && maxStudent === 0) {
       return "transparent";
     }
   };
