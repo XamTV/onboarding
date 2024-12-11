@@ -11,6 +11,7 @@ import useAuthContext from "./src/context/AuthContext";
 import { NavigationContainer } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import useNotifications from "./src/hooks/useNotifications";
+import Constant from "expo-constants";
 
 // Définition des paramètres de navigation
 export type StackParamList = {
@@ -38,13 +39,14 @@ const SCREENS = {
   },
 };
 
-export const scheme = "com.siruplab.onboarding://";
-
+export const scheme: string = `${Constant.expoConfig?.scheme}://`;
 function RootNavigator() {
   const Stack = createNativeStackNavigator<StackParamList>();
   const { user } = useAuthContext();
   const { t } = useTranslation();
   const { getInitialURL, subscribe } = useNotifications();
+  console.log(scheme);
+  
 
   return (
     <NavigationContainer
