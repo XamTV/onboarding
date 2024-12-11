@@ -1,6 +1,10 @@
 import * as Linking from "expo-linking";
 import messaging from "@react-native-firebase/messaging";
-import { firebase, increment, runTransaction } from "@react-native-firebase/firestore";
+import {
+  firebase,
+  increment,
+  runTransaction,
+} from "@react-native-firebase/firestore";
 import { t } from "i18next";
 
 const useNotifications = () => {
@@ -13,7 +17,7 @@ const useNotifications = () => {
     return newNotificationId;
   };
 
-  const notification = async (uid: string) => {
+  const updateOpenedNotification = async (uid: string) => {
     try {
       await runTransaction(firebase.firestore(), async (transaction) => {
         const getData = firebase.firestore().doc(`notification/${uid}`);
@@ -25,7 +29,6 @@ const useNotifications = () => {
             t("errors.unspecific", { code: "Le document n'existe pas" })
           );
         }
-        
 
         transaction.update(getData, {
           students: increment(1),
@@ -60,7 +63,7 @@ const useNotifications = () => {
       return deeplinkURL;
     }
     if (typeof uid === "string") {
-      await notification(uid);
+      await updateOpenedNotification(uid);
     }
     return null;
   };
@@ -78,7 +81,7 @@ const useNotifications = () => {
 
         if (url) listener(url as string);
         if (typeof uid === "string") {
-          await notification(uid);
+          await updateOpenedNotification(uid);
         }
       }
     );
