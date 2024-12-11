@@ -1,6 +1,7 @@
 # Compiled JavaScript files
 lib
 
+google-credentials.json
 # TypeScript v1 declaration files
 typings/
 

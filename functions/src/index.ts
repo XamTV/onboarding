@@ -25,7 +25,11 @@ export const teacherNotification = onCall<teacherNotificationParams>(
             .firestore()
             .doc(`login/${req.auth?.uid}`)
             .get();
-        const studentIds: string[] = userDoc.data()?.students || [];
+        if (userDoc.data()?.role !== 'teacher' ) {
+          throw new Error('User is not a teacher');
+        }
+
+        const studentIds: string[] = userDoc.data()?.students ?? [];
         const tokens = (
           await Promise.all(
               studentIds.map(async (studentId: string) => {
@@ -33,7 +37,7 @@ export const teacherNotification = onCall<teacherNotificationParams>(
                     .firestore()
                     .doc(`login/${studentId}`)
                     .get();
-                return studentDoc.data()?.notification_tokens || [];
+                return studentDoc.data()?.notification_tokens ?? [];
               }),
           )
         ).flat();
@@ -41,7 +45,7 @@ export const teacherNotification = onCall<teacherNotificationParams>(
         const pushReturn = await admin.messaging().sendEachForMulticast({
           tokens,
           data: {
-            url: `${scheme}chapterpage/${chapterTitle}/${bookId}/${chapterId}`,
+            url: `${scheme}/chapterpage/${chapterTitle}/${bookId}/${chapterId}`,
           },
           notification: {
             title: 'Bonjour',
