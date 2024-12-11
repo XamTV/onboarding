@@ -45,8 +45,6 @@ function RootNavigator() {
   const { user } = useAuthContext();
   const { t } = useTranslation();
   const { getInitialURL, subscribe } = useNotifications();
-  console.log(scheme);
-  
 
   return (
     <NavigationContainer
