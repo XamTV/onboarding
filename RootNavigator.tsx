@@ -5,7 +5,7 @@ import FavoritePage from "./src/pages/FavoritePage";
 import HomePage from "./src/pages/HomePage";
 import SigninPage from "./src/pages/SigninPage";
 import SignupPage from "./src/pages/SignupPage";
-import { Button } from "react-native";
+import { Button, View } from "react-native";
 import auth from "@react-native-firebase/auth";
 import useAuthContext from "./src/context/AuthContext";
 import { NavigationContainer } from "@react-navigation/native";

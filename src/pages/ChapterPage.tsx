@@ -161,7 +161,7 @@ export default function ChapterPage({
     );
   }
   return (
-    <View>
+    <View style={{ flex: 1 }}>
       <Pressable
         style={[
           style.buttons,
@@ -207,12 +207,12 @@ export default function ChapterPage({
         })}
       </Text>
       <Text style={style.title}></Text>
+      <FlatList data={sortedPages} renderItem={renderItem} />
       {userData?.role === "teacher" ? (
         <View style={style.snackBarContainer}>
           <SnackBar />
         </View>
       ) : null}
-      <FlatList data={sortedPages} renderItem={renderItem} />
     </View>
   );
 }

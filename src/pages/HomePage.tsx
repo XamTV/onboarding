@@ -18,6 +18,7 @@ import { BOOKS_QUERY } from "../service/Queries";
 import { useQuery } from "@apollo/client";
 import * as R from "remeda";
 import { useTranslation } from "react-i18next";
+import { colorSelector } from "../service/ColorSelector";
 
 type Props = NativeStackScreenProps<StackParamList, "HomePage">;
 
@@ -98,6 +99,8 @@ export default function HomePage({ navigation }: Readonly<Props>) {
       !textFilter || cacheBooksTextData[book.id].includes(normalizedTextFilter);
     return validSubject && validLevel && validText;
   });
+
+  const validBooks = filteredData.filter((item) => item.valid);
 
   if (loading) {
     return (
@@ -180,7 +183,10 @@ export default function HomePage({ navigation }: Readonly<Props>) {
         </Text>
         <View style={style.buttonContainer}>
           <Pressable
-            style={style.buttons}
+            style={[
+              style.buttons,
+              { backgroundColor: colorSelector(subjectFilter) },
+            ]}
             onPress={() => {
               setModalHandle({ visible: true, selected: "Levels" });
             }}
@@ -190,7 +196,10 @@ export default function HomePage({ navigation }: Readonly<Props>) {
             </Text>
           </Pressable>
           <Pressable
-            style={style.buttons}
+            style={[
+              style.buttons,
+              { backgroundColor: colorSelector(subjectFilter) },
+            ]}
             onPress={() => {
               setModalHandle({ visible: true, selected: "Subject" });
             }}
@@ -217,22 +226,23 @@ export default function HomePage({ navigation }: Readonly<Props>) {
           mode="outlined"
         />
         <FlatList
-          data={filteredData}
-          renderItem={({ item }) =>
-            item.valid ? (
-              <BookCard
-                bookId={item.id}
-                picture={item.url ?? ""}
-                displayTitle={item.displayTitle ?? ""}
-                onPress={() => {
-                  navigation.navigate("BookPage", {
-                    bookId: item.id,
-                    displayTitle: item.displayTitle ?? "",
-                  });
-                }}
-              />
-            ) : null
-          }
+          data={validBooks}
+          numColumns={2}
+          columnWrapperStyle={style.columnWrapper}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <BookCard
+              bookId={item.id}
+              picture={item.url ?? ""}
+              displayTitle={item.displayTitle ?? ""}
+              onPress={() => {
+                navigation.navigate("BookPage", {
+                  bookId: item.id,
+                  displayTitle: item.displayTitle ?? "",
+                });
+              }}
+            />
+          )}
         />
       </View>
     </Provider>
@@ -242,6 +252,14 @@ const style = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: StatusBar.currentHeight,
+  },
+  columnWrapper: {
+    flex: 1,
+    maxWidth: "45%",
+    marginHorizontal: 14,
+    marginVertical: 8,
+    justifyContent: "space-between",
+    gap: 16,
   },
   modalContainer: {
     display: "flex",
@@ -266,12 +284,12 @@ const style = StyleSheet.create({
     padding: 10,
   },
   buttons: {
-    backgroundColor: "lightblue",
     marginHorizontal: "auto",
     marginVertical: 16,
     padding: 8,
     borderRadius: 32,
     minWidth: 100,
+    backgroundColor: "lightblue",
   },
   buttonContainer: {
     flexDirection: "row",
@@ -281,8 +299,10 @@ const style = StyleSheet.create({
     textAlign: "center",
     fontSize: 16,
   },
+
   textFilterInput: {
     minWidth: 200,
     marginHorizontal: "auto",
+    marginBottom: 10,
   },
 });

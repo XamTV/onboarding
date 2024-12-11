@@ -1,11 +1,12 @@
 import { useTranslation } from "react-i18next";
 import { StyleSheet, TextStyle } from "react-native";
-import { Card, Text } from "react-native-paper";
+import { Card } from "react-native-paper";
 
 type Props = {
   bookId: number;
   picture: string;
   displayTitle: string;
+
   onPress?: () => void;
 };
 
@@ -20,18 +21,17 @@ export default function BookCard({
     <Card style={styles.bookCard} onPress={onPress}>
       <Card.Title titleStyle={styles.title} title={displayTitle} />
 
-      <Card.Cover source={{ uri: picture }} />
-      <Card.Content>
-        <Text>{t("reference", { bookId })} </Text>
-      </Card.Content>
+      <Card.Cover
+        style={{ borderTopEndRadius: 0, borderTopStartRadius: 0 }}
+        source={{ uri: picture }}
+      />
     </Card>
   );
 }
 
 const styles = StyleSheet.create({
   bookCard: {
-    margin: 20,
-    padding: 20,
+    minWidth: "100%",
   },
   title: {
     textAlign: "center",
