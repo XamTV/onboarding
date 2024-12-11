@@ -68,21 +68,17 @@ export default function ChapterPage({
   });
 
   useEffect(() => {
-    
-    
+    const unsubscribe = firebase
+      .firestore()
+      .doc(`notification/${pendingNotification}`)
+      .onSnapshot((doc) => {
+        const newStudents = doc.data()?.students;
+        setCurrentStudent((prev) => {
+          return newStudents !== prev ? newStudents : prev;
+        });
+      });
 
-      const unsubscribe = firebase
-        .firestore()
-        .doc(`notification/${pendingNotification}`)
-       .onSnapshot((doc) => {
-  const newStudents = doc.data()?.students;
-  setCurrentStudent((prev) => {
-    return newStudents !== prev ? newStudents : prev; 
-  });
-});
-
-      return () => unsubscribe();
-    
+    return unsubscribe;
   }, [pendingNotification]);
 
   const teacherNotificationUrl =
@@ -95,15 +91,15 @@ export default function ChapterPage({
   const handleNotification = () => {
     const notificationId = createNotification();
     setPendingNotification(notificationId);
-   console.log("notificationId", notificationId);
-   
+    console.log("notificationId", notificationId);
+
     functions()
       .httpsCallableFromUrl(teacherNotificationUrl)({
         bookId,
         bookTitle,
         chapterTitle,
         chapterId,
-        notificationId
+        notificationId,
       })
       .then((response) => {
         console.info(response.data);
