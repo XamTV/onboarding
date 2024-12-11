@@ -1,32 +1,5 @@
 import * as Linking from "expo-linking";
 import messaging from "@react-native-firebase/messaging";
-import { firebase, runTransaction } from "@react-native-firebase/firestore";
-import { t } from "i18next";
-
-const notification = async () => {
-  try {
-    await runTransaction(firebase.firestore(), async (transaction) => {
-      const getData = firebase.firestore().doc("notification/opened");
-
-      const doc = await transaction.get(getData);
-
-      if (!doc.exists) {
-        throw new Error(
-          t("errors.unspecific", { code: "Le document n'existe pas" })
-        );
-      }
-      const updatedStudentCount = (doc.data()?.students || 0) + 1;
-      transaction.update(getData, {
-        students: updatedStudentCount,
-      });
-    });
-  } catch (error) {
-    if (error instanceof Error) {
-      console.error(t("errors.transaction", { message: error.message }));
-    }
-    console.error(JSON.stringify(error));
-  }
-};
 
 const useNotifications = () => {
   const getInitialURL = async (): Promise<string | null> => {
@@ -37,7 +10,6 @@ const useNotifications = () => {
     }
 
     const message = await messaging().getInitialNotification();
-    notification();
 
     const deeplinkURL = message?.data?.url;
     if (typeof deeplinkURL === "string") {
@@ -58,7 +30,6 @@ const useNotifications = () => {
         const url = remoteMessage.data?.url;
 
         if (url) listener(url as string);
-        notification();
       }
     );
 

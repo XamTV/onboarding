@@ -38,11 +38,13 @@ export const AuthContextProvider = ({ children }: React.PropsWithChildren) => {
 
       if (user !== null) {
         firestore()
-          .doc(`login/${user.uid}`)
+          .doc<UserData>(`login/${user.uid}`)
           .get()
           .then((res) => {
             const data = res.data();
-            setUserData(data as UserData);
+            if (data) {
+              setUserData(data);
+            }
           });
         requestUserPermission(user.uid);
       }
