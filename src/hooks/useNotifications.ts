@@ -1,6 +1,6 @@
 import * as Linking from "expo-linking";
 import messaging from "@react-native-firebase/messaging";
-import { firebase, runTransaction } from "@react-native-firebase/firestore";
+import { firebase, increment, runTransaction } from "@react-native-firebase/firestore";
 import { t } from "i18next";
 
 const useNotifications = () => {
@@ -25,11 +25,10 @@ const useNotifications = () => {
             t("errors.unspecific", { code: "Le document n'existe pas" })
           );
         }
-        const updatedStudentCount = (doc.data()?.students || 0) + 1;
-        console.log("here");
+        
 
         transaction.update(getData, {
-          students: updatedStudentCount,
+          students: increment(1),
         });
       });
     } catch (error) {
