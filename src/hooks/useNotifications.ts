@@ -9,12 +9,16 @@ import { t } from "i18next";
 
 const useNotifications = () => {
   const createNotification = () => {
-    const newNotificationId = firebase
+    const notificationId = firebase
       .firestore()
       .collection("notification")
       .doc().id;
-
-    return newNotificationId;
+    firebase
+      .firestore()
+      .collection("notification")
+      .doc(notificationId)
+      .set({ students: 0, uid: notificationId });
+    return notificationId;
   };
 
   const updateOpenedNotification = async (uid: string) => {

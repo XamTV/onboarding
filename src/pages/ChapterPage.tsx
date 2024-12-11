@@ -73,9 +73,7 @@ export default function ChapterPage({
       .doc(`notification/${pendingNotification}`)
       .onSnapshot((doc) => {
         const newStudents = doc.data()?.students;
-        setCurrentStudent((prev) => {
-          return newStudents !== prev ? newStudents : prev;
-        });
+        setCurrentStudent(newStudents);
       });
 
     return unsubscribe;
@@ -91,7 +89,7 @@ export default function ChapterPage({
   const handleNotification = () => {
     const notificationId = createNotification();
     setPendingNotification(notificationId);
-    console.log("notificationId", notificationId);
+    console.info("notificationId", notificationId);
 
     functions()
       .httpsCallableFromUrl(teacherNotificationUrl)({
@@ -106,13 +104,7 @@ export default function ChapterPage({
         const result = response.data as NotificationResponse;
         setMaxStudent(result.result);
         setCurrentStudent(0);
-        firebase
-          .firestore()
-          .collection("notification")
-          .doc(notificationId)
-          .set({
-            students: 0,
-          });
+
         snackbar.enqueue(t("success.notificationSent"));
       })
       .catch((error) => {
