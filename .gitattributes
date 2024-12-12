@@ -1,0 +1,9 @@
+# suppress yarn-lock from PRs
+yarn.lock -diff
+yarn.lock -gitlab-diff
+
+# suppress gql from PRs
+gql.ts -diff
+gql.ts -gitlab-diff
+
+

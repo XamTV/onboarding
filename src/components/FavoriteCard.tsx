@@ -69,7 +69,7 @@ export default function FavoriteCard({
       {liked.books[bookId] ? <Card.Cover source={{ uri: picture }} /> : null}
 
       {chapters?.some(
-        (chapter) => chapter.id !== undefined && liked.chapters[chapter.id]
+        (chapter) => chapter.id != null && liked.chapters[chapter.id]
       ) ? (
         <Text style={styles.subtitleText}>{t("chapters")} </Text>
       ) : null}
@@ -77,7 +77,7 @@ export default function FavoriteCard({
       <Card.Content>
         <FlatList
           data={chapters?.filter(
-            (chapter) => chapter.id !== undefined && liked.chapters[chapter.id]
+            (chapter) => chapter.id != null && liked.chapters[chapter.id]
           )}
           renderItem={renderItem}
         />
