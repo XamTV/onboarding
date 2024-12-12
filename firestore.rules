@@ -12,12 +12,12 @@ service cloud.firestore {
     }
     match /login/ {uid} {
       
-      allow read : if isTeacher(uid) || isUser(uid)
-      allow write: if isTeacher(uid) || isUser(uid)
+      allow read : if  isUser(uid) || isTeacher(uid)
+      allow write: if  isUser(uid)  
     }
     
     match /notification/{docId} {
     allow read, write : if request.auth !=  null
     }
   }
-}
+} 

@@ -2,8 +2,16 @@ import { readFileSync } from "fs";
 import { resolve } from "path";
 import { initializeTestEnvironment } from "@firebase/rules-unit-testing";
 import { doc, setDoc, getDoc } from "firebase/firestore";
+
 describe("Firestore Rules", () => {
   let testEnv;
+
+  const teacher1Id = "teacher1-id";
+  const teacher2Id = "teacher2-id";
+  const student1Id = "student1-id";
+  const student2Id = "student2-id";
+  const student3Id = "student3-id";
+  const student4Id = "student4-id";
 
   beforeAll(async () => {
     const rules = readFileSync(
@@ -26,93 +34,106 @@ describe("Firestore Rules", () => {
 
   beforeEach(async () => {
     await testEnv.clearFirestore();
-  });
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      const adminDb = context.firestore();
 
+      await setDoc(doc(adminDb, "login", teacher1Id), {
+        role: "teacher",
+        students: [student1Id, student2Id],
+      });
+      await setDoc(doc(adminDb, "login", teacher2Id), {
+        role: "teacher",
+        students: [student3Id, student4Id],
+      });
+
+      await setDoc(doc(adminDb, "login", student1Id), {
+        role: "student",
+        description: "Hello, my name is Paul",
+      });
+      await setDoc(doc(adminDb, "login", student2Id), {
+        role: "student",
+        description: "Hello, my name is Isabel",
+      });
+      await setDoc(doc(adminDb, "login", student3Id), {
+        role: "student",
+        description: "Hello, my name is Marie",
+      });
+      await setDoc(doc(adminDb, "login", student4Id), {
+        role: "student",
+        description: "Hello, my name is Jack",
+      });
+    });
+  });
   it("should allow a teacher to read a student's document", async () => {
-    const teacherAuth = testEnv.authenticatedContext("teacher-id", {
+    const teacherAuth = testEnv.authenticatedContext(teacher1Id, {
       role: "teacher",
-      students: ["student-id"],
+      students: [student1Id],
     });
     const db = teacherAuth.firestore();
 
-    await testEnv.withSecurityRulesDisabled(async (context) => {
-      const adminDb = context.firestore();
-      await setDoc(doc(adminDb, "login", "teacher-id"), {
-        role: "teacher",
-        students: ["student-id"],
-      });
-      await setDoc(doc(adminDb, "login", "student-id"), { role: "student" });
-    });
-
-    const studentDoc = doc(db, "login", "student-id");
+    const studentDoc = doc(db, "login", student1Id);
     await expect(getDoc(studentDoc)).resolves.toBeDefined();
   });
 
-  // should deny a teacher from reading a non-student's document
-  it("should deny a teacher from reading a non-student's document", async () => {
-    const teacherAuth = testEnv.authenticatedContext("teacher-id", {
+  it("should deny a teacher from writing in a user's document", async () => {
+    const teacherAuth = testEnv.authenticatedContext(teacher1Id, {});
+    const db = teacherAuth.firestore();
+
+    const userDoc = doc(db, "login", student2Id);
+    await expect(
+      setDoc(userDoc, { description: "Hello, this is your teacher" })
+    ).rejects.toThrow();
+  });
+
+  it("should deny a teacher from reading a other teacher student's document", async () => {
+    const teacherAuth = testEnv.authenticatedContext(teacher1Id, {
       role: "teacher",
-      students: ["student-id"],
+      students: [student1Id, student2Id],
     });
     const db = teacherAuth.firestore();
 
-    await testEnv.withSecurityRulesDisabled(async (context) => {
-      const adminDb = context.firestore();
-      await setDoc(doc(adminDb, "login", "other-student-id"), {
-        role: "student",
-      });
-    });
-    const nonStudentDoc = doc(db, "login", "other-student-id");
+    const nonStudentDoc = doc(db, "login", student3Id);
     await expect(getDoc(nonStudentDoc)).rejects.toThrow();
   });
 
-  // should allow a user to read their own document
-
   it("should allow a user to read their own document", async () => {
-    const userAuth = testEnv.authenticatedContext("user-id", {});
+    const userAuth = testEnv.authenticatedContext(student1Id, {});
     const db = userAuth.firestore();
 
-    await testEnv.withSecurityRulesDisabled(async (context) => {
-      const adminDb = context.firestore();
-      await setDoc(doc(adminDb, "login", "user-id"), { role: "user" });
-    });
-    const userDoc = doc(db, "login", "user-id");
+    const userDoc = doc(db, "login", student1Id);
     await expect(getDoc(userDoc)).resolves.toBeDefined();
   });
 
-  // should deny a user from reading another user's document
-
   it("should deny a user from reading another user's document", async () => {
-    const userAuth = testEnv.authenticatedContext("user-id", {});
+    const userAuth = testEnv.authenticatedContext(student1Id, {});
     const db = userAuth.firestore();
 
-    await testEnv.withSecurityRulesDisabled(async (context) => {
-      const adminDb = context.firestore();
-      await setDoc(doc(adminDb, "login", "other-user-id"), { role: "user" });
-    });
-    const otherUserDoc = doc(db, "login", "other-user-id");
+    const otherUserDoc = doc(db, "login", student2Id);
     await expect(getDoc(otherUserDoc)).rejects.toThrow();
   });
 
-  // should allow any authenticated user to read/write notifications"
   it("should allow any authenticated user to read/write notifications", async () => {
-    const userAuth = testEnv.authenticatedContext("user-id", {});
+    const userAuth = testEnv.authenticatedContext(student1Id, {});
     const db = userAuth.firestore();
 
     const notificationDoc = doc(db, "notification", "custom-id");
+    const notificationData = { students: 1 };
     await expect(
-      setDoc(notificationDoc, { student: 1 })
+      setDoc(notificationDoc, { students: 1 })
     ).resolves.toBeUndefined();
     await expect(getDoc(notificationDoc)).resolves.toBeDefined();
+
+    const docResult = await getDoc(notificationDoc);
+    expect(docResult.exists()).toBe(true);
+    expect(docResult.data()).toEqual(notificationData);
   });
 
-  // should deny unauthenticated users from accessing notifications
   it("should deny unauthenticated users from accessing notifications", async () => {
     const unauthenticated = testEnv.unauthenticatedContext();
     const db = unauthenticated.firestore();
 
     const notificationDoc = doc(db, "notification", "custom-id");
-    await expect(setDoc(notificationDoc, { student: 1 })).rejects.toThrow();
+    await expect(setDoc(notificationDoc, { students: 1 })).rejects.toThrow();
     await expect(getDoc(notificationDoc)).rejects.toThrow();
   });
 });
