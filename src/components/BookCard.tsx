@@ -1,4 +1,3 @@
-import { useTranslation } from "react-i18next";
 import { StyleSheet, TextStyle } from "react-native";
 import { Card } from "react-native-paper";
 
@@ -16,7 +15,6 @@ export default function BookCard({
   picture,
   displayTitle,
 }: Readonly<Props>) {
-  const { t } = useTranslation();
   return (
     <Card style={styles.bookCard} onPress={onPress}>
       <Card.Title titleStyle={styles.title} title={displayTitle} />
@@ -31,7 +29,7 @@ export default function BookCard({
 
 const styles = StyleSheet.create({
   bookCard: {
-    minWidth: "100%",
+    width: "48%",
   },
   title: {
     textAlign: "center",

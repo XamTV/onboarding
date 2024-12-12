@@ -254,11 +254,11 @@ const style = StyleSheet.create({
     paddingTop: StatusBar.currentHeight,
   },
   columnWrapper: {
-    flex: 1,
-    maxWidth: "45%",
-    marginHorizontal: 14,
+    maxWidth: "100%",
+    marginHorizontal: 16,
     marginVertical: 8,
     justifyContent: "space-between",
+    alignContent: "center",
     gap: 16,
   },
   modalContainer: {
