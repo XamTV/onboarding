@@ -5,25 +5,17 @@ import { t } from "i18next";
 
 export async function requestUserPermission(uid: string) {
   try {
-    let iosPermission = false;
-    let androidPermission = false;
+    let permission = false;
 
-    if (Platform.OS === "ios") {
-      iosPermission =
-        (await messaging().requestPermission()) ===
-        messaging.AuthorizationStatus.AUTHORIZED;
-      androidPermission = true;
-    }
+    permission =
+      Platform.OS == "ios"
+        ? (await messaging().requestPermission()) ===
+          messaging.AuthorizationStatus.AUTHORIZED
+        : (await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+          )) === PermissionsAndroid.RESULTS.GRANTED;
 
-    if (Platform.OS === "android") {
-      androidPermission =
-        (await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
-        )) === PermissionsAndroid.RESULTS.GRANTED;
-      iosPermission = true;
-    }
-
-    if (!iosPermission || !androidPermission) {
+    if (!permission) {
       return;
     }
 
