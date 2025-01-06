@@ -19,6 +19,8 @@ import { useQuery } from "@apollo/client";
 import * as R from "remeda";
 import { useTranslation } from "react-i18next";
 import { colorSelector } from "../service/ColorSelector";
+import Animated, { useSharedValue } from "react-native-reanimated";
+import BottomSheet from "../components/BottomSheet";
 
 type Props = NativeStackScreenProps<StackParamList, "HomePage">;
 
@@ -101,6 +103,15 @@ export default function HomePage({ navigation }: Readonly<Props>) {
   });
 
   const validBooks = filteredData.filter((item) => item.valid);
+  const isOpen = useSharedValue(false);
+
+  const toggleSheet = () => {
+    isOpen.value = !isOpen.value;
+  };
+
+  const contentStyle = {
+    color: "black",
+  };
 
   if (loading) {
     return (
@@ -181,43 +192,19 @@ export default function HomePage({ navigation }: Readonly<Props>) {
             user: user?.email ?? "",
           })}
         </Text>
-        <View style={style.buttonContainer}>
-          <Pressable
-            style={[
-              style.buttons,
-              { backgroundColor: colorSelector(subjectFilter) },
-            ]}
-            onPress={() => {
-              setModalHandle({ visible: true, selected: "Levels" });
-            }}
-          >
-            <Text style={style.buttonText}>
-              {levelFilter ? `${levelFilter}` : t("categories.levels")}
-            </Text>
-          </Pressable>
-          <Pressable
-            style={[
-              style.buttons,
-              { backgroundColor: colorSelector(subjectFilter) },
-            ]}
-            onPress={() => {
-              setModalHandle({ visible: true, selected: "Subject" });
-            }}
-          >
-            <Text style={style.buttonText}>
-              {subjectFilter ? `${subjectFilter}` : t("categories.subjects")}
-            </Text>
-          </Pressable>
-
-          <Pressable
-            style={style.buttons}
-            onPress={() => {
-              navigation.navigate("FavoritePage");
-            }}
-          >
-            <Text style={style.buttonText}>{t("favorites.myFavorites")} </Text>
-          </Pressable>
-        </View>
+        <Pressable style={style.buttons} onPress={toggleSheet}>
+          <Text style={style.buttonText}>
+            {t("categories.selectCategories")}{" "}
+          </Text>
+        </Pressable>
+        <Pressable
+          style={style.buttons}
+          onPress={() => {
+            navigation.navigate("FavoritePage");
+          }}
+        >
+          <Text style={style.buttonText}>{t("favorites.myFavorites")} </Text>
+        </Pressable>
         <TextInput
           style={style.textFilterInput}
           label={t("searchBooks")}
@@ -245,6 +232,36 @@ export default function HomePage({ navigation }: Readonly<Props>) {
           )}
         />
       </View>
+      <BottomSheet isOpen={isOpen} toggleSheet={toggleSheet}>
+        <View style={style.buttonInBottoSheetContainer}>
+          <Pressable
+            style={[
+              style.buttonsInBottomSheet,
+              { backgroundColor: colorSelector(subjectFilter) },
+            ]}
+            onPress={() => {
+              setModalHandle({ visible: true, selected: "Levels" });
+            }}
+          >
+            <Text style={style.buttonText}>
+              {levelFilter ? `${levelFilter}` : t("categories.levels")}
+            </Text>
+          </Pressable>
+          <Pressable
+            style={[
+              style.buttonsInBottomSheet,
+              { backgroundColor: colorSelector(subjectFilter) },
+            ]}
+            onPress={() => {
+              setModalHandle({ visible: true, selected: "Subject" });
+            }}
+          >
+            <Text style={style.buttonText}>
+              {subjectFilter ? `${subjectFilter}` : t("categories.subjects")}
+            </Text>
+          </Pressable>
+        </View>
+      </BottomSheet>
     </Provider>
   );
 }
@@ -285,16 +302,31 @@ const style = StyleSheet.create({
   },
   buttons: {
     marginHorizontal: "auto",
-    marginVertical: 16,
+    marginVertical: 3,
+    padding: 8,
+    borderRadius: 32,
+    minWidth: 100,
+    backgroundColor: "lightblue",
+  },
+  buttonsInBottomSheet: {
+    marginHorizontal: 4,
+    marginVertical: 1,
     padding: 8,
     borderRadius: 32,
     minWidth: 100,
     backgroundColor: "lightblue",
   },
   buttonContainer: {
+    flexDirection: "column",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  buttonInBottoSheetContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
+    justifyContent: "space-between",
   },
+
   buttonText: {
     textAlign: "center",
     fontSize: 16,

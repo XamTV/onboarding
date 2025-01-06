@@ -12,6 +12,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { useTranslation } from "react-i18next";
 import useNotifications from "./src/hooks/useNotifications";
 import Constant from "expo-constants";
+import SafeAreaWrapper from "./src/components/SafeAreaWrapper";
 
 // Définition des paramètres de navigation
 export type StackParamList = {
@@ -55,38 +56,40 @@ function RootNavigator() {
         subscribe,
       }}
     >
-      {user ? (
-        <Stack.Navigator initialRouteName={"HomePage"}>
-          <Stack.Screen
-            name="HomePage"
-            component={HomePage}
-            options={{
-              headerLeft: () => (
-                <Button
-                  title={t("disconnect")}
-                  onPress={() => auth().signOut()}
-                />
-              ),
-            }}
-          />
-          <Stack.Screen
-            name="BookPage"
-            component={BookPage}
-            options={({ route }) => ({ title: route.params.displayTitle })}
-          />
-          <Stack.Screen
-            name="ChapterPage"
-            component={ChapterPage}
-            options={({ route }) => ({ title: route.params.chapterTitle })}
-          />
-          <Stack.Screen name="FavoritePage" component={FavoritePage} />
-        </Stack.Navigator>
-      ) : (
-        <Stack.Navigator initialRouteName={"SigninPage"}>
-          <Stack.Screen name="SigninPage" component={SigninPage} />
-          <Stack.Screen name="SignupPage" component={SignupPage} />
-        </Stack.Navigator>
-      )}
+      <SafeAreaWrapper>
+        {user ? (
+          <Stack.Navigator initialRouteName={"HomePage"}>
+            <Stack.Screen
+              name="HomePage"
+              component={HomePage}
+              options={{
+                headerLeft: () => (
+                  <Button
+                    title={t("disconnect")}
+                    onPress={() => auth().signOut()}
+                  />
+                ),
+              }}
+            />
+            <Stack.Screen
+              name="BookPage"
+              component={BookPage}
+              options={({ route }) => ({ title: route.params.displayTitle })}
+            />
+            <Stack.Screen
+              name="ChapterPage"
+              component={ChapterPage}
+              options={({ route }) => ({ title: route.params.chapterTitle })}
+            />
+            <Stack.Screen name="FavoritePage" component={FavoritePage} />
+          </Stack.Navigator>
+        ) : (
+          <Stack.Navigator initialRouteName={"SigninPage"}>
+            <Stack.Screen name="SigninPage" component={SigninPage} />
+            <Stack.Screen name="SignupPage" component={SignupPage} />
+          </Stack.Navigator>
+        )}
+      </SafeAreaWrapper>
     </NavigationContainer>
   );
 }

@@ -8,6 +8,7 @@ import { loadErrorMessages, loadDevMessages } from "@apollo/client/dev";
 import functions from "@react-native-firebase/functions";
 import "./i18next";
 import { SnackbarProvider } from "./src/context/SnackBarContext";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const client = new ApolloClient({
   uri: "https://api-preprod.lelivrescolaire.fr/graph/",
@@ -28,7 +29,9 @@ function App() {
       <SnackbarProvider>
         <AuthContextProvider>
           <FavoriteContextProvider>
-            <RootNavigator />
+            <SafeAreaProvider>
+              <RootNavigator />
+            </SafeAreaProvider>
           </FavoriteContextProvider>
         </AuthContextProvider>
       </SnackbarProvider>

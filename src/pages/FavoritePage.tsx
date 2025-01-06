@@ -1,4 +1,4 @@
-import { FlatList, StyleSheet, View } from "react-native";
+import { FlatList, Pressable, StyleSheet, View } from "react-native";
 import useFavorite from "../context/FavoriteContext";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { StackParamList } from "../../RootNavigator";
@@ -50,26 +50,28 @@ export default function FavoritePage({ navigation }: Readonly<Props>) {
   }
 
   return (
-    <FlatList
-      data={books.filter(
-        (book) =>
-          liked.books[book.id] ||
-          bookIdsOfLikedChapters.some((bookId) => bookId === book.id)
-      )}
-      renderItem={({ item }) => (
-        <FavoriteCard
-          onPress={() =>
-            navigation.navigate("BookPage", {
-              bookId: item.id,
-              displayTitle: item.displayTitle ?? "",
-            })
-          }
-          displayTitle={item.displayTitle ?? ""}
-          picture={item.url ?? ""}
-          bookId={item.id}
-        />
-      )}
-    />
+    <View>
+      <FlatList
+        data={books.filter(
+          (book) =>
+            liked.books[book.id] ||
+            bookIdsOfLikedChapters.some((bookId) => bookId === book.id)
+        )}
+        renderItem={({ item }) => (
+          <FavoriteCard
+            onPress={() =>
+              navigation.navigate("BookPage", {
+                bookId: item.id,
+                displayTitle: item.displayTitle ?? "",
+              })
+            }
+            displayTitle={item.displayTitle ?? ""}
+            picture={item.url ?? ""}
+            bookId={item.id}
+          />
+        )}
+      />
+    </View>
   );
 }
 
@@ -82,5 +84,23 @@ const style = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 10,
+  },
+  buttonContainer: {
+    marginTop: 16,
+    display: "flex",
+    flexDirection: "row",
+    width: "100%",
+    justifyContent: "space-around",
+  },
+  bottomSheetButton: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingBottom: 2,
+  },
+  bottomSheetButtonText: {
+    fontWeight: 600,
+    textDecorationLine: "underline",
   },
 });

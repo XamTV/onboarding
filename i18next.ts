@@ -8,8 +8,9 @@ const resources = {
     translation: {
       accountCreation: "Créer mon compte",
       categories: {
-        subjects: "Tous sujets",
         levels: "Tous niveaux",
+        selectCategories: "Sélectionner les catégories",
+        subjects: "Tous sujets",
       },
       close: "Fermer",
       connect: "Se connecter",
